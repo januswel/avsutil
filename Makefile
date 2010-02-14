@@ -4,11 +4,11 @@
 avs2wav: avs2wav.o avsutil.o
 	g++ -o avs2wav avs2wav.o avsutil.o
 
-avs2wav.o: avs2wav.cpp
-	g++ -c avs2wav.cpp
+avs2wav.o: src/avs2wav.cpp
+	g++ -c src/avs2wav.cpp
 
-avsutil.o: avsutil.cpp
-	g++ -c avsutil.cpp
+avsutil.o: src/avsutil.cpp
+	g++ -c src/avsutil.cpp
 
-avs2wav.cpp: avsutil.h avisynth.h
-avsutil.cpp: avsutil.h avisynth.h
+avs2wav.cpp: src/avsutil.h src/avisynth.h
+avsutil.cpp: src/avsutil.h src/avisynth.h
