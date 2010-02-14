@@ -4,6 +4,8 @@
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  *
+ *      AvsUtil <- Avs2File <- Avs2Wav
+ *
  * refer
  *  RIFF WAV specifications
  *      http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
@@ -30,10 +32,8 @@ namespace avsutil {
         unsigned __int16 block_size;    // channels * (bit_depth / 8)
     };
 
-    class Avs2File {
+    class AvsUtil {
         protected:
-            FILE* wavfp;                // file pointer for the wav file
-
             IScriptEnvironment* se;
             PClip clip;
             VideoInfo vi;
@@ -66,10 +66,21 @@ namespace avsutil {
             };
 
         public:
-            Avs2File() {};
-            virtual ~Avs2File() {};
-            const AudioInfo& get_audioinfo() const { return ai; };
+            AvsUtil() {};
+            AvsUtil(const std::string& avsfile) { open(avsfile); };
+            virtual ~AvsUtil() {};
             void open(const std::string& avsfile);
+            const AudioInfo& get_audioinfo() const { return ai; };
+    };
+
+    class Avs2File : public AvsUtil {
+        protected:
+            FILE* wavfp;                // file pointer for the wav file
+
+        public:
+            Avs2File() : AvsUtil() {};
+            Avs2File(const std::string& avsfile) : AvsUtil(avsfile) {};
+            virtual ~Avs2File() {};
             virtual bool write(const std::string& wavfile) = 0;
     };
 
@@ -87,7 +98,8 @@ namespace avsutil {
         protected:
             static const unsigned __int32 buf_samples_def = 1024;
 
-            unsigned int buf_samples;   // a number of samples that processed at one time
+            // a number of samples that processed at one time
+            unsigned int buf_samples;
 
             virtual void write_header();
             virtual void write_data();
@@ -95,6 +107,10 @@ namespace avsutil {
         public:
             // build the object ScriptEnvironment
             Avs2Wav(const unsigned int n = buf_samples_def) {
+                buf_samples = n;
+            };
+            Avs2Wav(const std::string& avsfile, const unsigned int n = buf_samples_def)
+                : Avs2File(avsfile) {
                 buf_samples = n;
             };
             virtual ~Avs2Wav() {};
