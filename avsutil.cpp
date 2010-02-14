@@ -46,7 +46,7 @@ namespace avsutil {
     //const unsigned __int32 Avs2Wav::buf_samples_def;
 
     // for a file format that has headers and data
-    bool Avs2Wav::write(const std::string& wavfile) {
+    bool Avs2Audio::write(const std::string& wavfile) {
 #ifdef _MSC_VER
         errno_t result = fopen_s(&wavfp, wavfile.c_str(), "wb");
         if (errno != 0) {
@@ -60,6 +60,7 @@ namespace avsutil {
 #endif
         write_header();
         write_data();
+        write_footer();
         fclose(wavfp);
 
         return true;

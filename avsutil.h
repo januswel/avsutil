@@ -4,7 +4,7 @@
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  *
- *      AvsUtil <- Avs2File <- Avs2Wav
+ *      AvsUtil <- Avs2File <- Avs2Audio <- Avs2Wav
  *
  * refer
  *  RIFF WAV specifications
@@ -84,7 +84,29 @@ namespace avsutil {
             virtual bool write(const std::string& wavfile) = 0;
     };
 
-    class Avs2Wav : public Avs2File {
+    class Avs2Audio : public Avs2File {
+        protected:
+            static const unsigned __int32 buf_samples_def = 1024;
+
+            // a number of samples that processed at one time
+            unsigned int buf_samples;
+
+            virtual void write_header() {};
+            virtual void write_data() {};
+            virtual void write_footer() {};
+
+        public:
+            // build the object ScriptEnvironment
+            Avs2Audio(const unsigned int n = buf_samples_def)
+                : buf_samples(n) {};
+            Avs2Audio(const std::string& avsfile, const unsigned int n = buf_samples_def)
+                : Avs2File(avsfile), buf_samples(n) {};
+            virtual ~Avs2Audio() {};
+
+            virtual bool write(const std::string& wavfile);
+    };
+
+    class Avs2Wav : public Avs2Audio {
         private:
             static const unsigned __int16 header_size;
             static const unsigned __int16 wave_header_size;
@@ -96,25 +118,16 @@ namespace avsutil {
             enum {PCM = 1};
 
         protected:
-            static const unsigned __int32 buf_samples_def = 1024;
-
-            // a number of samples that processed at one time
-            unsigned int buf_samples;
-
             virtual void write_header();
             virtual void write_data();
 
         public:
             // build the object ScriptEnvironment
-            Avs2Wav(const unsigned int n = buf_samples_def) {
-                buf_samples = n;
-            };
+            Avs2Wav(const unsigned int n = buf_samples_def)
+                : Avs2Audio(n) {};
             Avs2Wav(const std::string& avsfile, const unsigned int n = buf_samples_def)
-                : Avs2File(avsfile) {
-                buf_samples = n;
-            };
+                : Avs2Audio(avsfile, n) {};
             virtual ~Avs2Wav() {};
-            virtual bool write(const std::string& wavfile);
     };
 
     class Avs2FileError : public std::domain_error {
