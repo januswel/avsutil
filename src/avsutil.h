@@ -4,7 +4,7 @@
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  *
- *      AvsUtil <- FileWriter <- AudioWriter <- WavWriter
+ *      AvsUtil <- BinaryWriter <- AudioWriter <- WavWriter
  *
  * refer
  *  RIFF WAV specifications
@@ -73,18 +73,18 @@ namespace avsutil {
             const AudioInfo& get_audioinfo() const { return ai; };
     };
 
-    class FileWriter : public AvsUtil {
+    class BinaryWriter : public AvsUtil {
         protected:
-            FILE* wavfp;                // file pointer for the wav file
+            FILE* wavfp;    // file pointer for the file
 
         public:
-            FileWriter() : AvsUtil() {};
-            FileWriter(const std::string& avsfile) : AvsUtil(avsfile) {};
-            virtual ~FileWriter() {};
-            virtual bool write(const std::string& wavfile) = 0;
+            BinaryWriter() : AvsUtil() {};
+            BinaryWriter(const std::string& avsfile) : AvsUtil(avsfile) {};
+            virtual ~BinaryWriter() {};
+            virtual bool write(const std::string& wavfile) { return false; };
     };
 
-    class AudioWriter : public FileWriter {
+    class AudioWriter : public BinaryWriter {
         protected:
             static const unsigned __int32 buf_samples_def = 1024;
 
@@ -92,7 +92,7 @@ namespace avsutil {
             unsigned int buf_samples;
 
             virtual void write_header() {};
-            virtual void write_data() {};
+            virtual void write_data(void (*progress)(const unsigned __int64, const unsigned __int64)) {};
             virtual void write_footer() {};
 
         public:
@@ -100,10 +100,10 @@ namespace avsutil {
             AudioWriter(const unsigned int n = buf_samples_def)
                 : buf_samples(n) {};
             AudioWriter(const std::string& avsfile, const unsigned int n = buf_samples_def)
-                : FileWriter(avsfile), buf_samples(n) {};
+                : BinaryWriter(avsfile), buf_samples(n) {};
             virtual ~AudioWriter() {};
 
-            virtual bool write(const std::string& wavfile);
+            virtual bool write(const std::string& wavfile, void (*progress)(const unsigned __int64, const unsigned __int64) = NULL);
     };
 
     class WavWriter : public AudioWriter {
@@ -119,7 +119,7 @@ namespace avsutil {
 
         protected:
             virtual void write_header();
-            virtual void write_data();
+            virtual void write_data(void (*progress)(const unsigned __int64, const unsigned __int64));
 
         public:
             // build the object ScriptEnvironment

@@ -9,7 +9,9 @@
 
 namespace avsutil {
     // for a file format that has headers, data and footer
-    bool AudioWriter::write(const std::string& wavfile) {
+    bool AudioWriter::write(
+            const std::string& wavfile,
+            void (*progress)(const unsigned __int64, const unsigned __int64)) {
 #ifdef _MSC_VER
         errno_t result = fopen_s(&wavfp, wavfile.c_str(), "wb");
         if (errno != 0) {
@@ -22,7 +24,7 @@ namespace avsutil {
         }
 #endif
         write_header();
-        write_data();
+        write_data(progress);
         write_footer();
         fclose(wavfp);
 

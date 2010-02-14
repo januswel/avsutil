@@ -81,7 +81,7 @@ namespace avsutil {
      *  case 5.1 ch (maybe)
      *      fl0, fr0, fc0, lf0, bl0, br0, ... , fln, frn, fcn, lfn, bln, brn
      * */
-    void WavWriter::write_data() {
+    void WavWriter::write_data(void (*progress)(const unsigned __int64, const unsigned __int64)) {
         std::vector<__int8> buf(buf_samples * ai.channels * (ai.bit_depth / 8));
         unsigned __int64 start = 0;
         unsigned __int64 times = ai.samples / buf_samples;
@@ -89,10 +89,12 @@ namespace avsutil {
         for (unsigned __int64 i = 0; i < times ; start += buf_samples, ++i) {
             clip->GetAudio(&buf[0], start, buf_samples, se);
             fwrite(&buf[0], ai.block_size, buf_samples, wavfp);
+            if (progress != NULL) (*progress)(start + buf_samples, ai.samples);
         }
         if (reminder > 0) {
             clip->GetAudio(&buf[0], start, reminder, se);
             fwrite(&buf[0], ai.block_size, static_cast<size_t>(reminder), wavfp);
+            if (progress != NULL) (*progress)(start + reminder, ai.samples);
         }
     }
 }

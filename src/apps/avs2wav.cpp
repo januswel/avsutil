@@ -8,11 +8,15 @@
 #include "../avisynth.h"
 #include "../avsutil.h"
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <stdexcept>
 
 using namespace std;
 using namespace avsutil;
+
+// callback function for WavWriter::write()
+void progress_cl(const unsigned __int64, const unsigned __int64);
 
 int main(const int argc, const char* argv[]) {
     if (argc < 2) {
@@ -42,11 +46,11 @@ int main(const int argc, const char* argv[]) {
         cout << "sampling rate: " << ai.sampling_rate << endl;
         cout << "samples:       " << ai.samples << endl;
         cout << endl;
-        cout << "processing..." << endl;
 
-        ww.write(wavfile);
+        ww.write(wavfile, progress_cl);
 
-        cout << "finished." << endl;
+        cout << endl;
+        cout << "done." << endl;
     }
     catch (exception& ex) {
         cerr << endl << ex.what() << endl;
@@ -54,4 +58,11 @@ int main(const int argc, const char* argv[]) {
     }
 
     return 0;
+}
+
+void progress_cl(const unsigned __int64 processed, const unsigned __int64 max) {
+    float percentage = (static_cast<float>(processed) / static_cast<float>(max)) * 100;
+    cout << "\rprocessing... "
+        << setw(10) << right << processed << "/" << max
+        << "(" << setprecision(2) << setw(6) << right << fixed << percentage << "%)";
 }
