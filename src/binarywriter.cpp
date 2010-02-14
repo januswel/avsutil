@@ -1,6 +1,6 @@
 /*
- * filewriter.cpp
- *  definitions of avsutil::FileWriter class
+ * binarywriter.cpp
+ *  definitions of avsutil::BinaryWriter class
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  * */

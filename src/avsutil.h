@@ -86,6 +86,7 @@ namespace avsutil {
 
     class AudioWriter : public BinaryWriter {
         protected:
+            // default of buf_samples
             static const unsigned __int32 buf_samples_def = 1024;
 
             // a number of samples that processed at one time

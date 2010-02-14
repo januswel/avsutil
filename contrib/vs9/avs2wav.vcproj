@@ -200,7 +200,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\filewriter.cpp"
+				RelativePath="..\..\src\binarywriter.cpp"
 				>
 			</File>
 			<File
