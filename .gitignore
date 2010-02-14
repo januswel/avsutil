@@ -1,0 +1,13 @@
+# for C language
+*.[oa]
+*.~
+
+# for Microsoft Visual Studio
+*.ncb
+*.vcproj.*.user
+*.suo
+contrib/vs9/Debug/*
+contrib/vs9/Release/*
+
+# for vim
+*.swp
