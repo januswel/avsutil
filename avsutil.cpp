@@ -9,7 +9,7 @@
 
 namespace avsutil {
     // * definitions for Avs2File
-    void Avs2File::open(const std::string& avsfile) {
+    void AvsUtil::open(const std::string& avsfile) {
         try {
             se = CreateScriptEnvironment();
 
