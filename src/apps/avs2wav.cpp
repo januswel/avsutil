@@ -5,8 +5,8 @@
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
-#include "avisynth.h"
-#include "avsutil.h"
+#include "../avisynth.h"
+#include "../avsutil.h"
 #include <iostream>
 #include <string>
 #include <stdexcept>
