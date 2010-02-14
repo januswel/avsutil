@@ -27,9 +27,9 @@ int main(const int argc, const char* argv[]) {
     cout << "destination: " << wavfile << endl;
 
     try {
-        Avs2Wav a2w;
-        a2w.open(avsfile);
-        AudioInfo ai = a2w.get_audioinfo();
+        WavWriter ww;
+        ww.open(avsfile);
+        AudioInfo ai = ww.get_audioinfo();
 
         if (!ai.exists) {
             cerr << "no audio in the file: " << avsfile << endl;
@@ -44,7 +44,7 @@ int main(const int argc, const char* argv[]) {
         cout << endl;
         cout << "processing..." << endl;
 
-        a2w.write(wavfile);
+        ww.write(wavfile);
 
         cout << "finished." << endl;
     }

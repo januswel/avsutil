@@ -188,11 +188,23 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\src\audiowriter.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\apps\avs2wav.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\avsutil.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\filewriter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\wavwriter.cpp"
 				>
 			</File>
 		</Filter>

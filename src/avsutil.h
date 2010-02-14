@@ -4,7 +4,7 @@
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  *
- *      AvsUtil <- Avs2File <- Avs2Audio <- Avs2Wav
+ *      AvsUtil <- FileWriter <- AudioWriter <- WavWriter
  *
  * refer
  *  RIFF WAV specifications
@@ -12,8 +12,8 @@
  *
  * */
 
-#ifndef AVS2WAV
-#define AVS2WAV
+#ifndef AVSUTIL
+#define AVSUTIL
 
 #include "avisynth.h"
 #include <string>
@@ -73,18 +73,18 @@ namespace avsutil {
             const AudioInfo& get_audioinfo() const { return ai; };
     };
 
-    class Avs2File : public AvsUtil {
+    class FileWriter : public AvsUtil {
         protected:
             FILE* wavfp;                // file pointer for the wav file
 
         public:
-            Avs2File() : AvsUtil() {};
-            Avs2File(const std::string& avsfile) : AvsUtil(avsfile) {};
-            virtual ~Avs2File() {};
+            FileWriter() : AvsUtil() {};
+            FileWriter(const std::string& avsfile) : AvsUtil(avsfile) {};
+            virtual ~FileWriter() {};
             virtual bool write(const std::string& wavfile) = 0;
     };
 
-    class Avs2Audio : public Avs2File {
+    class AudioWriter : public FileWriter {
         protected:
             static const unsigned __int32 buf_samples_def = 1024;
 
@@ -97,16 +97,16 @@ namespace avsutil {
 
         public:
             // build the object ScriptEnvironment
-            Avs2Audio(const unsigned int n = buf_samples_def)
+            AudioWriter(const unsigned int n = buf_samples_def)
                 : buf_samples(n) {};
-            Avs2Audio(const std::string& avsfile, const unsigned int n = buf_samples_def)
-                : Avs2File(avsfile), buf_samples(n) {};
-            virtual ~Avs2Audio() {};
+            AudioWriter(const std::string& avsfile, const unsigned int n = buf_samples_def)
+                : FileWriter(avsfile), buf_samples(n) {};
+            virtual ~AudioWriter() {};
 
             virtual bool write(const std::string& wavfile);
     };
 
-    class Avs2Wav : public Avs2Audio {
+    class WavWriter : public AudioWriter {
         private:
             static const unsigned __int16 header_size;
             static const unsigned __int16 wave_header_size;
@@ -123,11 +123,11 @@ namespace avsutil {
 
         public:
             // build the object ScriptEnvironment
-            Avs2Wav(const unsigned int n = buf_samples_def)
-                : Avs2Audio(n) {};
-            Avs2Wav(const std::string& avsfile, const unsigned int n = buf_samples_def)
-                : Avs2Audio(avsfile, n) {};
-            virtual ~Avs2Wav() {};
+            WavWriter(const unsigned int n = buf_samples_def)
+                : AudioWriter(n) {};
+            WavWriter(const std::string& avsfile, const unsigned int n = buf_samples_def)
+                : AudioWriter(avsfile, n) {};
+            virtual ~WavWriter() {};
     };
 
     class Avs2FileError : public std::domain_error {
