@@ -31,9 +31,8 @@ int main(const int argc, const char* argv[]) {
     cout << "destination: " << wavfile << endl;
 
     try {
-        WavWriter ww;
-        ww.open(avsfile);
-        AudioInfo ai = ww.get_audioinfo();
+        WavWriter ww(avsfile);
+        AudioInfo ai = ww.get_avs().get_audioinfo();
 
         if (!ai.exists) {
             cerr << "no audio in the file: " << avsfile << endl;

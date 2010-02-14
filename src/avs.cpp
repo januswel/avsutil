@@ -1,6 +1,6 @@
 /*
- * avsutil.cpp
- *  definitions of avsutil::AvsUtil class
+ * avs.cpp
+ *  definitions of avsutil::Avs class
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  * */
@@ -9,7 +9,7 @@
 
 namespace avsutil {
     // * definitions for Avs2File
-    void AvsUtil::open(const std::string& avsfile) {
+    void Avs::open(const std::string& avsfile) {
         try {
             se = CreateScriptEnvironment();
 
@@ -28,7 +28,7 @@ namespace avsutil {
             pack_audio_info();
         }
         catch (AvisynthError& avserr) {
-            throw Avs2FileError(std::string("Specified file is not valid for AviSynth.\n") + avserr.msg);
+            throw AvsUtilError(std::string("Specified file is not valid for AviSynth.\n") + avserr.msg);
         }
     }
 }

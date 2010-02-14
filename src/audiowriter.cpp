@@ -13,20 +13,20 @@ namespace avsutil {
             const std::string& wavfile,
             void (*progress)(const unsigned __int64, const unsigned __int64)) {
 #ifdef _MSC_VER
-        errno_t result = fopen_s(&wavfp, wavfile.c_str(), "wb");
+        errno_t result = fopen_s(&audiofp, wavfile.c_str(), "wb");
         if (errno != 0) {
             return false;
         }
 #else
-        wavfp = fopen(wavfile.c_str(), "wb");
-        if (wavfp == NULL) {
+        audiofp = fopen(wavfile.c_str(), "wb");
+        if (audiofp == NULL) {
             return false;
         }
 #endif
         write_header();
         write_data(progress);
         write_footer();
-        fclose(wavfp);
+        fclose(audiofp);
 
         return true;
     };

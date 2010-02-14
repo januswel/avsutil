@@ -4,7 +4,9 @@
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  *
- *      AvsUtil <- BinaryWriter <- AudioWriter <- WavWriter
+ *      AudioInfo
+ *      Avs
+ *      FileWriter <- AudioWriter <- WavWriter
  *
  * refer
  *  RIFF WAV specifications
@@ -32,7 +34,12 @@ namespace avsutil {
         unsigned __int16 block_size;    // channels * (bit_depth / 8)
     };
 
-    class AvsUtil {
+    /*
+     * A class has basic features about avs,
+     * by wrapping classes defined in avisynth.h,
+     * e.g. opening avs file and getting audio informations.
+     * */
+    class Avs {
         protected:
             IScriptEnvironment* se;
             PClip clip;
@@ -66,49 +73,52 @@ namespace avsutil {
             };
 
         public:
-            AvsUtil() {};
-            AvsUtil(const std::string& avsfile) { open(avsfile); };
-            virtual ~AvsUtil() {};
+            Avs() {};
+            Avs(const std::string& avsfile) { open(avsfile); };
+            virtual ~Avs() {};
             void open(const std::string& avsfile);
             const AudioInfo& get_audioinfo() const { return ai; };
+            void get_audio(void* buf, const __int64 start, const __int64 count) { clip->GetAudio(buf, start, count, se); };
     };
 
-    class BinaryWriter : public AvsUtil {
-        protected:
-            FILE* wavfp;    // file pointer for the file
-
+    /*
+     * An ancestor class for writing file.
+     * This is an abstract class.
+     * */
+    class FileWriter {
         public:
-            BinaryWriter() : AvsUtil() {};
-            BinaryWriter(const std::string& avsfile) : AvsUtil(avsfile) {};
-            virtual ~BinaryWriter() {};
-            virtual bool write(const std::string& wavfile) { return false; };
+            virtual bool write(const std::string& wavfile, void (*progress)(const unsigned __int64, const unsigned __int64)) = 0;
     };
 
-    class AudioWriter : public BinaryWriter {
+    /*
+     * A super class for writing audio file.
+     * This is abstract class.
+     * In order to make the class to write audio file in your favorite format,
+     * implement write_header(), write_footer() and write_data(),
+     * in your sub classes for this.
+     * */
+    class AudioWriter : public FileWriter {
         protected:
-            // default of buf_samples
-            static const unsigned __int32 buf_samples_def = 1024;
+            FILE* audiofp;    // file pointer for the file
+            Avs avs;
 
-            // a number of samples that processed at one time
-            unsigned int buf_samples;
-
-            virtual void write_header() {};
-            virtual void write_data(void (*progress)(const unsigned __int64, const unsigned __int64)) {};
-            virtual void write_footer() {};
+            virtual void write_header() = 0;
+            virtual void write_footer() = 0;
+            virtual void write_data(void (*progress)(const unsigned __int64, const unsigned __int64)) = 0;
 
         public:
-            // build the object ScriptEnvironment
-            AudioWriter(const unsigned int n = buf_samples_def)
-                : buf_samples(n) {};
-            AudioWriter(const std::string& avsfile, const unsigned int n = buf_samples_def)
-                : BinaryWriter(avsfile), buf_samples(n) {};
+            AudioWriter() {};
+            AudioWriter(const std::string& avsfile) : avs(avsfile) {};
             virtual ~AudioWriter() {};
 
+            const Avs& get_avs() const { return avs; };
+            void open(const std::string& avsfile) { avs.open(avsfile); };
             virtual bool write(const std::string& wavfile, void (*progress)(const unsigned __int64, const unsigned __int64) = NULL);
     };
 
     class WavWriter : public AudioWriter {
         private:
+            // constants
             static const unsigned __int16 header_size;
             static const unsigned __int16 wave_header_size;
             static const unsigned __int16 fmt_chunk_size;
@@ -116,24 +126,33 @@ namespace avsutil {
             static const char* header_wave;
             static const char* header_fmt;
             static const char* header_data;
-            enum {PCM = 1};
+            enum {PCM = 1};     // only linear PCM format for now
+
+            // default of buf_samples
+            //  actual buffer size is:
+            //      min     buf_samples *  1 byte ( 8bit, mono)
+            //      max     buf_samples * 24 byte (32bit, 5.1ch)
+            static const unsigned __int32 buf_samples_def = 0x1000;
+
+            // a number of samples that processed at one time
+            unsigned int buf_samples;
 
         protected:
             virtual void write_header();
+            virtual void write_footer() {};
             virtual void write_data(void (*progress)(const unsigned __int64, const unsigned __int64));
 
         public:
-            // build the object ScriptEnvironment
             WavWriter(const unsigned int n = buf_samples_def)
-                : AudioWriter(n) {};
+                : buf_samples(n) {};
             WavWriter(const std::string& avsfile, const unsigned int n = buf_samples_def)
-                : AudioWriter(avsfile, n) {};
+                : buf_samples(n), AudioWriter(avsfile) {};
             virtual ~WavWriter() {};
     };
 
-    class Avs2FileError : public std::domain_error {
+    class AvsUtilError : public std::domain_error {
         public:
-            Avs2FileError(const std::string& errmsg) : std::domain_error(errmsg) {};
+            AvsUtilError(const std::string& errmsg) : std::domain_error(errmsg) {};
     };
 };
 
