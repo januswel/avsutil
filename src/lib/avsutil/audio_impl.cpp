@@ -6,7 +6,7 @@
  * */
 
 #include "avsutil_impl.hpp"
-#include "wav.hpp"
+#include "../wav/wav.hpp"
 #include <vector>
 
 #ifdef _DEBUG
