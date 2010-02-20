@@ -5,9 +5,9 @@
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
-#include "../avisynth.h"
-#include "../avsutil.h"
+#include "../avsutil.hpp"
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <string>
 #include <stdexcept>
@@ -15,7 +15,7 @@
 using namespace std;
 using namespace avsutil;
 
-// callback function for WavWriter::write()
+// callback function for IAudio
 void progress_cl(const unsigned __int64, const unsigned __int64);
 
 int main(const int argc, const char* argv[]) {
@@ -31,8 +31,9 @@ int main(const int argc, const char* argv[]) {
     cout << "destination: " << wavfile << endl;
 
     try {
-        WavWriter ww(avsfile);
-        AudioInfo ai = ww.get_avs().get_audioinfo();
+        IAvs* avs = CreateAvsObj(avsfile.c_str());
+        IAudio* audio = avs->audio();
+        AudioInfo ai = audio->info();
 
         if (!ai.exists) {
             cerr << "no audio in the file: " << avsfile << endl;
@@ -46,10 +47,15 @@ int main(const int argc, const char* argv[]) {
         cout << "samples:       " << ai.samples << endl;
         cout << endl;
 
-        ww.write(wavfile, progress_cl);
+        audio->progress_callback(progress_cl);
+        ofstream fout(wavfile.c_str(), ios::binary | ios::trunc);
+        fout << audio;
 
         cout << endl;
         cout << "done." << endl;
+
+        delete audio;
+        delete avs;
     }
     catch (exception& ex) {
         cerr << endl << ex.what() << endl;
