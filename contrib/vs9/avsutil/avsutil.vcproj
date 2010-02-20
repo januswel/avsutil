@@ -59,6 +59,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="&quot;C:\Program Files\AviSynth 2.5\Extras\avisynth.lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
