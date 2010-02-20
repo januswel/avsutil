@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <memory>
 #include <string>
 #include <stdexcept>
 
@@ -43,8 +44,8 @@ int main(const int argc, const char* argv[]) {
          << setw(header_width) << "destination:" << wavfile << endl;
 
     try {
-        IAvs* avs = CreateAvsObj(avsfile.c_str());
-        IAudio* audio = avs->audio();
+        auto_ptr<IAvs> avs(CreateAvsObj(avsfile.c_str()));
+        auto_ptr<IAudio> audio(avs->audio());
         AudioInfo ai = audio->info();
 
         if (!ai.exists) {
@@ -57,13 +58,10 @@ int main(const int argc, const char* argv[]) {
         pout << right << fixed << setprecision(2);
         audio->progress_callback(progress_cl);
         ofstream fout(wavfile.c_str(), ios::binary | ios::trunc);
-        fout << audio;
+        fout << audio.get();
 
         cout << endl
              << "done." << endl;
-
-        delete audio;
-        delete avs;
     }
     catch (exception& ex) {
         cerr << endl << ex.what() << endl;
