@@ -22,7 +22,9 @@ using namespace avsutil;
 // this stream is used in progress_cl()
 ostream pout(cout.rdbuf());
 
-// functions
+// forward declarations
+// typical one
+void usage(ostream& out);
 // callback function for IAudio::write()
 void progress_cl(const unsigned __int64, const unsigned __int64);
 // output audio informations
@@ -30,7 +32,8 @@ ostream& operator <<(ostream&, const AudioInfo&);
 
 int main(const int argc, const char* argv[]) {
     if (argc < 2) {
-        cerr << "specify file name." << endl;
+        usage(cerr);
+        cerr << "Specify <inputfile>." << endl;
         exit(1);
     }
 
@@ -72,6 +75,10 @@ int main(const int argc, const char* argv[]) {
 }
 
 // definitions of functions
+void usage(ostream& out) {
+    out << "Usage: avs2wav <inputfile>" << endl;
+}
+
 void progress_cl(const unsigned __int64 processed, const unsigned __int64 max) {
     float percentage = (static_cast<float>(processed) / static_cast<float>(max)) * 100;
     pout << "\rprocessing... "
