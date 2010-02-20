@@ -6,39 +6,35 @@
  * */
 
 #include "avsutil_impl.hpp"
-
-#ifdef _DEBUG
-#include <iostream>
-#endif
+#include "../debuglogger/debuglogger.hpp"
 
 namespace avsutil {
     // implementations for functions
-    IAvs* CreateAvsObj(void) { return new impl::CAvs(); }
+    IAvs* CreateAvsObj(void) {
+        DBGLOG(FUNCNAME << "(void)");
+        return new impl::CAvs();
+    }
     IAvs* CreateAvsObj(const char* filename) {
+        DBGLOG(FUNCNAME << "(\"" << filename << "\")");
         return new impl::CAvs(filename);
     }
 
     namespace impl {
         CAvs::CAvs(void) : mv_se(CreateScriptEnvironment()), mv_is_fine(true) {
-#ifdef _DEBUG
-            std::cerr << "avsutil::impl::CAvs::CAvs(void)" << std::endl;
-#endif
+            DBGLOG(FUNCNAME << "(void)");
         };
 
         CAvs::CAvs(const char* avsfile) : mv_se(CreateScriptEnvironment()), mv_is_fine(true) {
-#ifdef _DEBUG
-            std::cerr << "avsutil::impl::CAvs::CAvs(const char*)" << std::endl;
-#endif
+            DBGLOG(FUNCNAME << "(const char*)");
             open(avsfile);
         };
 
         CAvs::~CAvs(void) {
-#ifdef _DEBUG
-            std::cerr << "avsutil::impl::CAvs::~CAvs(void)" << std::endl;
-#endif
+            DBGLOG(FUNCNAME << "(void)");
         };
 
         void CAvs::open(const char* avsfile) {
+            DBGLOG(FUNCNAME << "(\"" << avsfile << "\")");
             try {
                 // pack the filename as the argument of AviSynth filter
                 AVSValue filename = avsfile;
@@ -64,13 +60,13 @@ namespace avsutil {
         }
 
         void CAvs::getaudio(char* buf, const unsigned __int64 start, const unsigned __int64 count) {
-#ifdef _DEBUG
-            std::cerr << "avsutil::impl::CAvs::getaudio(char*, " << start << ", " << count << ")" << std::endl;
-#endif
+            DBGLOG(FUNCNAME << "(char*, " << start << ", " << count << ")");
             mv_clip->GetAudio(buf, start, count, mv_se.get());
         }
 
         IAudio* CAvs::audio(void) {
+            DBGLOG(FUNCNAME << "(void)");
+
             // build a CAudio object
             std::auto_ptr<AudioInfo> ai(new AudioInfo); // ai has a possession of (AudioInfo*)
             pack_audioinfo(ai.get());                   // ai lends pack_audioinfo() (AudioInfo*)
@@ -78,6 +74,7 @@ namespace avsutil {
         };
 
         void CAvs::pack_audioinfo(AudioInfo* ai) {
+            DBGLOG(FUNCNAME << "(AudioInfo*)");
             VideoInfo vi = mv_clip->GetVideoInfo();
             ai->exists = vi.HasAudio();
             ai->samples = vi.num_audio_samples;
@@ -88,6 +85,7 @@ namespace avsutil {
         }
 
         const unsigned int CAvs::bitdepth(const VideoInfo& vi) const {
+            DBGLOG(FUNCNAME << "(const VideoInfo&)");
             switch (vi.sample_type) {
                 case SAMPLE_INT8:
                     return 8;

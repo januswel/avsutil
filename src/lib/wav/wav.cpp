@@ -9,13 +9,11 @@
 
 #include "wav.hpp"
 #include "../../helper/cast.hpp"
-
-#ifdef _DEBUG
-#include <iostream>
-#endif
+#include "../debuglogger/debuglogger.hpp"
 
 namespace wav {
     bool WavHeader::read(std::istream& in) {
+        DBGLOG(FUNCNAME << "(std::istream&)");
         in.read(general_type, 4);
         in.read(pointer_cast<char*>(&riff_size), sizeof(riff_size));
         in.read(riff_type, 4);
@@ -33,6 +31,7 @@ namespace wav {
     }
 
     bool WavHeader::write(std::ostream& out) const {
+        DBGLOG(FUNCNAME << "(std::ostream&)");
         out.write(general_type, 4);
         out.write(constpointer_cast<const char*>(&riff_size), sizeof(riff_size));
         out.write(riff_type, 4);
@@ -51,17 +50,13 @@ namespace wav {
 }
 
 std::istream& operator >>(std::istream& in, wav::WavHeader& wh) {
-#ifdef _DEBUG
-    std::cerr << "std::istream& operator >>(std::istream&, const wav::WavHeader&)" << std::endl;
-#endif
+    DBGLOG(FUNCNAME << "(std::istream&, const wav::WavHeader&)");
     if (wh.read(in) == true) return in;
     else throw new std::domain_error("something is wrong in reading wav header.");
 }
 
 std::ostream& operator <<(std::ostream& out, const wav::WavHeader& wh) {
-#ifdef _DEBUG
-    std::cerr << "std::ostream& operator <<(std::ostream&, const wav::WavHeader&)" << std::endl;
-#endif
+    DBGLOG(FUNCNAME << "(std::ostream&, const wav::WavHeader&)");
     if (wh.write(out) == true) return out;
     else throw new std::domain_error("something is wrong in writing wav header.");
 }

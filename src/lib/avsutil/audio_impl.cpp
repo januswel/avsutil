@@ -8,32 +8,27 @@
 #include "avsutil_impl.hpp"
 #include "../wav/wav.hpp"
 #include <vector>
-
-#ifdef _DEBUG
-#include <iostream>
-#endif
+#include "../debuglogger/debuglogger.hpp"
 
 namespace avsutil {
     namespace impl {
         CAudio::CAudio(CAvs* avs, std::auto_ptr<AudioInfo> info)
             : mv_avs(avs), mv_info(info), mv_progress_callback(NULL), buf_samples(buf_samples_default) {
-#ifdef _DEBUG
-                std::cerr << "avsutil::impl::CAudio::CAudio(void)" << std::endl;
-#endif
+                DBGLOG(FUNCNAME << "(CAvs*, std::auto_ptr<AudioInfo>)@");
             }
 
         CAudio::~CAudio(void) {
-#ifdef _DEBUG
-            std::cerr << "avsutil::impl::CAudio::~CAudio(void)" << std::endl;
-#endif
+            DBGLOG(FUNCNAME << "(void)");
         }
 
         void CAudio::write(std::ostream& out) const {
+            DBGLOG(FUNCNAME << "(std::ostream&)");
             write_header(out);
             write_data(out);
         }
 
         void CAudio::write_header(std::ostream& out) const {
+            DBGLOG(FUNCNAME << "(std::ostream&)");
             unsigned __int32 data_size = static_cast<unsigned __int32>(mv_info->samples) * mv_info->block_size;
             unsigned __int32 riff_size = data_size + wav::riff_header_size;
             unsigned __int32 data_per_sec = mv_info->sampling_rate * mv_info->block_size;
@@ -78,6 +73,7 @@ namespace avsutil {
          *      br: back right      (for 5.1ch)
          * */
         void CAudio::write_data(std::ostream& out) const {
+            DBGLOG(FUNCNAME << "(std::ostream&)");
             unsigned __int32 buf_size = buf_samples * mv_info->channels * (mv_info->bit_depth / 8);
             std::vector<char> buf(buf_size);
 
@@ -104,17 +100,13 @@ namespace avsutil {
 }
 
 std::ostream& operator <<(std::ostream& out, const avsutil::IAudio& audio) {
-#ifdef _DEBUG
-    std::cerr << "std::ostream& operator <<(std::ostream&, const avsutil::IAudio&)" << std::endl;
-#endif
+    DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::IAudio&)");
     audio.write(out);
     return out;
 }
 
 std::ostream& operator <<(std::ostream& out, const avsutil::IAudio* const audio) {
-#ifdef _DEBUG
-    std::cerr << "std::ostream& operator <<(std::ostream&, const avsutil::IAudio* const)" << std::endl;
-#endif
+    DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::IAudio* const)");
     audio->write(out);
     return out;
 }
