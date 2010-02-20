@@ -6,8 +6,11 @@
 *.ncb
 *.vcproj.*.user
 *.suo
-contrib/vs9/Debug/*
-contrib/vs9/Release/*
+contrib/vs9/*/Debug/*
+contrib/vs9/*/Release/*
 
 # for vim
 *.swp
+
+# for test
+test/*.wav
