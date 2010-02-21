@@ -13,7 +13,7 @@
 namespace avsutil {
     namespace impl {
         CAudio::CAudio(CAvs* avs, std::auto_ptr<AudioInfo> info)
-            : mv_avs(avs), mv_info(info), mv_progress_callback(NULL), buf_samples(buf_samples_default) {
+            : mv_avs(avs), mv_info(info), mv_progress_callback(NULL), mv_buf_samples(mv_buf_samples_default) {
                 DBGLOG(FUNCNAME << "(CAvs*, std::auto_ptr<AudioInfo>)@");
             }
 
@@ -74,16 +74,20 @@ namespace avsutil {
          * */
         void CAudio::write_data(std::ostream& out) const {
             DBGLOG(FUNCNAME << "(std::ostream&)");
-            unsigned __int32 buf_size = buf_samples * mv_info->channels * (mv_info->bit_depth / 8);
+
+            unsigned __int32 buf_size = mv_buf_samples * mv_info->channels * (mv_info->bit_depth / 8);
             std::vector<char> buf(buf_size);
+            DBGLOG("actual buffer size is: "
+                    << mv_buf_samples << " * " << mv_info->channels << " * " << (mv_info->bit_depth / 8)
+                    << " = " << buf_size);
 
             unsigned __int64 start = 0;
-            unsigned __int64 times = mv_info->samples / buf_samples;
-            unsigned __int64 reminder = mv_info->samples - times * buf_samples;
+            unsigned __int64 times = mv_info->samples / mv_buf_samples;
+            unsigned __int64 reminder = mv_info->samples - times * mv_buf_samples;
 
-            for (unsigned __int64 i = 0; i < times; start += buf_samples, ++i) {
+            for (unsigned __int64 i = 0; i < times; start += mv_buf_samples, ++i) {
                 if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info->samples);
-                mv_avs->getaudio(&buf[0], start, buf_samples);
+                mv_avs->getaudio(&buf[0], start, mv_buf_samples);
                 out.write(&buf[0], buf_size);
             }
 

@@ -56,6 +56,12 @@ namespace avsutil {
             virtual void write(std::ostream&) const = 0;
             // setter for the function to show progress
             virtual void progress_callback(void (*progress_callback)(const unsigned __int64 processed_samples, const unsigned __int64 total_samples)) = 0;
+            // setter for a samples of a buffer
+            // default is 4096
+            // an actual buffer size is:
+            //      min     buf_samples *  1 byte ( 8bit, mono)
+            //      max     buf_samples * 24 byte (32bit, 5.1ch)
+            virtual void buf_samples(const unsigned __int32) = 0;
 
             // typical destructor
             virtual ~IAudio(void) {};

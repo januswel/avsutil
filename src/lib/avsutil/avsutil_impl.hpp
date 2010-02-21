@@ -55,8 +55,8 @@ namespace avsutil {
                 CAvs* mv_avs;
                 std::auto_ptr<AudioInfo> mv_info;
                 void (*mv_progress_callback)(const unsigned __int64, const unsigned __int64);
-                unsigned __int32 buf_samples;
-                static const unsigned __int64 buf_samples_default = 4096;
+                unsigned __int32 mv_buf_samples;
+                static const unsigned __int64 mv_buf_samples_default = 4096;
 
             private:
                 // utilities
@@ -73,6 +73,9 @@ namespace avsutil {
                 void write(std::ostream&) const;
                 void progress_callback(void (*progress_callback)(const unsigned __int64, const unsigned __int64)) {
                     mv_progress_callback = progress_callback;
+                };
+                void buf_samples(const unsigned __int32 buf_samples) {
+                    mv_buf_samples = buf_samples;
                 };
         };
     }
