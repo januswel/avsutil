@@ -173,7 +173,6 @@ ostream& operator <<(ostream& out, const AudioInfo& ai) {
         << setw(header_width) << "bit depth "     << ' ' << ai.bit_depth << "bit" << endl
         << setw(header_width) << "channels "      << ' ' << channels << endl
         << setw(header_width) << "sampling rate " << ' ' << sampling_rate << "kHz" << endl
-        << setw(header_width) << "samples "       << ' ' << ai.samples << endl
         << endl;
 
     return out;
