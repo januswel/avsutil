@@ -102,7 +102,7 @@ int main(const int argc, const char* argv[]) {
     try {
         auto_ptr<IAvs> avs(CreateAvsObj(inputfile.c_str()));
         if (!avs->is_fine()) {
-            cerr << avs->errmsg();
+            cerr << avs->errmsg() << endl;
             exit(1);
         }
 
