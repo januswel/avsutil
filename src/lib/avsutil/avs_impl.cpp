@@ -51,7 +51,7 @@ namespace avsutil {
             }
             catch (AvisynthError& avserr) {
                 mv_is_fine = false;
-                mv_errmsg = std::string("Specified file is not valid for AviSynth.\n") + avserr.msg;
+                mv_errmsg = avserr.msg;
             }
             catch (std::exception& ex) {
                 mv_is_fine = false;
