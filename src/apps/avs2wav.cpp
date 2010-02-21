@@ -13,6 +13,7 @@
 #include <memory>
 #include <string>
 #include <stdexcept>
+#include <vector>
 
 #ifdef WIN32
 #include <io.h>
@@ -37,6 +38,8 @@ void usage(ostream& out);
 bool is_connected(void);
 // set stdout to binary mode
 void set_stdout_binary(void);
+// convert string to number
+unsigned int str2num(const char* str);
 // callback function for IAudio::write()
 void progress_cl(const unsigned __int64, const unsigned __int64);
 // output audio informations
@@ -44,17 +47,57 @@ ostream& operator <<(ostream&, const AudioInfo&);
 
 int main(const int argc, const char* argv[]) {
     // constants
-    static const unsigned int header_width = 14;
+    const unsigned int header_width = 14;
+    const unsigned int buf_samples_def = 4096;
+    const unsigned int buf_size_def = 4096;
+    const unsigned int buf_samples_min = 1;
+    const unsigned int buf_size_min = 2;
 
-    // check arguments
-    if (argc < 2) {
-        usage(cerr);
-        cerr << "Specify <inputfile>." << endl;
-        exit(1);
+    // analyze options
+    string inputfile;
+    string outputfile;
+    unsigned int buf_samples = buf_samples_def;
+    unsigned int buf_size = buf_size_def;
+    for (int i = 1; i < argc; ++i) {
+        const char* arg = argv[i];
+        if (arg[0] == '-') {
+            switch (arg[1]) {
+                case 'h':
+                    usage(cout);
+                    exit(0);
+            }
+            if (i + 1 <= argc) {
+                switch (arg[1]) {
+                    case 'b':
+                        buf_size = str2num(argv[i + 1]);
+                        if (buf_size < buf_size_min) buf_size = buf_size_min;
+                        ++i;
+                        break;
+                    case 's':
+                        buf_samples = str2num(argv[i + 1]);
+                        if (buf_samples < buf_samples_min) buf_samples = buf_samples_min;
+                        ++i;
+                        break;
+                    case 'o':
+                        outputfile = argv[i + 1];
+                        ++i;
+                        break;
+                    default:
+                        cerr << "Unknown option: \"-" << arg[1] << "\" is ignored." << endl;
+                        break;
+                }
+            }
+        }
+        else {
+            inputfile = arg;
+        }
     }
 
-    // input file
-    string inputfile(argv[1]);
+    if (inputfile.empty()) {
+        cerr << "Specify <inputfile>." << endl;
+        usage(cerr);
+        exit(1);
+    }
 
     try {
         auto_ptr<IAvs> avs(CreateAvsObj(inputfile.c_str()));
@@ -72,7 +115,6 @@ int main(const int argc, const char* argv[]) {
         }
 
         // preparations
-        string outputfile;
         // output and information stream (to stdout for now)
         ostream outputs(cout.rdbuf());
         ostream infos(cout.rdbuf());
@@ -84,7 +126,7 @@ int main(const int argc, const char* argv[]) {
         // settings for infos, outputs and progresss
         if (is_stdout) {
             // output to file
-            outputfile.assign(argv[1]).append(".wav");
+            if (outputfile.empty()) outputfile.assign(argv[1]).append(".wav");
             // create filebuf and set it output stream
             filebuf* fbuf = new filebuf;
             fbuf->open(outputfile.c_str(), ios::out | ios::binary | ios::trunc);
@@ -104,6 +146,9 @@ int main(const int argc, const char* argv[]) {
             << setw(header_width) << "destination:" << outputfile << endl
             << ai;
 
+        std::vector<char> internalbuf(buf_size);
+        outputs.rdbuf()->pubsetbuf(&internalbuf[0], buf_size);
+        audio->buf_samples(buf_samples);
         audio->progress_callback(progress_cl);
         outputs << audio.get();
 
@@ -122,7 +167,16 @@ int main(const int argc, const char* argv[]) {
 
 // definitions of functions
 void usage(ostream& out) {
-    out << "Usage: avs2wav <inputfile> [| othercommands]" << endl;
+    out << "Usage: avs2wav [options] <inputfile> [| othercommands]\n"
+        << "Options:\n"
+        << "    -s N            Set a number of samples used when reading to N.\n"
+        << "                    min: 1, default: 4096.\n"
+        << "    -b N            Set buffer size used when writing to N.\n"
+        << "                    Mutiple of a value of \"-s\" is preferable.\n"
+        << "                    min: 2, default: 4096.\n"
+        << "    -o <filename>   Output to filename.  This is ignored when redirected\n"
+        << "                    to file or conneted to other command with pipe.\n"
+        << endl;
 }
 
 bool is_connected(void) {
@@ -137,6 +191,14 @@ void set_stdout_binary(void) {
 #ifdef WIN32
     _setmode(_fileno(stdout), _O_BINARY);
 #endif
+}
+
+unsigned int str2num(const char* str) {
+    stringstream ss;
+    unsigned int num;
+    ss << dec << str;
+    ss >> num;
+    return num;
 }
 
 void progress_cl(const unsigned __int64 processed, const unsigned __int64 max) {
