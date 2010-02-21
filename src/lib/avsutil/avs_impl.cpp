@@ -98,7 +98,7 @@ namespace avsutil {
                 case SAMPLE_FLOAT:
                     return sizeof(float) * 8;
                 default:
-                    throw std::range_error("unknown sample type");
+                    return 0;
             }
         }
     }
