@@ -58,6 +58,11 @@ int main(const int argc, const char* argv[]) {
 
     try {
         auto_ptr<IAvs> avs(CreateAvsObj(inputfile.c_str()));
+        if (!avs->is_fine()) {
+            cerr << avs->errmsg();
+            exit(1);
+        }
+
         auto_ptr<IAudio> audio(avs->audio());
         AudioInfo ai = audio->info();
 
