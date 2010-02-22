@@ -231,10 +231,10 @@ ostream& operator <<(ostream& out, const AudioInfo& ai) {
     // in order to save the formattings of "out"
     ostream o(out.rdbuf());
     o << left << setfill('.')
-        << endl
-        << setw(header_width) << "bit depth "     << ' ' << ai.bit_depth << "bit" << endl
-        << setw(header_width) << "channels "      << ' ' << channels << endl
-        << setw(header_width) << "sampling rate " << ' ' << sampling_rate << "kHz" << endl
+        << "\n"
+        << setw(header_width) << "bit depth "     << ' ' << ai.bit_depth << "bit\n"
+        << setw(header_width) << "channels "      << ' ' << channels << "\n"
+        << setw(header_width) << "sampling rate " << ' ' << sampling_rate << "kHz\n"
         << endl;
 
     return out;
