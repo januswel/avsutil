@@ -8,6 +8,7 @@
 #ifndef AVSUTIL_IMPL_HPP
 #define AVSUTIL_IMPL_HPP
 
+#include "avisynth.h"
 #include "../../avsutil.hpp"
 #include <memory>
 #include <string>

@@ -13,7 +13,6 @@
 #ifndef AVSUTIL_HPP
 #define AVSUTIL_HPP
 
-#include "avisynth.h"
 #include <stdexcept>
 #include <ostream>
 
