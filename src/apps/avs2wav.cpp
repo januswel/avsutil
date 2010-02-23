@@ -5,7 +5,7 @@
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
-#include "../avsutil.hpp"
+#include "../include/avsutil.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>

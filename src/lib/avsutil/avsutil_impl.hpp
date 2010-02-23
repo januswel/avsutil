@@ -9,7 +9,7 @@
 #define AVSUTIL_IMPL_HPP
 
 #include "avisynth.h"
-#include "../../avsutil.hpp"
+#include "../../include/avsutil.hpp"
 #include <memory>
 #include <string>
 #include <ostream>
