@@ -47,16 +47,16 @@ namespace wav {
         out.write(constpointer_cast<const char*>(&data_size), sizeof(data_size));
         return (static_cast<std::streamoff>(out.tellp()) == static_cast<std::streamoff>(wav::total_header_size));
     }
-}
 
-std::istream& operator >>(std::istream& in, wav::WavHeader& wh) {
-    DBGLOG(FUNCNAME << "(std::istream&, const wav::WavHeader&)");
-    if (wh.read(in) == true) return in;
-    else throw new std::domain_error("something is wrong in reading wav header.");
-}
+    std::istream& operator >>(std::istream& in, WavHeader& wh) {
+        DBGLOG(FUNCNAME << "(std::istream&, const wav::WavHeader&)");
+        if (wh.read(in) == true) return in;
+        else throw new std::domain_error("something is wrong in reading wav header.");
+    }
 
-std::ostream& operator <<(std::ostream& out, const wav::WavHeader& wh) {
-    DBGLOG(FUNCNAME << "(std::ostream&, const wav::WavHeader&)");
-    if (wh.write(out) == true) return out;
-    else throw new std::domain_error("something is wrong in writing wav header.");
+    std::ostream& operator <<(std::ostream& out, const WavHeader& wh) {
+        DBGLOG(FUNCNAME << "(std::ostream&, const wav::WavHeader&)");
+        if (wh.write(out) == true) return out;
+        else throw new std::domain_error("something is wrong in writing wav header.");
+    }
 }

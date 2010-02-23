@@ -64,9 +64,9 @@ namespace wav {
         bool read(std::istream &);
         bool write(std::ostream &) const;
     };
-}
 
-std::istream& operator >>(std::istream&, wav::WavHeader&);
-std::ostream& operator <<(std::ostream&, const wav::WavHeader&);
+    std::istream& operator >>(std::istream&, WavHeader&);
+    std::ostream& operator <<(std::ostream&, const WavHeader&);
+}
 
 #endif // WAV_HPP

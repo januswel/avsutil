@@ -107,16 +107,17 @@ namespace avsutil {
             if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info->samples);
         }
     }
+
+    std::ostream& operator <<(std::ostream& out, const IAudio& audio) {
+        DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::IAudio&)");
+        audio.write(out);
+        return out;
+    }
+
+    std::ostream& operator <<(std::ostream& out, const IAudio* const audio) {
+        DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::IAudio* const)");
+        audio->write(out);
+        return out;
+    }
 }
 
-std::ostream& operator <<(std::ostream& out, const avsutil::IAudio& audio) {
-    DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::IAudio&)");
-    audio.write(out);
-    return out;
-}
-
-std::ostream& operator <<(std::ostream& out, const avsutil::IAudio* const audio) {
-    DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::IAudio* const)");
-    audio->write(out);
-    return out;
-}

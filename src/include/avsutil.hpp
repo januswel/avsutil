@@ -80,11 +80,12 @@ namespace avsutil {
         public:
             AvsUtilError(const char* errmsg) : std::domain_error(errmsg) {};
     };
+
+    // output audio data in the format of RIFF linear PCM
+    std::ostream& operator <<(std::ostream&, const IAudio&);
+    std::ostream& operator <<(std::ostream&, const IAudio* const);
 };
 
-// output audio data in the format of RIFF linear PCM
-std::ostream& operator <<(std::ostream&, const avsutil::IAudio&);
-std::ostream& operator <<(std::ostream&, const avsutil::IAudio* const);
 
 
 #endif // AVSUTIL_HPP
