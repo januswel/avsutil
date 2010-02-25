@@ -127,7 +127,7 @@ int main(const int argc, const char* argv[]) {
         // settings for infos, outputs and progresss
         if (is_stdout) {
             // output to file
-            if (outputfile.empty()) outputfile.assign(argv[1]).append(".wav");
+            if (outputfile.empty()) outputfile.assign(inputfile).append(".wav");
             // create filebuf and set it output stream
             filebuf* fbuf = new filebuf;
             fbuf->open(outputfile.c_str(), ios::out | ios::binary | ios::trunc);
