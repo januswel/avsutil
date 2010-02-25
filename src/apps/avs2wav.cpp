@@ -48,7 +48,7 @@ ostream& operator <<(ostream&, const AudioInfo&);
 
 int main(const unsigned int argc, const char* argv[]) {
     // constants
-    const unsigned int header_width = 14;
+    const unsigned int header_width = 24;
     const unsigned int buf_samples_def = 4096;
     const unsigned int buf_size_def = 4096;
     const unsigned int buf_samples_min = 1;
@@ -134,8 +134,10 @@ int main(const unsigned int argc, const char* argv[]) {
         }
 
         infos
-            << setw(header_width) << "source:"      << inputfile << endl
-            << setw(header_width) << "destination:" << outputfile << endl
+            << setw(header_width) << "source:"                << inputfile << endl
+            << setw(header_width) << "destination:"           << outputfile << endl
+            << setw(header_width) << "buffers for output:"    << buf_size << " bytes" << endl
+            << setw(header_width) << "processed at one time:" << buf_samples << " samples" << endl
             << ai;
 
         std::vector<char> internalbuf(buf_size);
