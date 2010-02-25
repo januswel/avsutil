@@ -60,34 +60,27 @@ int main(const int argc, const char* argv[]) {
     unsigned int buf_samples = buf_samples_def;
     unsigned int buf_size = buf_size_def;
     for (int i = 1; i < argc; ++i) {
-        const char* arg = argv[i];
-        if (arg[0] == '-') {
-            switch (arg[1]) {
-                case 'h':
-                    usage(cout);
-                    exit(0);
-            }
-            if (i + 1 <= argc) {
-                switch (arg[1]) {
-                    case 'b':
-                        buf_size = conv.strto<unsigned int>(argv[i + 1]);
-                        if (buf_size < buf_size_min) buf_size = buf_size_min;
-                        ++i;
-                        break;
-                    case 's':
-                        buf_samples = conv.strto<unsigned int>(argv[i + 1]);
-                        if (buf_samples < buf_samples_min) buf_samples = buf_samples_min;
-                        ++i;
-                        break;
-                    case 'o':
-                        outputfile = argv[i + 1];
-                        ++i;
-                        break;
-                    default:
-                        cerr << "Unknown option: \"-" << arg[1] << "\" is ignored." << endl;
-                        break;
-                }
-            }
+        const string arg(argv[i]);
+        if (arg == "-h") {
+            usage(cout);
+            exit(0);
+        }
+        else if (arg == "-b") {
+            buf_size = conv.strto<unsigned int>(argv[i + 1]);
+            if (buf_size < buf_size_min) buf_size = buf_size_min;
+            ++i;
+        }
+        else if (arg == "-s") {
+            buf_samples = conv.strto<unsigned int>(argv[i + 1]);
+            if (buf_samples < buf_samples_min) buf_samples = buf_samples_min;
+            ++i;
+        }
+        else if (arg == "-o") {
+            outputfile = argv[i + 1];
+            ++i;
+        }
+        else if (arg[0] == '-') {
+            cerr << "Unknown option: \"" << arg << "\" is ignored." << endl;
         }
         else {
             inputfile = arg;
