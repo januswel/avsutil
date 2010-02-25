@@ -89,6 +89,7 @@ int main(const unsigned int argc, const char* argv[]) {
         }
         else if (arg[0] == '-') {
             cerr << "Unknown option: \"" << arg << '"' << endl;
+            usage(cerr);
             exit(1);
         }
         else {
