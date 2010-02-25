@@ -46,7 +46,7 @@ void progress_cl(const unsigned __int64, const unsigned __int64);
 // output audio informations
 ostream& operator <<(ostream&, const AudioInfo&);
 
-int main(const int argc, const char* argv[]) {
+int main(const unsigned int argc, const char* argv[]) {
     // constants
     const unsigned int header_width = 14;
     const unsigned int buf_samples_def = 4096;
@@ -59,25 +59,22 @@ int main(const int argc, const char* argv[]) {
     string outputfile;
     unsigned int buf_samples = buf_samples_def;
     unsigned int buf_size = buf_size_def;
-    for (int i = 1; i < argc; ++i) {
+    for (unsigned int i = 1; i < argc; ++i) {
         const string arg(argv[i]);
         if (arg == "-h") {
             usage(cout);
             exit(0);
         }
         else if (arg == "-b") {
-            buf_size = conv.strto<unsigned int>(argv[i + 1]);
+            buf_size = conv.strto<unsigned int>(argv[++i]);
             if (buf_size < buf_size_min) buf_size = buf_size_min;
-            ++i;
         }
         else if (arg == "-s") {
-            buf_samples = conv.strto<unsigned int>(argv[i + 1]);
+            buf_samples = conv.strto<unsigned int>(argv[++i]);
             if (buf_samples < buf_samples_min) buf_samples = buf_samples_min;
-            ++i;
         }
         else if (arg == "-o") {
-            outputfile = argv[i + 1];
-            ++i;
+            outputfile = argv[++i];
         }
         else if (arg[0] == '-') {
             cerr << "Unknown option: \"" << arg << '"' << endl;
