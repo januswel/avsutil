@@ -8,12 +8,12 @@
 #include "../include/avsutil.hpp"
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <iomanip>
 #include <memory>
 #include <string>
 #include <stdexcept>
 #include <vector>
+#include "../helper/converter.hpp"
 
 #ifdef WIN32
 #include <io.h>
@@ -31,6 +31,9 @@ using namespace avsutil;
 // streambuf is stdout fow now
 ostream progresss(cout.rdbuf());
 
+// converter routing through std::string;
+util::string::converter conv;
+
 // forward declarations
 // typical one
 void usage(ostream& out);
@@ -38,8 +41,6 @@ void usage(ostream& out);
 bool is_connected(void);
 // set stdout to binary mode
 void set_stdout_binary(void);
-// convert string to number
-unsigned int str2num(const char* str);
 // callback function for IAudio::write()
 void progress_cl(const unsigned __int64, const unsigned __int64);
 // output audio informations
@@ -69,12 +70,12 @@ int main(const int argc, const char* argv[]) {
             if (i + 1 <= argc) {
                 switch (arg[1]) {
                     case 'b':
-                        buf_size = str2num(argv[i + 1]);
+                        buf_size = conv.strto<unsigned int>(argv[i + 1]);
                         if (buf_size < buf_size_min) buf_size = buf_size_min;
                         ++i;
                         break;
                     case 's':
-                        buf_samples = str2num(argv[i + 1]);
+                        buf_samples = conv.strto<unsigned int>(argv[i + 1]);
                         if (buf_samples < buf_samples_min) buf_samples = buf_samples_min;
                         ++i;
                         break;
@@ -193,14 +194,6 @@ void set_stdout_binary(void) {
 #endif
 }
 
-unsigned int str2num(const char* str) {
-    stringstream ss;
-    unsigned int num;
-    ss << dec << str;
-    ss >> num;
-    return num;
-}
-
 void progress_cl(const unsigned __int64 processed, const unsigned __int64 max) {
     float percentage = (static_cast<float>(processed) / static_cast<float>(max)) * 100;
     progresss
@@ -220,9 +213,7 @@ ostream& operator <<(ostream& out, const AudioInfo& ai) {
         case 2: channels = "stereo"; break;
         case 6: channels = "5.1ch";  break;
         default:
-            stringstream ss;
-            ss << dec << ai.channels;
-            channels.assign(ss.str()).append("ch");
+            channels.assign(conv.strfrom(ai.channels)).append("ch");
             break;
     }
     float sampling_rate = static_cast<float>(ai.sampling_rate) / 1000;
