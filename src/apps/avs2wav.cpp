@@ -62,11 +62,11 @@ int main(const unsigned int argc, const char* argv[]) {
     unsigned int buf_size = buf_size_def;
     for (unsigned int i = 1; i < argc; ++i) {
         const string arg(argv[i]);
-        if (arg == "-h") {
+        if (arg == "-h" || arg == "--help") {
             usage(cout);
             return 0;
         }
-        else if (arg == "-b") {
+        else if (arg == "-b" || arg == "--buffers") {
             buf_size = conv.strto<unsigned int>(argv[++i]);
             if (buf_size < buf_size_min) {
                 cerr << "Size of buffers for output is required at least: "
@@ -75,7 +75,7 @@ int main(const unsigned int argc, const char* argv[]) {
                 exit(1);
             }
         }
-        else if (arg == "-s") {
+        else if (arg == "-s" || arg == "--samples") {
             buf_samples = conv.strto<unsigned int>(argv[++i]);
             if (buf_samples < buf_samples_min) {
                 cerr << "A number of samples processed at one time is required at least: "
@@ -84,7 +84,7 @@ int main(const unsigned int argc, const char* argv[]) {
                 exit(1);
             }
         }
-        else if (arg == "-o") {
+        else if (arg == "-o" || arg == "--output") {
             outputfile = argv[++i];
         }
         else if (arg[0] == '-') {
@@ -174,13 +174,20 @@ int main(const unsigned int argc, const char* argv[]) {
 void usage(ostream& out) {
     out << "Usage: avs2wav [options] <inputfile> [| othercommands]\n"
         << "Options:\n"
-        << "    -s N            Set a number of samples used when reading to N.\n"
+        << "    -h, --help      Shows this help\n"
+        << "\n"
+        << "    -s N            Sets a number of samples processed at one time to N.\n"
         << "                    min: 1, default: 4096.\n"
-        << "    -b N            Set buffer size used when writing to N.\n"
+        << "    --samples N     Same as \"-s\"\n"
+        << "    -b N            Sets size of buffer for output to N.\n"
         << "                    Mutiple of a value of \"-s\" is preferable.\n"
         << "                    min: 2, default: 4096.\n"
-        << "    -o <filename>   Output to filename.  This is ignored when redirected\n"
-        << "                    to file or conneted to other command with pipe.\n"
+        << "    --buffers N     Same as \"-b\"\n"
+        << "\n"
+        << "    -o <file>       Sets a name of output file to <file>.  This is\n"
+        << "                    ignored when redirected to file or conneted to\n"
+        << "                    other command with pipe.\n"
+        << "    --output <file> Same as \"-o\"\n"
         << endl;
 }
 
