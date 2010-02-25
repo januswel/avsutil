@@ -68,11 +68,21 @@ int main(const unsigned int argc, const char* argv[]) {
         }
         else if (arg == "-b") {
             buf_size = conv.strto<unsigned int>(argv[++i]);
-            if (buf_size < buf_size_min) buf_size = buf_size_min;
+            if (buf_size < buf_size_min) {
+                cerr << "Size of buffers for output is required at least: "
+                     << buf_size_min << endl
+                     << "Check the argument with \"-b\" option." << endl;
+                exit(1);
+            }
         }
         else if (arg == "-s") {
             buf_samples = conv.strto<unsigned int>(argv[++i]);
-            if (buf_samples < buf_samples_min) buf_samples = buf_samples_min;
+            if (buf_samples < buf_samples_min) {
+                cerr << "A number of samples processed at one time is required at least: "
+                     << buf_samples_min << endl
+                     << "Check the argument with \"-s\" option." << endl;
+                exit(1);
+            }
         }
         else if (arg == "-o") {
             outputfile = argv[++i];
