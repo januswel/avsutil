@@ -64,7 +64,7 @@ int main(const unsigned int argc, const char* argv[]) {
         const string arg(argv[i]);
         if (arg == "-h") {
             usage(cout);
-            exit(0);
+            return 0;
         }
         else if (arg == "-b") {
             buf_size = conv.strto<unsigned int>(argv[++i]);
@@ -96,7 +96,7 @@ int main(const unsigned int argc, const char* argv[]) {
         auto_ptr<IAvs> avs(CreateAvsObj(inputfile.c_str()));
         if (!avs->is_fine()) {
             cerr << avs->errmsg() << endl;
-            exit(1);
+            exit(2);
         }
 
         auto_ptr<IAudio> audio(avs->audio());
@@ -104,7 +104,7 @@ int main(const unsigned int argc, const char* argv[]) {
 
         if (!ai.exists) {
             cerr << "no audio in the file: " << inputfile << endl;
-            exit(1);
+            exit(2);
         }
 
         // preparations
@@ -154,7 +154,7 @@ int main(const unsigned int argc, const char* argv[]) {
     }
     catch (exception& ex) {
         cerr << endl << ex.what() << endl;
-        exit(1);
+        exit(3);
     }
 
     return 0;
