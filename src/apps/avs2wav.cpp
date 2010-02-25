@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include <vector>
 #include "../helper/converter.hpp"
+#include <cstdlib> // for std::exit()
 
 #ifdef WIN32
 #include <io.h>
