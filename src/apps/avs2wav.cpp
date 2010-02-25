@@ -80,7 +80,8 @@ int main(const int argc, const char* argv[]) {
             ++i;
         }
         else if (arg[0] == '-') {
-            cerr << "Unknown option: \"" << arg << "\" is ignored." << endl;
+            cerr << "Unknown option: \"" << arg << '"' << endl;
+            exit(1);
         }
         else {
             inputfile = arg;
