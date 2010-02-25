@@ -1,3 +1,3 @@
 v = BlankClip.KillAudio
 a = Tone(samplerate=8000, channels=2, level=0.5)
-AudioDub(v, a)
+AudioDub(v, a).ConvertAudioTo16Bit
