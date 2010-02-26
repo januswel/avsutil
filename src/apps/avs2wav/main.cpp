@@ -5,7 +5,7 @@
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
-#include "../include/avsutil.hpp"
+#include "../../include/avsutil.hpp"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -13,7 +13,7 @@
 #include <string>
 #include <stdexcept>
 #include <vector>
-#include "../helper/converter.hpp"
+#include "../../helper/converter.hpp"
 #include <cstdlib> // for std::exit()
 
 #ifdef WIN32
