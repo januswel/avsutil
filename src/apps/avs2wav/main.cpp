@@ -6,6 +6,7 @@
  * */
 
 #include "../../include/avsutil.hpp"
+#include "avs2wav.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -38,6 +39,8 @@ util::string::converter conv;
 // forward declarations
 // typical one
 void usage(ostream& out);
+// the another typical
+void version_license(ostream& out);
 // return true if redirected to file or connected to pipe
 bool is_connected(void);
 // set stdout to binary mode
@@ -64,6 +67,10 @@ int main(const unsigned int argc, const char* argv[]) {
         const string arg(argv[i]);
         if (arg == "-h" || arg == "--help") {
             usage(cout);
+            return 0;
+        }
+        else if (arg == "-v" || arg == "--version") {
+            version_license(cout);
             return 0;
         }
         else if (arg == "-b" || arg == "--buffers") {
@@ -176,6 +183,7 @@ void usage(ostream& out) {
     out << "Usage: avs2wav [options] <inputfile> [| othercommands]\n"
         << "Options:\n"
         << "    -h, --help      Shows this help\n"
+        << "    -v, --version   Shows version and license informations.\n"
         << "\n"
         << "    -s N            Sets a number of samples processed at one time to N.\n"
         << "                    min: 1, default: 4096.\n"
@@ -189,6 +197,25 @@ void usage(ostream& out) {
         << "                    ignored when redirected to file or conneted to\n"
         << "                    other command with pipe.\n"
         << "    --output <file> Same as \"-o\"\n"
+        << endl;
+}
+
+void version_license(ostream& out) {
+    out << "avs2wav version " << version << '\n'
+        << "Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>\n"
+        << '\n'
+        << "This program is free software: you can redistribute it and/or modify\n"
+        << "it under the terms of the GNU General Public License as published by\n"
+        << "the Free Software Foundation, either version 3 of the License, or\n"
+        << "(at your option) any later version.\n"
+        << '\n'
+        << "This program is distributed in the hope that it will be useful,\n"
+        << "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+        << "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+        << "GNU General Public License for more details.\n"
+        << '\n'
+        << "You should have received a copy of the GNU General Public License\n"
+        << "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n"
         << endl;
 }
 

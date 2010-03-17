@@ -186,6 +186,10 @@
 				RelativePath="..\..\..\src\apps\avs2wav\main.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\src\apps\avs2wav\version.cpp"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
