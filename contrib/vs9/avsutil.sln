@@ -22,23 +22,32 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		Independence|Win32 = Independence|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{3C207A91-BC84-4A65-B8F0-5B21969F90C0}.Debug|Win32.ActiveCfg = Debug|Win32
 		{3C207A91-BC84-4A65-B8F0-5B21969F90C0}.Debug|Win32.Build.0 = Debug|Win32
+		{3C207A91-BC84-4A65-B8F0-5B21969F90C0}.Independence|Win32.ActiveCfg = Independence|Win32
+		{3C207A91-BC84-4A65-B8F0-5B21969F90C0}.Independence|Win32.Build.0 = Independence|Win32
 		{3C207A91-BC84-4A65-B8F0-5B21969F90C0}.Release|Win32.ActiveCfg = Release|Win32
 		{3C207A91-BC84-4A65-B8F0-5B21969F90C0}.Release|Win32.Build.0 = Release|Win32
 		{696EC07A-CC2B-4E75-A996-1884E1EBDD3A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{696EC07A-CC2B-4E75-A996-1884E1EBDD3A}.Debug|Win32.Build.0 = Debug|Win32
+		{696EC07A-CC2B-4E75-A996-1884E1EBDD3A}.Independence|Win32.ActiveCfg = Independence|Win32
+		{696EC07A-CC2B-4E75-A996-1884E1EBDD3A}.Independence|Win32.Build.0 = Independence|Win32
 		{696EC07A-CC2B-4E75-A996-1884E1EBDD3A}.Release|Win32.ActiveCfg = Release|Win32
 		{696EC07A-CC2B-4E75-A996-1884E1EBDD3A}.Release|Win32.Build.0 = Release|Win32
 		{5CC62E4F-9648-490D-BF77-4B99FD477875}.Debug|Win32.ActiveCfg = Debug|Win32
 		{5CC62E4F-9648-490D-BF77-4B99FD477875}.Debug|Win32.Build.0 = Debug|Win32
+		{5CC62E4F-9648-490D-BF77-4B99FD477875}.Independence|Win32.ActiveCfg = Independence|Win32
+		{5CC62E4F-9648-490D-BF77-4B99FD477875}.Independence|Win32.Build.0 = Independence|Win32
 		{5CC62E4F-9648-490D-BF77-4B99FD477875}.Release|Win32.ActiveCfg = Release|Win32
 		{5CC62E4F-9648-490D-BF77-4B99FD477875}.Release|Win32.Build.0 = Release|Win32
 		{71D9439D-542D-4973-B934-A09270D8BD36}.Debug|Win32.ActiveCfg = Debug|Win32
 		{71D9439D-542D-4973-B934-A09270D8BD36}.Debug|Win32.Build.0 = Debug|Win32
+		{71D9439D-542D-4973-B934-A09270D8BD36}.Independence|Win32.ActiveCfg = Independence|Win32
+		{71D9439D-542D-4973-B934-A09270D8BD36}.Independence|Win32.Build.0 = Independence|Win32
 		{71D9439D-542D-4973-B934-A09270D8BD36}.Release|Win32.ActiveCfg = Release|Win32
 		{71D9439D-542D-4973-B934-A09270D8BD36}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection

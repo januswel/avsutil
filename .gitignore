@@ -8,6 +8,7 @@
 *.suo
 contrib/vs9/*/Debug/*
 contrib/vs9/*/Release/*
+contrib/vs9/*/Independence/*
 
 # for vim
 *.swp
