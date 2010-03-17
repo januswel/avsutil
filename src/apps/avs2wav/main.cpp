@@ -16,6 +16,7 @@
 #include <vector>
 #include <locale>
 #include "../../helper/tconv.hpp"
+#include "../../helper/elapsed.hpp"
 
 #ifdef _MSC_VER
 #include <io.h>
@@ -192,11 +193,13 @@ void inline set_stdout_binary(void) {
 }
 
 void progress_cl(const unsigned __int64 processed, const unsigned __int64 max) {
+    static util::time::elapsed elapsed_time;
     float percentage = (static_cast<float>(processed) / static_cast<float>(max)) * 100;
     progresss
-        << "\rprocessing... "
+        << "\r"
         << setw(10) << processed << "/" << max << " samples"
-        << " (" << setw(6) << percentage << "%)";
+        << " (" << setw(6) << percentage << "%)"
+        << " elapsed time " << elapsed_time.get() << " sec";
 }
 
 ostream& operator <<(ostream& out, const AudioInfo& ai) {
