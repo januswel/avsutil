@@ -14,6 +14,7 @@
 #include <string>
 #include <stdexcept>
 #include <vector>
+#include <locale>
 #include "../../helper/tconv.hpp"
 
 #ifdef _MSC_VER
@@ -46,6 +47,8 @@ void progress_cl(const unsigned __int64, const unsigned __int64);
 ostream& operator <<(ostream&, const AudioInfo&);
 
 int main(const unsigned int argc, const char* argv[]) {
+    locale::global(locale(""));
+
     // constants
     const unsigned int header_width = 24;
     const unsigned int buf_samples_def = 4096;
