@@ -15,7 +15,6 @@
 #include <stdexcept>
 #include <vector>
 #include "../../helper/converter.hpp"
-#include <cstdlib> // for std::exit()
 
 #ifdef _MSC_VER
 #include <io.h>
@@ -63,11 +62,11 @@ int main(const unsigned int argc, const char* argv[]) {
         const string arg(argv[i]);
         if (arg == "-h" || arg == "--help") {
             usage(cout);
-            return 0;
+            return OK;
         }
         else if (arg == "-v" || arg == "--version") {
             version_license(cout);
-            return 0;
+            return OK;
         }
         else if (arg == "-b" || arg == "--buffers") {
             buf_size = conv.strto<unsigned int>(argv[++i]);
@@ -75,7 +74,7 @@ int main(const unsigned int argc, const char* argv[]) {
                 cerr << "Size of buffers for output is required at least: "
                      << buf_size_min << endl
                      << "Check the argument with \"-b\" option." << endl;
-                exit(1);
+                return BAD_ARG;
             }
         }
         else if (arg == "-s" || arg == "--samples") {
@@ -84,7 +83,7 @@ int main(const unsigned int argc, const char* argv[]) {
                 cerr << "A number of samples processed at one time is required at least: "
                      << buf_samples_min << endl
                      << "Check the argument with \"-s\" option." << endl;
-                exit(1);
+                return BAD_ARG;
             }
         }
         else if (arg == "-o" || arg == "--output") {
@@ -93,7 +92,7 @@ int main(const unsigned int argc, const char* argv[]) {
         else if (arg[0] == '-') {
             cerr << "Unknown option: \"" << arg << '"' << endl;
             usage(cerr);
-            exit(1);
+            return BAD_ARG;
         }
         else {
             inputfile = arg;
@@ -103,14 +102,14 @@ int main(const unsigned int argc, const char* argv[]) {
     if (inputfile.empty()) {
         cerr << "Specify <inputfile>." << endl;
         usage(cerr);
-        exit(1);
+        return BAD_ARG;
     }
 
     try {
         auto_ptr<IAvs> avs(CreateAvsObj(inputfile.c_str()));
         if (!avs->is_fine()) {
             cerr << avs->errmsg() << endl;
-            exit(2);
+            return BAD_AVS;
         }
 
         auto_ptr<IAudio> audio(avs->audio());
@@ -118,7 +117,7 @@ int main(const unsigned int argc, const char* argv[]) {
 
         if (!ai.exists) {
             cerr << "no audio in the file: " << inputfile << endl;
-            exit(2);
+            return BAD_AVS;
         }
 
         // preparations
@@ -168,10 +167,10 @@ int main(const unsigned int argc, const char* argv[]) {
     }
     catch (exception& ex) {
         cerr << endl << ex.what() << endl;
-        exit(3);
+        return UNKNOWN;
     }
 
-    return 0;
+    return OK;
 }
 
 // definitions of functions

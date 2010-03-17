@@ -9,7 +9,10 @@
 #include <ostream>
 
 // global object
+// version number
 extern const std::string version;
+// return enumeration
+enum {OK = 0, BAD_ARG, BAD_AVS, UNKNOWN};
 
 // typical one
 void usage(std::ostream& out);
