@@ -7,24 +7,28 @@
 
 #include "../../include/avsutil.hpp"
 #include "avs2wav.h"
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <memory>
-#include <string>
-#include <stdexcept>
-#include <vector>
-#include <locale>
 #include "../../helper/tconv.hpp"
 #include "../../helper/elapsed.hpp"
 
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <locale>
+#include <vector>
+#include <stdexcept>
+#include <memory>   // fot std::auto_ptr
+
 #ifdef _MSC_VER
-#include <io.h>
-#include <fcntl.h>
+#   include <io.h>      // for _isatty(1), _setmode(2)
+#   include <fcntl.h>   // for _setmode(2)
+#   include <stdio.h>   // for _fileno(1)
 #else
-#include <unistd.h>
+#   include <unistd.h>  // for fileno(1)
+#   include <stdio.h>   // for isatty(1)
 #endif
 
+// using namespaces
 using namespace std;
 using namespace avsutil;
 
@@ -34,7 +38,7 @@ using namespace avsutil;
 // streambuf is stdout fow now
 ostream progresss(cout.rdbuf());
 
-// converter routing through std::string;
+// type converter routing through std::string;
 util::string::converter conv;
 
 // forward declarations
@@ -48,6 +52,7 @@ void progress_cl(const unsigned __int64, const unsigned __int64);
 ostream& operator <<(ostream&, const AudioInfo&);
 
 int main(const unsigned int argc, const char* argv[]) {
+    // set global locale to use non-ascii characters for filenames
     locale::global(locale(""));
 
     // constants
@@ -110,12 +115,14 @@ int main(const unsigned int argc, const char* argv[]) {
     }
 
     try {
+        // read in avs file
         auto_ptr<IAvs> avs(CreateAvsObj(inputfile.c_str()));
         if (!avs->is_fine()) {
             cerr << avs->errmsg() << endl;
             return BAD_AVS;
         }
 
+        // get audio stream
         auto_ptr<IAudio> audio(avs->audio());
         AudioInfo ai = audio->info();
 
@@ -128,15 +135,18 @@ int main(const unsigned int argc, const char* argv[]) {
         // output and information stream (to stdout for now)
         ostream outputs(cout.rdbuf());
         ostream infos(cout.rdbuf());
-        // settings for stream
+        // apply manipulators to form data
         progresss << right << fixed << setprecision(2);
         infos << left;
-        // this is true if redirected to file or connected to pipe
-        bool is_stdout = !is_connected();
+
         // settings for infos, outputs and progresss
-        if (is_stdout) {
-            // output to file
+        // this is true if redirected to file or connected to pipe
+        if (!is_connected()) {
+            // if output to file
+
+            // set output filename if it isn't decided still
             if (outputfile.empty()) outputfile.assign(inputfile).append(".wav");
+
             // create filebuf and set it output stream
             filebuf* fbuf = new filebuf;
             fbuf->open(outputfile.c_str(), ios::out | ios::binary | ios::trunc);
@@ -144,14 +154,19 @@ int main(const unsigned int argc, const char* argv[]) {
                 cerr << "Can't open file to write: " << outputfile << endl;
                 return UNKNOWN;
             }
+
+            // set filebuf to output stream
             outputs.rdbuf(fbuf);
         }
         else {
-            // redirected or connected pipe
-            // output to stdout
+            // if output to stdout
+
+            // only to show
             outputfile.assign("stdout");
+            // use stderr to show a progress of the process and informations of avs
             progresss.rdbuf(cerr.rdbuf());
             infos.rdbuf(cerr.rdbuf());
+            // set stdout to binary mode (Windows only)
             set_stdout_binary();
         }
 
@@ -162,13 +177,18 @@ int main(const unsigned int argc, const char* argv[]) {
             << setw(header_width) << "processed at one time:" << buf_samples << " samples" << endl
             << ai;
 
+        // allocate buffer
         std::vector<char> internalbuf(buf_size);
         outputs.rdbuf()->pubsetbuf(&internalbuf[0], buf_size);
+        // set values to IAudio
         audio->buf_samples(buf_samples);
         audio->progress_callback(progress_cl);
+
+        // do it
         outputs << audio.get();
 
         infos
+            << endl
             << endl
             << "done." << endl
             << endl;
