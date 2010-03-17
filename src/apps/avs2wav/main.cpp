@@ -17,7 +17,7 @@
 #include "../../helper/converter.hpp"
 #include <cstdlib> // for std::exit()
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <io.h>
 #include <fcntl.h>
 #else
@@ -176,7 +176,7 @@ int main(const unsigned int argc, const char* argv[]) {
 
 // definitions of functions
 bool is_connected(void) {
-#ifdef WIN32
+#ifdef _MSC_VER
     return !_isatty(_fileno(stdout));
 #else
     return !isatty(fileno(stdout));
@@ -184,7 +184,7 @@ bool is_connected(void) {
 }
 
 void set_stdout_binary(void) {
-#ifdef WIN32
+#ifdef _MSC_VER
     _setmode(_fileno(stdout), _O_BINARY);
 #endif
 }
