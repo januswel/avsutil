@@ -6,5 +6,13 @@
  * */
 
 #include <string>
+#include <ostream>
 
+// global object
 extern const std::string version;
+
+// typical one
+void usage(std::ostream& out);
+// the another typical
+void version_license(std::ostream& out);
+

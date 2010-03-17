@@ -187,6 +187,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\apps\avs2wav\usage.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\apps\avs2wav\version.cpp"
 				>
 			</File>
