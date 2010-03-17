@@ -174,7 +174,7 @@ int main(const unsigned int argc, const char* argv[]) {
 }
 
 // definitions of functions
-bool is_connected(void) {
+bool inline is_connected(void) {
 #ifdef _MSC_VER
     return !_isatty(_fileno(stdout));
 #else
@@ -182,7 +182,7 @@ bool is_connected(void) {
 #endif
 }
 
-void set_stdout_binary(void) {
+void inline set_stdout_binary(void) {
 #ifdef _MSC_VER
     _setmode(_fileno(stdout), _O_BINARY);
 #endif
