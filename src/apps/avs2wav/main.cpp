@@ -140,6 +140,10 @@ int main(const unsigned int argc, const char* argv[]) {
             // create filebuf and set it output stream
             filebuf* fbuf = new filebuf;
             fbuf->open(outputfile.c_str(), ios::out | ios::binary | ios::trunc);
+            if (!fbuf->is_open()) {
+                cerr << "Can't open file to write: " << outputfile << endl;
+                return UNKNOWN;
+            }
             outputs.rdbuf(fbuf);
         }
         else {
