@@ -1,13 +1,13 @@
 /*
- * converter.hpp
+ * tconv.hpp
  * type converter by routing through std::string / std::wstring
  *
  * written by janus_wel<janus.wel.3@gmail.com>
  * This source code is in the public domain, and has NO WARRANTY.
  * */
 
-#ifndef CONVERT_HPP
-#define CONVERT_HPP
+#ifndef TCONV_HPP
+#define TCONV_HPP
 
 #include <sstream>
 #include <string>
@@ -59,4 +59,4 @@ namespace util {
     }
 }
 
-#endif // CONVERT_HPP
+#endif // TCONV_HPP
