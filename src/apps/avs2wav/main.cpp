@@ -6,7 +6,7 @@
  * */
 
 #include "../../include/avsutil.hpp"
-#include "avs2wav.h"
+#include "avs2wav.hpp"
 #include "../../helper/tconv.hpp"
 #include "../../helper/elapsed.hpp"
 

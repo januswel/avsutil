@@ -5,7 +5,7 @@
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
-#include "avs2wav.h"
+#include "avs2wav.hpp"
 #include <iostream>
 
 void usage(std::ostream& out) {
