@@ -1,5 +1,5 @@
 /*
- * avs2wav.cpp
+ * avs2wav main.cpp
  *  extract audio data as RIFF WAV format, from avs file
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
