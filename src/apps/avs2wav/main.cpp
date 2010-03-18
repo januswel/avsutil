@@ -105,6 +105,7 @@ int main(const unsigned int argc, const char* argv[]) {
         }
         else {
             inputfile = arg;
+            break;
         }
     }
 
