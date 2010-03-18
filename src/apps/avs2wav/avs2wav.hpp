@@ -5,6 +5,9 @@
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
+#ifndef AVS2WAV_HPP
+#define AVS2WAV_HPP
+
 #include <string>
 #include <ostream>
 
@@ -18,4 +21,6 @@ enum {OK = 0, BAD_ARG, BAD_AVS, UNKNOWN};
 void usage(std::ostream& out);
 // the another typical
 void version_license(std::ostream& out);
+
+#endif // AVS2WAV_HPP
 
