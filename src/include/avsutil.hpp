@@ -4,8 +4,8 @@
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  *
- *      IAvs:           An interface class to handle avs file
- *      IAudio:         An interface class to handle an audio stream in avs file
+ *      IAvs:           An interface class to handle AVS file
+ *      IAudio:         An interface class to handle an audio stream in AVS file
  *      AudioInfo:      A struct that has informations about audio stream
  *      AvsUtilError:   An exception class
  * */
@@ -21,15 +21,15 @@ namespace avsutil {
     class IAudio;
     struct AudioInfo;
 
-    // instantiate the object about avs
+    // instantiate the object about AVS
     // the returned pointer MUST be "delete"ed
     IAvs* CreateAvsObj(void);
     IAvs* CreateAvsObj(const char* filename);   // with a filename
 
     /*
-     * A class has basic features about avs,
+     * A class has basic features about AVS,
      * by wrapping classes defined in avisynth.h,
-     * e.g. opening avs file and getting audio informations.
+     * e.g. opening AVS file and getting audio informations.
      * */
     class IAvs {
         public:
@@ -86,6 +86,5 @@ namespace avsutil {
     std::ostream& operator <<(std::ostream&, const IAudio* const);
 };
 
-
-
 #endif // AVSUTIL_HPP
+
