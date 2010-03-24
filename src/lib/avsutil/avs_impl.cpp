@@ -115,6 +115,7 @@ namespace avsutil {
                         vi.SamplesPerSecond(),
                         vi.AudioChannels(),
                         bitdepth(vi.sample_type),
+                        (vi.sample_type == SAMPLE_FLOAT ? false : true),
                         vi.BytesPerAudioSample()
                         ));
 

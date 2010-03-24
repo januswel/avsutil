@@ -19,7 +19,7 @@ namespace avsutil {
                 DBGLOG("samples: " << mv_info->samples);
                 DBGLOG("sampling_rate: " << mv_info->sampling_rate);
                 DBGLOG("channels: " << mv_info->channels);
-                DBGLOG("bit_depth: " << mv_info->bit_depth);
+                DBGLOG("bit_depth: " << mv_info->bit_depth << "(" << (mv_info->is_int ? "int" : "float") << ")");
                 DBGLOG("block_size: " << mv_info->block_size);
             }
 

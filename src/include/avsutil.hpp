@@ -153,6 +153,7 @@ namespace avsutil {
         unsigned __int32 sampling_rate; // a.k.a sampling frequency
         unsigned __int16 channels;      // left, [right, [center, ...]]
         unsigned __int16 bit_depth;     // a.k.a sample precision
+        bool is_int;                    // int if true, float if false
         unsigned __int16 block_size;    // channels * (bit_depth / 8)
 
         // constructor for convenience with new statement
@@ -162,6 +163,7 @@ namespace avsutil {
                 unsigned __int32 sampling_rate,
                 unsigned __int16 channels,
                 unsigned __int16 bit_depth,
+                bool is_int,
                 unsigned __int16 block_size
                 ) :
             exists(exists),
@@ -169,6 +171,7 @@ namespace avsutil {
             sampling_rate(sampling_rate),
             channels(channels),
             bit_depth(bit_depth),
+            is_int(is_int),
             block_size(block_size)
         {}
     };
