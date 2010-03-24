@@ -35,26 +35,35 @@ namespace avsutil {
 
         void CAudio::write_header(std::ostream& out) const {
             DBGLOG(FUNCNAME << "(std::ostream&)");
+
             unsigned __int32 data_size = static_cast<unsigned __int32>(mv_info->samples) * mv_info->block_size;
             unsigned __int32 riff_size = data_size + wav::riff_header_size;
             unsigned __int32 data_per_sec = mv_info->sampling_rate * mv_info->block_size;
             unsigned __int16 fmt_type = wav::LINEAR_PCM;
-            wav::WavHeader wh = {
-                {wav::general_type[0], wav::general_type[1], wav::general_type[2], wav::general_type[3]},
+
+            wav::RiffHeader rh = {
+                wav::general_type,
                 riff_size,
-                {wav::riff_type[0] ,wav::riff_type[1] ,wav::riff_type[2] ,wav::riff_type[3]},
-                {wav::fmt_mark[0], wav::fmt_mark[1], wav::fmt_mark[2], wav::fmt_mark[3]},
-                wav::fmt_chunk_size,
-                fmt_type,
-                mv_info->channels,
-                mv_info->sampling_rate,
-                data_per_sec,
-                mv_info->block_size,
-                mv_info->bit_depth,
-                {wav::data_mark[0], wav::data_mark[1], wav::data_mark[2], wav::data_mark[3]},
-                data_size,
+                {
+                    wav::riff_type,
+                    {
+                        wav::fmt_mark,
+                        wav::fmt_chunk_size,
+                        fmt_type,
+                        mv_info->channels,
+                        mv_info->sampling_rate,
+                        data_per_sec,
+                        mv_info->block_size,
+                        mv_info->bit_depth
+                    },
+                    {
+                        wav::data_mark,
+                        data_size
+                    }
+                }
             };
-            out << wh;
+
+            out << rh;
         }
 
         void CAudio::write_data(std::ostream& out) const {
