@@ -3,7 +3,7 @@
 
 #ifdef _DEBUG
 #   define DBGLOG(str) (debuglogger::logs << str << std::endl)
-#   ifdef WIN32
+#   ifdef _MSC_VER
 #       define FUNCNAME __FUNCTION__
 #   else
 #       define FUNCNAME __func__
@@ -13,10 +13,14 @@
 #endif
 
 #ifdef _DEBUG
+
 #include <fstream>
+
 namespace debuglogger {
     extern std::ofstream logs;
 }
-#endif
+
+#endif // _DEBUG
 
 #endif // DEBUGLOGGER_HPP
+
