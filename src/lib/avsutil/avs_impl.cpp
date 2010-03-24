@@ -79,7 +79,7 @@ namespace avsutil {
                         vi.fps_numerator,
                         vi.fps_denominator,
                         vi.num_frames,
-                        get_fourcc(vi.pixel_type),
+                        fourcc(vi.pixel_type),
                         vi.BitsPerPixel(),
                         vi.IsFieldBased(),
                         vi.IsTFF()
@@ -88,7 +88,7 @@ namespace avsutil {
             return new CVideo(this, pi);
         };
 
-        VideoInfo::fourcc_t CAvs::get_fourcc(int pixel_type) {
+        const VideoInfo::fourcc_t CAvs::fourcc(const int pixel_type) const {
             switch (pixel_type) {
                 case ::VideoInfo::CS_BGR:   return VideoInfo::RGB;
                 case ::VideoInfo::CS_YUY2:  return VideoInfo::YUY2;
@@ -109,17 +109,17 @@ namespace avsutil {
                         vi.num_audio_samples,
                         vi.SamplesPerSecond(),
                         vi.AudioChannels(),
-                        bitdepth(vi),
+                        bitdepth(vi.sample_type),
                         vi.BytesPerAudioSample()
                         ));
 
             return new CAudio(this, ai);
         };
 
-        const unsigned int CAvs::bitdepth(const ::VideoInfo& vi) const {
+        const unsigned int CAvs::bitdepth(const int sample_type) const {
             DBGLOG(FUNCNAME << "(const ::VideoInfo&)");
 
-            switch (vi.sample_type) {
+            switch (sample_type) {
                 case SAMPLE_INT8:
                     return 8;
                 case SAMPLE_INT16:

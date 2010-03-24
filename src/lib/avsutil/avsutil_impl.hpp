@@ -30,8 +30,8 @@ namespace avsutil {
 
             private:
                 // utilities
-                VideoInfo::fourcc_t get_fourcc(int pixel_type);
-                const unsigned int bitdepth(const ::VideoInfo& vi) const;
+                const VideoInfo::fourcc_t fourcc(const int pixel_type) const;
+                const unsigned int bitdepth(const int sample_type) const;
 
             public:
                 // constructors and destructor
