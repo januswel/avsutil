@@ -18,6 +18,8 @@
 
 namespace avsutil {
     class IAvs;
+    class IVideo;
+    struct VideoInfo;
     class IAudio;
     struct AudioInfo;
 
@@ -41,12 +43,65 @@ namespace avsutil {
             virtual const char* errmsg(void) = 0;
             // get audio
             // the returned pointer MUST be "delete"ed
+            virtual IVideo* video(void) = 0;
+            // the returned pointer MUST be "delete"ed
             virtual IAudio* audio(void) = 0;
 
             // typical destructor
             virtual ~IAvs(void) {};
     };
 
+    // for video stream
+    class IVideo {
+        public:
+            // get informations
+            virtual const VideoInfo& info(void) = 0;
+
+            // typical destructor
+            virtual ~IVideo(void) {};
+    };
+
+    // informations of video stream
+    struct VideoInfo {
+        // Enumerations for representation as color spaces (pixel type) by FOURCC
+        // refer: http://www.fourcc.org/
+        enum fourcc_t {
+            UNKOWN,
+            // In AviSynth, this denote data is represented as raw DIB
+            // - Device Independent Bitmap that doesn't have pallette data
+            // and bytes per pixel is 24 or 32.
+            // This is an alias for BI_RGB
+            RGB,
+            // YUV 4:2:2 packed
+            // byte ordering in a macropixel is YUYV.
+            YUY2,
+            // YUV 4:2:0 planar
+            // 1 sample per 2x2 for V and U, plane order is YVU
+            YV12,
+            // YUV 4:2:0 planar
+            // 1 sample per 2x2 for U and V, plane order is YUV.
+            // a.k.a IYUV
+            I420
+        };
+
+        bool exists;
+        unsigned __int32 width;             // a number of horizontal pixels
+        unsigned __int32 height;            // a number of scan lines
+        double fps;                         // fps_numerator / fps_denominator
+        double time;                        // numof_frames * fps_denominator / fps_numerator
+        unsigned __int32 fps_numerator;
+        unsigned __int32 fps_denominator;
+        unsigned __int32 numof_frames;
+        fourcc_t color_space;               // represented by FOURCC
+        unsigned __int16 bpp;               // effective bit per pixcel
+        bool is_fieldbased;                 // field-based if true, frame-based if false
+        bool is_tff;                        // Top Field First if true, Bottom Field First if false
+                                            // This should be evaluated only when is_fieldbased is true.
+        // AviSynth doesn't contain this information (in 2.58)
+        //bool is_progressive;              // progressive if true, interlaced if false
+    };
+
+    // for audio stream
     class IAudio {
         public:
             // get informations

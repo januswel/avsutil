@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="avsutil"
 	ProjectGUID="{696EC07A-CC2B-4E75-A996-1884E1EBDD3A}"
+	RootNamespace="avsutil"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="0"
 	>
@@ -228,6 +229,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\lib\avsutil\avs_impl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lib\avsutil\video_impl.cpp"
 				>
 			</File>
 		</Filter>

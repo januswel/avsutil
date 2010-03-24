@@ -64,6 +64,43 @@ namespace avsutil {
             mv_clip->GetAudio(buf, start, count, mv_se.get());
         }
 
+        IVideo* CAvs::video(void) {
+            DBGLOG(FUNCNAME << "(void)");
+
+            // build a CVideo object
+            std::auto_ptr<VideoInfo> pi(new VideoInfo); // pi has a possession of (VideoInfo*)
+            pack_videoinfo(pi.get());                   // pi lends pack_videoinfo() (VideoInfo*)
+            return new CVideo(this, pi);                // pi passes a possesion of (VideoInfo*) to CVideo()
+        };
+
+        void CAvs::pack_videoinfo(VideoInfo* pi) {
+            DBGLOG(FUNCNAME << "(VideoInfo*)");
+            ::VideoInfo vi = mv_clip->GetVideoInfo();
+
+            pi->exists          = vi.HasVideo();
+            pi->width           = vi.width;
+            pi->height          = vi.height;
+            pi->fps             = static_cast<double>(vi.fps_numerator) / vi.fps_denominator;
+            pi->time            = static_cast<double>(vi.num_frames) * vi.fps_denominator / vi.fps_numerator;
+            pi->fps_numerator   = vi.fps_numerator;
+            pi->fps_denominator = vi.fps_denominator;
+            pi->numof_frames    = vi.num_frames;
+            pi->color_space     = get_fourcc(vi.pixel_type);
+            pi->bpp             = vi.BitsPerPixel();
+            pi->is_fieldbased   = vi.IsFieldBased();
+            pi->is_tff          = vi.IsTFF();
+        }
+
+        VideoInfo::fourcc_t CAvs::get_fourcc(int pixel_type) {
+            switch (pixel_type) {
+                case ::VideoInfo::CS_BGR:   return VideoInfo::RGB;
+                case ::VideoInfo::CS_YUY2:  return VideoInfo::YUY2;
+                case ::VideoInfo::CS_YV12:  return VideoInfo::YV12;
+                case ::VideoInfo::CS_I420:  return VideoInfo::I420;
+                default:                    return VideoInfo::UNKOWN;
+            }
+        }
+
         IAudio* CAvs::audio(void) {
             DBGLOG(FUNCNAME << "(void)");
 
@@ -75,7 +112,7 @@ namespace avsutil {
 
         void CAvs::pack_audioinfo(AudioInfo* ai) {
             DBGLOG(FUNCNAME << "(AudioInfo*)");
-            VideoInfo vi = mv_clip->GetVideoInfo();
+            ::VideoInfo vi = mv_clip->GetVideoInfo();
             ai->exists = vi.HasAudio();
             ai->samples = vi.num_audio_samples;
             ai->sampling_rate = vi.SamplesPerSecond();
@@ -84,8 +121,8 @@ namespace avsutil {
             ai->block_size = vi.BytesPerAudioSample();
         }
 
-        const unsigned int CAvs::bitdepth(const VideoInfo& vi) const {
-            DBGLOG(FUNCNAME << "(const VideoInfo&)");
+        const unsigned int CAvs::bitdepth(const ::VideoInfo& vi) const {
+            DBGLOG(FUNCNAME << "(const ::VideoInfo&)");
             switch (vi.sample_type) {
                 case SAMPLE_INT8:
                     return 8;
@@ -103,3 +140,4 @@ namespace avsutil {
         }
     }
 }
+

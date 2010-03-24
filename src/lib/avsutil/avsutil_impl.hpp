@@ -31,8 +31,10 @@ namespace avsutil {
 
             private:
                 // utilities
+                void pack_videoinfo(VideoInfo* pi);
+                VideoInfo::fourcc_t get_fourcc(int pixel_type);
                 void pack_audioinfo(AudioInfo* ai);
-                const unsigned int bitdepth(const VideoInfo& vi) const;
+                const unsigned int bitdepth(const ::VideoInfo& vi) const;
 
             public:
                 // constructors and destructor
@@ -45,10 +47,25 @@ namespace avsutil {
                 const char* filename(void) { return mv_filename.c_str(); };
                 bool is_fine(void) { return mv_is_fine; }
                 const char* errmsg(void) { return mv_errmsg.c_str(); };
+                IVideo* video(void);
                 IAudio* audio(void);
 
                 // utilities
                 void getaudio(char* buf, const unsigned __int64 start, const unsigned __int64 count);
+        };
+
+        class CVideo: public IVideo {
+            private:
+                CAvs* mv_avs;
+                std::auto_ptr<VideoInfo> mv_info;
+
+            public:
+                // constructor and destructor
+                CVideo(CAvs* avs, std::auto_ptr<VideoInfo> info);
+                ~CVideo(void);
+
+                // implementations for interfaces
+                const VideoInfo& info(void) { return *(mv_info.get()); };
         };
 
         class CAudio : public IAudio {
@@ -83,3 +100,4 @@ namespace avsutil {
 }
 
 #endif // AVSUTIL_IMPL_HPP
+
