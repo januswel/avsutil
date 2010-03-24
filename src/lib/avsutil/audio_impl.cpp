@@ -29,6 +29,7 @@ namespace avsutil {
 
         void CAudio::write(std::ostream& out) const {
             DBGLOG(FUNCNAME << "(std::ostream&)");
+
             write_header(out);
             write_data(out);
         }
@@ -98,12 +99,14 @@ namespace avsutil {
 
     std::ostream& operator <<(std::ostream& out, const Audio& audio) {
         DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::Audio&)");
+
         audio.write(out);
         return out;
     }
 
     std::ostream& operator <<(std::ostream& out, const Audio* const audio) {
         DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::Audio* const)");
+
         audio->write(out);
         return out;
     }

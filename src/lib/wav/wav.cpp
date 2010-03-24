@@ -34,12 +34,14 @@ namespace wav {
 
     std::istream& operator >>(std::istream& in, RiffHeader& wh) {
         DBGLOG(FUNCNAME << "(std::istream&, const wav::WavHeader&)");
+
         if (wh.read(in) == true) return in;
         else throw new std::domain_error("something is wrong in reading wav header.");
     }
 
     std::ostream& operator <<(std::ostream& out, const RiffHeader& wh) {
         DBGLOG(FUNCNAME << "(std::ostream&, const wav::WavHeader&)");
+
         if (wh.write(out) == true) return out;
         else throw new std::domain_error("something is wrong in writing wav header.");
     }

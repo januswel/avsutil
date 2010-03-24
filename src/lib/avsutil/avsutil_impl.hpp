@@ -41,9 +41,9 @@ namespace avsutil {
 
                 // implementations for interfaces
                 void open(const char* avsfile);
-                const char* filename(void) { return mv_filename.c_str(); };
+                const char* filename(void) { return mv_filename.c_str(); }
                 bool is_fine(void) { return mv_is_fine; }
-                const char* errmsg(void) { return mv_errmsg.c_str(); };
+                const char* errmsg(void) { return mv_errmsg.c_str(); }
                 Video* video(void);
                 Audio* audio(void);
 
@@ -83,7 +83,7 @@ namespace avsutil {
                 ~CVideo(void);
 
                 // implementations for interfaces
-                const VideoInfo& info(void) { return *(mv_info.get()); };
+                const VideoInfo& info(void) { return *(mv_info.get()); }
         };
 
         class CAudio : public Audio {
@@ -105,14 +105,14 @@ namespace avsutil {
                 ~CAudio(void);
 
                 // implementations for interfaces
-                AudioInfo& info(void) { return *(mv_info.get()); };
+                AudioInfo& info(void) { return *(mv_info.get()); }
                 void write(std::ostream&) const;
                 void progress_callback(void (*progress_callback)(const unsigned __int64, const unsigned __int64)) {
                     mv_progress_callback = progress_callback;
-                };
+                }
                 void buf_samples(const unsigned __int32 buf_samples) {
                     mv_buf_samples = buf_samples;
-                };
+                }
         };
     }
 }

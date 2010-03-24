@@ -12,29 +12,33 @@ namespace avsutil {
     // implementations for functions
     Avs* CreateAvsObj(void) {
         DBGLOG(FUNCNAME << "(void)");
+
         return new impl::CAvs();
     }
     Avs* CreateAvsObj(const char* filename) {
         DBGLOG(FUNCNAME << "(\"" << filename << "\")");
+
         return new impl::CAvs(filename);
     }
 
     namespace impl {
         CAvs::CAvs(void) : mv_se(CreateScriptEnvironment()), mv_is_fine(true) {
             DBGLOG(FUNCNAME << "(void)");
-        };
+        }
 
         CAvs::CAvs(const char* avsfile) : mv_se(CreateScriptEnvironment()), mv_is_fine(true) {
             DBGLOG(FUNCNAME << "(const char*)");
+
             open(avsfile);
-        };
+        }
 
         CAvs::~CAvs(void) {
             DBGLOG(FUNCNAME << "(void)");
-        };
+        }
 
         void CAvs::open(const char* avsfile) {
             DBGLOG(FUNCNAME << "(\"" << avsfile << "\")");
+
             try {
                 // pack the filename as the argument of AviSynth filter
                 AVSValue filename = avsfile;
@@ -61,6 +65,7 @@ namespace avsutil {
 
         void CAvs::audio_data(char* buf, const unsigned __int64 start, const unsigned __int64 count) {
             DBGLOG(FUNCNAME << "(char*, " << start << ", " << count << ")");
+
             mv_clip->GetAudio(buf, start, count, mv_se.get());
         }
 
@@ -86,7 +91,7 @@ namespace avsutil {
                         ));
 
             return new CVideo(this, pi);
-        };
+        }
 
         const VideoInfo::fourcc_t CAvs::fourcc(const int pixel_type) const {
             switch (pixel_type) {
@@ -114,7 +119,7 @@ namespace avsutil {
                         ));
 
             return new CAudio(this, ai);
-        };
+        }
 
         const unsigned int CAvs::bitdepth(const int sample_type) const {
             DBGLOG(FUNCNAME << "(const ::VideoInfo&)");

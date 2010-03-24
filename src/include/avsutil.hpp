@@ -45,7 +45,7 @@ namespace avsutil {
             virtual Audio* audio(void) = 0;
 
             // typical destructor
-            virtual ~Avs(void) {};
+            virtual ~Avs(void) {}
     };
 
     // for a video stream
@@ -55,7 +55,7 @@ namespace avsutil {
             virtual const VideoInfo& info(void) = 0;
 
             // typical destructor
-            virtual ~Video(void) {};
+            virtual ~Video(void) {}
     };
 
     // informations of a video stream
@@ -143,7 +143,7 @@ namespace avsutil {
             virtual void buf_samples(const unsigned __int32) = 0;
 
             // typical destructor
-            virtual ~Audio(void) {};
+            virtual ~Audio(void) {}
     };
 
     // informations of audio stream
@@ -176,7 +176,7 @@ namespace avsutil {
     // an exception that be thrown by functions in this namespace
     class AvsUtilError : public std::domain_error {
         public:
-            AvsUtilError(const char* errmsg) : std::domain_error(errmsg) {};
+            AvsUtilError(const char* errmsg) : std::domain_error(errmsg) {}
     };
 
     // output audio data in the format of RIFF linear PCM
