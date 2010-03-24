@@ -15,9 +15,9 @@ namespace wav {
     bool RiffHeader::read(std::istream& in) {
         DBGLOG(FUNCNAME << "(std::istream&)");
 
-        in.read(pointer_cast<char*>(&general_type), sizeof(general_type));
-        in.read(pointer_cast<char*>(&riff_size),    sizeof(riff_size));
-        in.read(pointer_cast<char*>(&wav_header),   sizeof(wav_header));
+        in.read(util::cast::pointer_cast<char*>(&general_type), sizeof(general_type));
+        in.read(util::cast::pointer_cast<char*>(&riff_size),    sizeof(riff_size));
+        in.read(util::cast::pointer_cast<char*>(&wav_header),   sizeof(wav_header));
 
         return (static_cast<std::streamoff>(in.tellg()) == static_cast<std::streamoff>(wav::total_header_size));
     }
@@ -25,9 +25,9 @@ namespace wav {
     bool RiffHeader::write(std::ostream& out) const {
         DBGLOG(FUNCNAME << "(std::ostream&)");
 
-        out.write(constpointer_cast<const char*>(&general_type),    sizeof(general_type));
-        out.write(constpointer_cast<const char*>(&riff_size),       sizeof(riff_size));
-        out.write(constpointer_cast<const char*>(&wav_header),      sizeof(wav_header));
+        out.write(util::cast::constpointer_cast<const char*>(&general_type), sizeof(general_type));
+        out.write(util::cast::constpointer_cast<const char*>(&riff_size),    sizeof(riff_size));
+        out.write(util::cast::constpointer_cast<const char*>(&wav_header),   sizeof(wav_header));
 
         return (static_cast<std::streamoff>(out.tellp()) == static_cast<std::streamoff>(wav::total_header_size));
     }
