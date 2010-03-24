@@ -79,8 +79,8 @@ namespace avsutil {
                         vi.HasVideo(),
                         vi.width,
                         vi.height,
-                        static_cast<double>(vi.fps_numerator) / vi.fps_denominator,
                         static_cast<double>(vi.num_frames) * vi.fps_denominator / vi.fps_numerator,
+                        static_cast<double>(vi.fps_numerator) / vi.fps_denominator,
                         vi.fps_numerator,
                         vi.fps_denominator,
                         vi.num_frames,
@@ -111,11 +111,12 @@ namespace avsutil {
             // build a CAudio object
             std::auto_ptr<AudioInfo> ai(new AudioInfo(
                         vi.HasAudio(),
-                        vi.num_audio_samples,
-                        vi.SamplesPerSecond(),
                         vi.AudioChannels(),
                         bitdepth(vi.sample_type),
                         (vi.sample_type == SAMPLE_FLOAT ? false : true),
+                        static_cast<double>(vi.num_audio_samples) / vi.SamplesPerSecond(),
+                        vi.SamplesPerSecond(),
+                        vi.num_audio_samples,
                         vi.BytesPerAudioSample()
                         ));
 

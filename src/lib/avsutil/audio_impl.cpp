@@ -16,7 +16,7 @@ namespace avsutil {
             : mv_avs(avs), mv_info(info), mv_progress_callback(NULL), mv_buf_samples(mv_buf_samples_default) {
                 DBGLOG(FUNCNAME << "(CAvs*, std::auto_ptr<AudioInfo>)");
                 DBGLOG("audio stream " << (mv_info->exists ? "exists" : "doesn't exist"));
-                DBGLOG("samples: " << mv_info->samples);
+                DBGLOG("a number of samples: " << mv_info->numof_samples);
                 DBGLOG("sampling_rate: " << mv_info->sampling_rate);
                 DBGLOG("channels: " << mv_info->channels);
                 DBGLOG("bit_depth: " << mv_info->bit_depth << "(" << (mv_info->is_int ? "int" : "float") << ")");
@@ -37,7 +37,7 @@ namespace avsutil {
         void CAudio::write_header(std::ostream& out) const {
             DBGLOG(FUNCNAME << "(std::ostream&)");
 
-            unsigned __int32 data_size = static_cast<unsigned __int32>(mv_info->samples) * mv_info->block_size;
+            unsigned __int32 data_size = static_cast<unsigned __int32>(mv_info->numof_samples) * mv_info->block_size;
             unsigned __int32 riff_size = data_size + wav::riff_header_size;
             unsigned __int32 data_per_sec = mv_info->sampling_rate * mv_info->block_size;
             unsigned __int16 fmt_type = wav::LINEAR_PCM;
@@ -77,23 +77,23 @@ namespace avsutil {
                     << " = " << buf_size);
 
             unsigned __int64 start = 0;
-            unsigned __int64 times = mv_info->samples / mv_buf_samples;
-            unsigned __int64 reminder = mv_info->samples - times * mv_buf_samples;
+            unsigned __int64 times = mv_info->numof_samples / mv_buf_samples;
+            unsigned __int64 reminder = mv_info->numof_samples - times * mv_buf_samples;
 
             for (unsigned __int64 i = 0; i < times; start += mv_buf_samples, ++i) {
-                if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info->samples);
+                if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info->numof_samples);
                 mv_avs->audio_data(&buf[0], start, mv_buf_samples);
                 out.write(&buf[0], buf_size);
             }
 
             if (reminder > 0) {
-                if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info->samples);
+                if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info->numof_samples);
                 mv_avs->audio_data(&buf[0], start, reminder);
                 out.write(&buf[0], mv_info->block_size * static_cast<size_t>(reminder));
                 start += reminder;
             }
 
-            if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info->samples);
+            if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info->numof_samples);
         }
     }
 

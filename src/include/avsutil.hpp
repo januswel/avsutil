@@ -84,11 +84,11 @@ namespace avsutil {
         bool exists;
         unsigned __int32 width;             // a number of horizontal pixels
         unsigned __int32 height;            // a number of scan lines
-        double fps;                         // fps_numerator / fps_denominator
         double time;                        // numof_frames * fps_denominator / fps_numerator
+        double fps;                         // fps_numerator / fps_denominator
         unsigned __int32 fps_numerator;
         unsigned __int32 fps_denominator;
-        unsigned __int32 numof_frames;
+        unsigned __int32 numof_frames;      // a number of frames
         fourcc_t color_space;               // represented by FOURCC
         unsigned __int16 bpp;               // effective bit per pixcel
         bool is_fieldbased;                 // field-based if true, frame-based if false
@@ -102,8 +102,8 @@ namespace avsutil {
                 bool exists,
                 unsigned __int32 width,
                 unsigned __int32 height,
-                double fps,
                 double time,
+                double fps,
                 unsigned __int32 fps_numerator,
                 unsigned __int32 fps_denominator,
                 unsigned __int32 numof_frames,
@@ -113,9 +113,10 @@ namespace avsutil {
                 bool is_tff
                 ) :
             exists(exists),
-            width(width), height(height),
-            fps(fps),
+            width(width),
+            height(height),
             time(time),
+            fps(fps),
             fps_numerator(fps_numerator),
             fps_denominator(fps_denominator),
             numof_frames(numof_frames),
@@ -149,29 +150,32 @@ namespace avsutil {
     // informations of audio stream
     struct AudioInfo {
         bool exists;
-        unsigned __int64 samples;       // number of samples
-        unsigned __int32 sampling_rate; // a.k.a sampling frequency
         unsigned __int16 channels;      // left, [right, [center, ...]]
         unsigned __int16 bit_depth;     // a.k.a sample precision
         bool is_int;                    // int if true, float if false
-        unsigned __int16 block_size;    // channels * (bit_depth / 8)
+        double time;                    // numof_samples / sampling_rate
+        unsigned __int32 sampling_rate; // a.k.a sampling frequency
+        unsigned __int64 numof_samples; // a number of samples
+        unsigned __int16 block_size;    // bytes per sample: channels * (bit_depth / 8)
 
         // constructor for convenience with new statement
         AudioInfo(
                 bool exists,
-                unsigned __int64 samples,
-                unsigned __int32 sampling_rate,
                 unsigned __int16 channels,
                 unsigned __int16 bit_depth,
                 bool is_int,
+                double time,
+                unsigned __int32 sampling_rate,
+                unsigned __int64 numof_samples,
                 unsigned __int16 block_size
                 ) :
             exists(exists),
-            samples(samples),
-            sampling_rate(sampling_rate),
             channels(channels),
             bit_depth(bit_depth),
             is_int(is_int),
+            time(time),
+            sampling_rate(sampling_rate),
+            numof_samples(numof_samples),
             block_size(block_size)
         {}
     };
