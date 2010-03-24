@@ -16,7 +16,7 @@
 
 namespace avsutil {
     namespace impl {
-        class CAvs : public IAvs {
+        class CAvs : public Avs {
             private:
                 // types defined by avisynth.h
                 std::auto_ptr<IScriptEnvironment> mv_se;
@@ -46,14 +46,14 @@ namespace avsutil {
                 const char* filename(void) { return mv_filename.c_str(); };
                 bool is_fine(void) { return mv_is_fine; }
                 const char* errmsg(void) { return mv_errmsg.c_str(); };
-                IVideo* video(void);
-                IAudio* audio(void);
+                Video* video(void);
+                Audio* audio(void);
 
                 // utilities
                 void getaudio(char* buf, const unsigned __int64 start, const unsigned __int64 count);
         };
 
-        class CVideo: public IVideo {
+        class CVideo: public Video {
             private:
                 CAvs* mv_avs;
                 std::auto_ptr<VideoInfo> mv_info;
@@ -67,7 +67,7 @@ namespace avsutil {
                 const VideoInfo& info(void) { return *(mv_info.get()); };
         };
 
-        class CAudio : public IAudio {
+        class CAudio : public Audio {
             private:
                 CAvs* mv_avs;
                 std::auto_ptr<AudioInfo> mv_info;

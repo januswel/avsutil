@@ -13,24 +13,24 @@
 
 namespace avsutil {
     // forward declarations
-    class IAvs;         // an interface class to handle AVS file
-    class IVideo;       // an interface class to handle a video stream in AVS file
+    class Avs;          // an interface class to handle AVS file
+    class Video;        // an interface class to handle a video stream in AVS file
     struct VideoInfo;   // a struct that has informations about a video stream
-    class IAudio;       // an interface class to handle an audio stream in AVS file
+    class Audio;        // an interface class to handle an audio stream in AVS file
     struct AudioInfo;   // a struct that has informations about an audio stream
     class AvsUtilError; // an exception class
 
     // These instantiate the object about AVS.
     // The returned pointer MUST be "delete"ed.
-    IAvs* CreateAvsObj(void);
-    IAvs* CreateAvsObj(const char* filename);   // with a filename
+    Avs* CreateAvsObj(void);
+    Avs* CreateAvsObj(const char* filename);   // with a filename
 
     /*
      * A class has basic features about AVS,
      * by wrapping classes defined in avisynth.h,
      * e.g. opening AVS file and getting audio informations.
      * */
-    class IAvs {
+    class Avs {
         public:
             // to open a file
             virtual void open(const char* avsfile) = 0;
@@ -40,22 +40,22 @@ namespace avsutil {
             virtual const char* errmsg(void) = 0;
             // get audio
             // the returned pointer MUST be "delete"ed
-            virtual IVideo* video(void) = 0;
+            virtual Video* video(void) = 0;
             // the returned pointer MUST be "delete"ed
-            virtual IAudio* audio(void) = 0;
+            virtual Audio* audio(void) = 0;
 
             // typical destructor
-            virtual ~IAvs(void) {};
+            virtual ~Avs(void) {};
     };
 
     // for a video stream
-    class IVideo {
+    class Video {
         public:
             // get informations
             virtual const VideoInfo& info(void) = 0;
 
             // typical destructor
-            virtual ~IVideo(void) {};
+            virtual ~Video(void) {};
     };
 
     // informations of a video stream
@@ -99,7 +99,7 @@ namespace avsutil {
     };
 
     // for an audio stream
-    class IAudio {
+    class Audio {
         public:
             // get informations
             virtual const AudioInfo& info(void) = 0;
@@ -115,7 +115,7 @@ namespace avsutil {
             virtual void buf_samples(const unsigned __int32) = 0;
 
             // typical destructor
-            virtual ~IAudio(void) {};
+            virtual ~Audio(void) {};
     };
 
     // informations of audio stream
@@ -135,8 +135,8 @@ namespace avsutil {
     };
 
     // output audio data in the format of RIFF linear PCM
-    std::ostream& operator <<(std::ostream&, const IAudio&);
-    std::ostream& operator <<(std::ostream&, const IAudio* const);
+    std::ostream& operator <<(std::ostream&, const Audio&);
+    std::ostream& operator <<(std::ostream&, const Audio* const);
 };
 
 #endif // AVSUTIL_HPP

@@ -108,14 +108,14 @@ namespace avsutil {
         }
     }
 
-    std::ostream& operator <<(std::ostream& out, const IAudio& audio) {
-        DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::IAudio&)");
+    std::ostream& operator <<(std::ostream& out, const Audio& audio) {
+        DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::Audio&)");
         audio.write(out);
         return out;
     }
 
-    std::ostream& operator <<(std::ostream& out, const IAudio* const audio) {
-        DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::IAudio* const)");
+    std::ostream& operator <<(std::ostream& out, const Audio* const audio) {
+        DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::Audio* const)");
         audio->write(out);
         return out;
     }

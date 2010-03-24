@@ -10,11 +10,11 @@
 
 namespace avsutil {
     // implementations for functions
-    IAvs* CreateAvsObj(void) {
+    Avs* CreateAvsObj(void) {
         DBGLOG(FUNCNAME << "(void)");
         return new impl::CAvs();
     }
-    IAvs* CreateAvsObj(const char* filename) {
+    Avs* CreateAvsObj(const char* filename) {
         DBGLOG(FUNCNAME << "(\"" << filename << "\")");
         return new impl::CAvs(filename);
     }
@@ -64,7 +64,7 @@ namespace avsutil {
             mv_clip->GetAudio(buf, start, count, mv_se.get());
         }
 
-        IVideo* CAvs::video(void) {
+        Video* CAvs::video(void) {
             DBGLOG(FUNCNAME << "(void)");
 
             // build a CVideo object
@@ -101,7 +101,7 @@ namespace avsutil {
             }
         }
 
-        IAudio* CAvs::audio(void) {
+        Audio* CAvs::audio(void) {
             DBGLOG(FUNCNAME << "(void)");
 
             // build a CAudio object

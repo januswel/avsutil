@@ -46,7 +46,7 @@ util::string::converter conv;
 bool is_connected(void);
 // set stdout to binary mode
 void set_stdout_binary(void);
-// callback function for IAudio::write()
+// callback function for Audio::write()
 void progress_cl(const unsigned __int64, const unsigned __int64);
 // output audio informations
 ostream& operator <<(ostream&, const AudioInfo&);
@@ -117,14 +117,14 @@ int main(const unsigned int argc, const char* argv[]) {
 
     try {
         // read in avs file
-        auto_ptr<IAvs> avs(CreateAvsObj(inputfile.c_str()));
+        auto_ptr<Avs> avs(CreateAvsObj(inputfile.c_str()));
         if (!avs->is_fine()) {
             cerr << avs->errmsg() << endl;
             return BAD_AVS;
         }
 
         // get audio stream
-        auto_ptr<IAudio> audio(avs->audio());
+        auto_ptr<Audio> audio(avs->audio());
         AudioInfo ai = audio->info();
 
         if (!ai.exists) {
@@ -181,7 +181,7 @@ int main(const unsigned int argc, const char* argv[]) {
         // allocate buffer
         std::vector<char> internalbuf(buf_size);
         outputs.rdbuf()->pubsetbuf(&internalbuf[0], buf_size);
-        // set values to IAudio
+        // set values to Audio
         audio->buf_samples(buf_samples);
         audio->progress_callback(progress_cl);
 

@@ -48,7 +48,7 @@ int main(const int argc, const char* const argv[]) {
         return BAD_ARG;
     }
 
-    auto_ptr<IAvs> avs(CreateAvsObj(argv[1]));
+    auto_ptr<Avs> avs(CreateAvsObj(argv[1]));
     if (!avs->is_fine()) {
         cout << avs->errmsg() << endl;
         return BAD_AVS;
