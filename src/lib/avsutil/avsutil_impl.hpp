@@ -30,9 +30,7 @@ namespace avsutil {
 
             private:
                 // utilities
-                void pack_videoinfo(VideoInfo* pi);
                 VideoInfo::fourcc_t get_fourcc(int pixel_type);
-                void pack_audioinfo(AudioInfo* ai);
                 const unsigned int bitdepth(const ::VideoInfo& vi) const;
 
             public:

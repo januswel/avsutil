@@ -96,6 +96,34 @@ namespace avsutil {
                                             // This should be evaluated only when is_fieldbased is true.
         // AviSynth doesn't contain this information (in 2.58)
         //bool is_progressive;              // progressive if true, interlaced if false
+
+        // constructor for convenience with new statement
+        VideoInfo(
+                bool exists,
+                unsigned __int32 width,
+                unsigned __int32 height,
+                double fps,
+                double time,
+                unsigned __int32 fps_numerator,
+                unsigned __int32 fps_denominator,
+                unsigned __int32 numof_frames,
+                fourcc_t color_space,
+                unsigned __int16 bpp,
+                bool is_fieldbased,
+                bool is_tff
+                ) :
+            exists(exists),
+            width(width), height(height),
+            fps(fps),
+            time(time),
+            fps_numerator(fps_numerator),
+            fps_denominator(fps_denominator),
+            numof_frames(numof_frames),
+            color_space(color_space),
+            bpp(bpp),
+            is_fieldbased(is_fieldbased),
+            is_tff(is_tff)
+        {}
     };
 
     // for an audio stream
@@ -126,6 +154,23 @@ namespace avsutil {
         unsigned __int16 channels;      // left, [right, [center, ...]]
         unsigned __int16 bit_depth;     // a.k.a sample precision
         unsigned __int16 block_size;    // channels * (bit_depth / 8)
+
+        // constructor for convenience with new statement
+        AudioInfo(
+                bool exists,
+                unsigned __int64 samples,
+                unsigned __int32 sampling_rate,
+                unsigned __int16 channels,
+                unsigned __int16 bit_depth,
+                unsigned __int16 block_size
+                ) :
+            exists(exists),
+            samples(samples),
+            sampling_rate(sampling_rate),
+            channels(channels),
+            bit_depth(bit_depth),
+            block_size(block_size)
+        {}
     };
 
     // an exception that be thrown by functions in this namespace

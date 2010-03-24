@@ -67,29 +67,26 @@ namespace avsutil {
         Video* CAvs::video(void) {
             DBGLOG(FUNCNAME << "(void)");
 
-            // build a CVideo object
-            std::auto_ptr<VideoInfo> pi(new VideoInfo); // pi has a possession of (VideoInfo*)
-            pack_videoinfo(pi.get());                   // pi lends pack_videoinfo() (VideoInfo*)
-            return new CVideo(this, pi);                // pi passes a possesion of (VideoInfo*) to CVideo()
-        };
-
-        void CAvs::pack_videoinfo(VideoInfo* pi) {
-            DBGLOG(FUNCNAME << "(VideoInfo*)");
             ::VideoInfo vi = mv_clip->GetVideoInfo();
 
-            pi->exists          = vi.HasVideo();
-            pi->width           = vi.width;
-            pi->height          = vi.height;
-            pi->fps             = static_cast<double>(vi.fps_numerator) / vi.fps_denominator;
-            pi->time            = static_cast<double>(vi.num_frames) * vi.fps_denominator / vi.fps_numerator;
-            pi->fps_numerator   = vi.fps_numerator;
-            pi->fps_denominator = vi.fps_denominator;
-            pi->numof_frames    = vi.num_frames;
-            pi->color_space     = get_fourcc(vi.pixel_type);
-            pi->bpp             = vi.BitsPerPixel();
-            pi->is_fieldbased   = vi.IsFieldBased();
-            pi->is_tff          = vi.IsTFF();
-        }
+            // build a CVideo object
+            std::auto_ptr<VideoInfo> pi(new VideoInfo(
+                        vi.HasVideo(),
+                        vi.width,
+                        vi.height,
+                        static_cast<double>(vi.fps_numerator) / vi.fps_denominator,
+                        static_cast<double>(vi.num_frames) * vi.fps_denominator / vi.fps_numerator,
+                        vi.fps_numerator,
+                        vi.fps_denominator,
+                        vi.num_frames,
+                        get_fourcc(vi.pixel_type),
+                        vi.BitsPerPixel(),
+                        vi.IsFieldBased(),
+                        vi.IsTFF()
+                        ));
+
+            return new CVideo(this, pi);
+        };
 
         VideoInfo::fourcc_t CAvs::get_fourcc(int pixel_type) {
             switch (pixel_type) {
@@ -104,25 +101,24 @@ namespace avsutil {
         Audio* CAvs::audio(void) {
             DBGLOG(FUNCNAME << "(void)");
 
-            // build a CAudio object
-            std::auto_ptr<AudioInfo> ai(new AudioInfo); // ai has a possession of (AudioInfo*)
-            pack_audioinfo(ai.get());                   // ai lends pack_audioinfo() (AudioInfo*)
-            return new CAudio(this, ai);                // ai passes a possesion of (AudioInfo*) to CAudio()
-        };
-
-        void CAvs::pack_audioinfo(AudioInfo* ai) {
-            DBGLOG(FUNCNAME << "(AudioInfo*)");
             ::VideoInfo vi = mv_clip->GetVideoInfo();
-            ai->exists = vi.HasAudio();
-            ai->samples = vi.num_audio_samples;
-            ai->sampling_rate = vi.SamplesPerSecond();
-            ai->channels = vi.AudioChannels();
-            ai->bit_depth = bitdepth(vi);
-            ai->block_size = vi.BytesPerAudioSample();
-        }
+
+            // build a CAudio object
+            std::auto_ptr<AudioInfo> ai(new AudioInfo(
+                        vi.HasAudio(),
+                        vi.num_audio_samples,
+                        vi.SamplesPerSecond(),
+                        vi.AudioChannels(),
+                        bitdepth(vi),
+                        vi.BytesPerAudioSample()
+                        ));
+
+            return new CAudio(this, ai);
+        };
 
         const unsigned int CAvs::bitdepth(const ::VideoInfo& vi) const {
             DBGLOG(FUNCNAME << "(const ::VideoInfo&)");
+
             switch (vi.sample_type) {
                 case SAMPLE_INT8:
                     return 8;
