@@ -3,11 +3,6 @@
  *  Utility classes for AviSynth
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
- *
- *      IAvs:           An interface class to handle AVS file
- *      IAudio:         An interface class to handle an audio stream in AVS file
- *      AudioInfo:      A struct that has informations about audio stream
- *      AvsUtilError:   An exception class
  * */
 
 #ifndef AVSUTIL_HPP
@@ -17,14 +12,16 @@
 #include <ostream>
 
 namespace avsutil {
-    class IAvs;
-    class IVideo;
-    struct VideoInfo;
-    class IAudio;
-    struct AudioInfo;
+    // forward declarations
+    class IAvs;         // an interface class to handle AVS file
+    class IVideo;       // an interface class to handle a video stream in AVS file
+    struct VideoInfo;   // a struct that has informations about a video stream
+    class IAudio;       // an interface class to handle an audio stream in AVS file
+    struct AudioInfo;   // a struct that has informations about an audio stream
+    class AvsUtilError; // an exception class
 
-    // instantiate the object about AVS
-    // the returned pointer MUST be "delete"ed
+    // These instantiate the object about AVS.
+    // The returned pointer MUST be "delete"ed.
     IAvs* CreateAvsObj(void);
     IAvs* CreateAvsObj(const char* filename);   // with a filename
 
@@ -51,7 +48,7 @@ namespace avsutil {
             virtual ~IAvs(void) {};
     };
 
-    // for video stream
+    // for a video stream
     class IVideo {
         public:
             // get informations
@@ -61,7 +58,7 @@ namespace avsutil {
             virtual ~IVideo(void) {};
     };
 
-    // informations of video stream
+    // informations of a video stream
     struct VideoInfo {
         // Enumerations for representation as color spaces (pixel type) by FOURCC
         // refer: http://www.fourcc.org/
@@ -101,7 +98,7 @@ namespace avsutil {
         //bool is_progressive;              // progressive if true, interlaced if false
     };
 
-    // for audio stream
+    // for an audio stream
     class IAudio {
         public:
             // get informations
@@ -131,6 +128,7 @@ namespace avsutil {
         unsigned __int16 block_size;    // channels * (bit_depth / 8)
     };
 
+    // an exception that be thrown by functions in this namespace
     class AvsUtilError : public std::domain_error {
         public:
             AvsUtilError(const char* errmsg) : std::domain_error(errmsg) {};

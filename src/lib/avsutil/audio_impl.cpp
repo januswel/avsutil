@@ -15,7 +15,7 @@ namespace avsutil {
         CAudio::CAudio(CAvs* avs, std::auto_ptr<AudioInfo> info)
             : mv_avs(avs), mv_info(info), mv_progress_callback(NULL), mv_buf_samples(mv_buf_samples_default) {
                 DBGLOG(FUNCNAME << "(CAvs*, std::auto_ptr<AudioInfo>)");
-                DBGLOG("audio stream " << (mv_info->exists ? "exists" : "does'nt exist"));
+                DBGLOG("audio stream " << (mv_info->exists ? "exists" : "doesn't exist"));
                 DBGLOG("samples: " << mv_info->samples);
                 DBGLOG("sampling_rate: " << mv_info->sampling_rate);
                 DBGLOG("channels: " << mv_info->channels);

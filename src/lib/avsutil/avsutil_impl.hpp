@@ -16,7 +16,6 @@
 
 namespace avsutil {
     namespace impl {
-        class CAudio;
         class CAvs : public IAvs {
             private:
                 // types defined by avisynth.h
