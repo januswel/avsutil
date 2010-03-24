@@ -48,7 +48,28 @@ namespace avsutil {
                 Audio* audio(void);
 
                 // utilities
-                void getaudio(char* buf, const unsigned __int64 start, const unsigned __int64 count);
+                /*
+                 * function audio_data() returns audio data in the following format:
+                 *
+                 *  case mono
+                 *      d0, d1, ... , dn
+                 *  case stereo
+                 *      l0, r0, l1, r1, ... , ln, rn
+                 *  case 5.1 ch (maybe)
+                 *      fl0, fr0, fc0, lf0, bl0, br0, ... , fln, frn, fcn, lfn, bln, brn
+                 *
+                 *  notes
+                 *      d:  data            (for mono)
+                 *      l:  left            (for stereo)
+                 *      r:  right           (for stereo)
+                 *      fl: front left      (for 5.1ch)
+                 *      fr: front right     (for 5.1ch)
+                 *      fc: front center    (for 5.1ch)
+                 *      lf: low frequency   (for 5.1ch)
+                 *      bl: back left       (for 5.1ch)
+                 *      br: back right      (for 5.1ch)
+                 * */
+                void audio_data(char* buf, const unsigned __int64 start, const unsigned __int64 count);
         };
 
         class CVideo: public Video {

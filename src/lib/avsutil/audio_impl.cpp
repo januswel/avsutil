@@ -57,27 +57,6 @@ namespace avsutil {
             out << wh;
         }
 
-        /*
-         * function getaudio() - IClip::GetAudio() returns audio data in the following format:
-         *
-         *  case mono
-         *      d0, d1, ... , dn
-         *  case stereo
-         *      l0, r0, l1, r1, ... , ln, rn
-         *  case 5.1 ch (maybe)
-         *      fl0, fr0, fc0, lf0, bl0, br0, ... , fln, frn, fcn, lfn, bln, brn
-         *
-         *  notes
-         *      d:  data            (for mono)
-         *      l:  left            (for stereo)
-         *      r:  right           (for stereo)
-         *      fl: front left      (for 5.1ch)
-         *      fr: front right     (for 5.1ch)
-         *      fc: front center    (for 5.1ch)
-         *      lf: low frequency   (for 5.1ch)
-         *      bl: back left       (for 5.1ch)
-         *      br: back right      (for 5.1ch)
-         * */
         void CAudio::write_data(std::ostream& out) const {
             DBGLOG(FUNCNAME << "(std::ostream&)");
 
@@ -93,13 +72,13 @@ namespace avsutil {
 
             for (unsigned __int64 i = 0; i < times; start += mv_buf_samples, ++i) {
                 if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info->samples);
-                mv_avs->getaudio(&buf[0], start, mv_buf_samples);
+                mv_avs->audio_data(&buf[0], start, mv_buf_samples);
                 out.write(&buf[0], buf_size);
             }
 
             if (reminder > 0) {
                 if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info->samples);
-                mv_avs->getaudio(&buf[0], start, reminder);
+                mv_avs->audio_data(&buf[0], start, reminder);
                 out.write(&buf[0], mv_info->block_size * static_cast<size_t>(reminder));
                 start += reminder;
             }
