@@ -1,6 +1,6 @@
 /*
  * usage.cpp
- *  Usage definitions for avslint.
+ *  Usage definitions for avsinfo.
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  * */
@@ -9,7 +9,7 @@
 #include <iostream>
 
 void usage(std::ostream& out) {
-    out << "Usage: avslint [options] <inputfile>\n"
+    out << "Usage: avsinfo [options] <inputfile>\n"
         << "General options:\n"
         << "    -h, --help      Shows this help.\n"
         << "    -v, --version   Shows version and license informations.\n"
