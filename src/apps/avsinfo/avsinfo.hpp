@@ -13,7 +13,7 @@
 // global object
 // version number
 extern const std::string version;
-// return enumeration
+// enumerations for return statements
 enum {OK = 0, BAD_ARG, BAD_AVS, UNKNOWN};
 
 // typical one
