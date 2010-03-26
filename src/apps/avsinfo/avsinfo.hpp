@@ -10,16 +10,20 @@
 
 #include <string>
 
-// global object
-// version number
-extern const std::string version;
-// enumerations for return statements
-enum {OK = 0, BAD_ARG, BAD_AVS, UNKNOWN};
+namespace avsinfo {
+    namespace general {
+        // global object
+        // version number
+        extern const std::string version;
+        // enumerations for return statements
+        enum {OK = 0, BAD_ARG, BAD_AVS, UNKNOWN};
 
-// typical one
-void usage(std::ostream& out);
-// the another typical
-void version_license(std::ostream& out);
+        // typical one
+        void usage(std::ostream& out);
+        // the another typical
+        void version_license(std::ostream& out);
+    }
+}
 
 #endif // AVSINFO_HPP
 
