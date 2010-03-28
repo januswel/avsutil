@@ -81,6 +81,16 @@ namespace avsutil {
             I420
         };
 
+        static const char* fourcc_name(const fourcc_t f) {
+            switch(f) {
+                case UNKOWN:    return "unkown";
+                case RGB:       return "RGB";
+                case YUY2:      return "YUY2";
+                case YV12:      return "YV12";
+                case I420:      return "I420";
+            };
+        }
+
         bool exists;
         unsigned __int32 width;             // a number of horizontal pixels
         unsigned __int32 height;            // a number of scan lines
