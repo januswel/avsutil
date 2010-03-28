@@ -95,11 +95,13 @@ namespace avsutil {
 
         const VideoInfo::fourcc_t CAvs::fourcc(const int pixel_type) const {
             switch (pixel_type) {
-                case ::VideoInfo::CS_BGR:   return VideoInfo::RGB;
-                case ::VideoInfo::CS_YUY2:  return VideoInfo::YUY2;
-                case ::VideoInfo::CS_YV12:  return VideoInfo::YV12;
-                case ::VideoInfo::CS_I420:  return VideoInfo::I420;
-                default:                    return VideoInfo::UNKOWN;
+                case ::VideoInfo::CS_BGR24:
+                case ::VideoInfo::CS_BGR32:     return VideoInfo::RGB;
+                case ::VideoInfo::CS_YUY2:      return VideoInfo::YUY2;
+                case ::VideoInfo::CS_YV12:      return VideoInfo::YV12;
+                case ::VideoInfo::CS_I420:      return VideoInfo::I420;
+                case ::VideoInfo::CS_UNKNOWN:
+                default:                        return VideoInfo::UNKOWN;
             }
         }
 
