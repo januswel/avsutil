@@ -123,7 +123,7 @@ int main(const int argc, const char* const argv[]) {
             }
             if (video_flags[VIDEO_TIME])        print_video_items(VIDEO_TIME, vi.time);
             if (video_flags[FRAMES])            print_video_items(FRAMES, vi.numof_frames);
-            if (video_flags[COLOR_SPACE])       print_video_items(COLOR_SPACE, vi.color_space);
+            if (video_flags[COLOR_SPACE])       print_video_items(COLOR_SPACE, VideoInfo::fourcc_name(vi.color_space));
             if (video_flags[BPP])               print_video_items(BPP, vi.bpp);
             if (video_flags[INTERLACE_TYPE]) {
                 if (machine_flag) print_video_items(INTERLACE_TYPE, vi.is_fieldbased);
