@@ -8,34 +8,34 @@
 #include "avsutil_impl.hpp"
 #include "../wav/wav.hpp"
 #include <vector>
-#include "../debuglogger/debuglogger.hpp"
+#include "../../helper/dlogger.hpp"
 
 namespace avsutil {
     namespace impl {
         CAudio::CAudio(CAvs* avs, std::auto_ptr<AudioInfo> info)
             : mv_avs(avs), mv_info(info), mv_progress_callback(NULL), mv_buf_samples(mv_buf_samples_default) {
-                DBGLOG(FUNCNAME << "(CAvs*, std::auto_ptr<AudioInfo>)");
-                DBGLOG("audio stream " << (mv_info->exists ? "exists" : "doesn't exist"));
-                DBGLOG("a number of samples: " << mv_info->numof_samples);
-                DBGLOG("sampling_rate: " << mv_info->sampling_rate);
-                DBGLOG("channels: " << mv_info->channels);
-                DBGLOG("bit_depth: " << mv_info->bit_depth << "(" << (mv_info->is_int ? "int" : "float") << ")");
-                DBGLOG("block_size: " << mv_info->block_size);
+                DBGLOG("avsutil::impl::CAudio::CAudio(CAvs*, std::auto_ptr<AudioInfo>)\n"
+                        << "audio stream " << (mv_info->exists ? "exists" : "doesn't exist") << "\n"
+                        << "a number of samples: " << mv_info->numof_samples << "\n"
+                        << "sampling_rate: " << mv_info->sampling_rate << "\n"
+                        << "channels: " << mv_info->channels << "\n"
+                        << "bit_depth: " << mv_info->bit_depth << "(" << (mv_info->is_int ? "int" : "float") << ")\n"
+                        << "block_size: " << mv_info->block_size);
             }
 
         CAudio::~CAudio(void) {
-            DBGLOG(FUNCNAME << "(void)");
+            DBGLOG("avsutil::impl::CAudio::~CAudio(void)");
         }
 
         void CAudio::write(std::ostream& out) const {
-            DBGLOG(FUNCNAME << "(std::ostream&)");
+            DBGLOG("avsutil::impl::CAudio::write(std::ostream&)");
 
             write_header(out);
             write_data(out);
         }
 
         void CAudio::write_header(std::ostream& out) const {
-            DBGLOG(FUNCNAME << "(std::ostream&)");
+            DBGLOG("avsutil::impl::CAudio::write_header(std::ostream&)");
 
             unsigned __int32 data_size = static_cast<unsigned __int32>(mv_info->numof_samples) * mv_info->block_size;
             unsigned __int32 riff_size = data_size + wav::riff_header_size;
@@ -68,7 +68,7 @@ namespace avsutil {
         }
 
         void CAudio::write_data(std::ostream& out) const {
-            DBGLOG(FUNCNAME << "(std::ostream&)");
+            DBGLOG("avsutil::impl::CAudio::write_data(std::ostream&)");
 
             unsigned __int32 buf_size = mv_buf_samples * mv_info->channels * (mv_info->bit_depth / 8);
             std::vector<char> buf(buf_size);
@@ -98,14 +98,14 @@ namespace avsutil {
     }
 
     std::ostream& operator <<(std::ostream& out, const Audio& audio) {
-        DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::Audio&)");
+        DBGLOG("avsutil::operator <<(std::ostream&, const avsutil::Audio&)");
 
         audio.write(out);
         return out;
     }
 
     std::ostream& operator <<(std::ostream& out, const Audio* const audio) {
-        DBGLOG(FUNCNAME << "(std::ostream&, const avsutil::Audio* const)");
+        DBGLOG("avsutil::operator <<(std::ostream&, const avsutil::Audio* const)");
 
         audio->write(out);
         return out;

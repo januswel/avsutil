@@ -6,38 +6,38 @@
  * */
 
 #include "avsutil_impl.hpp"
-#include "../debuglogger/debuglogger.hpp"
+#include "../../helper/dlogger.hpp"
 
 namespace avsutil {
     // implementations for functions
     Avs* CreateAvsObj(void) {
-        DBGLOG(FUNCNAME << "(void)");
+        DBGLOG("avsutil::CreateAvsObj(void)");
 
         return new impl::CAvs();
     }
     Avs* CreateAvsObj(const char* filename) {
-        DBGLOG(FUNCNAME << "(\"" << filename << "\")");
+        DBGLOG("avsutil::CreateAvsObj(\"" << filename << "\")");
 
         return new impl::CAvs(filename);
     }
 
     namespace impl {
         CAvs::CAvs(void) : mv_se(CreateScriptEnvironment()), mv_is_fine(true) {
-            DBGLOG(FUNCNAME << "(void)");
+            DBGLOG("avsutil::impl::CAvs::CAvs(void)");
         }
 
         CAvs::CAvs(const char* avsfile) : mv_se(CreateScriptEnvironment()), mv_is_fine(true) {
-            DBGLOG(FUNCNAME << "(const char*)");
+            DBGLOG("avsutil::impl::CAvs::CAvs(const char*)");
 
             open(avsfile);
         }
 
         CAvs::~CAvs(void) {
-            DBGLOG(FUNCNAME << "(void)");
+            DBGLOG("avsutil::impl::CAvs::~CAvs(void)");
         }
 
         void CAvs::open(const char* avsfile) {
-            DBGLOG(FUNCNAME << "(\"" << avsfile << "\")");
+            DBGLOG("avsutil::impl::CAvs::open(\"" << avsfile << "\")");
 
             try {
                 // pack the filename as the argument of AviSynth filter
@@ -64,13 +64,13 @@ namespace avsutil {
         }
 
         void CAvs::audio_data(char* buf, const unsigned __int64 start, const unsigned __int64 count) {
-            DBGLOG(FUNCNAME << "(char*, " << start << ", " << count << ")");
+            DBGLOG("avsutil::impl::CAvs::audio_data(char*, " << start << ", " << count << ")");
 
             mv_clip->GetAudio(buf, start, count, mv_se.get());
         }
 
         Video* CAvs::video(void) {
-            DBGLOG(FUNCNAME << "(void)");
+            DBGLOG("avsutil::impl::CAvs::video(void)");
 
             ::VideoInfo vi = mv_clip->GetVideoInfo();
 
@@ -106,7 +106,7 @@ namespace avsutil {
         }
 
         Audio* CAvs::audio(void) {
-            DBGLOG(FUNCNAME << "(void)");
+            DBGLOG("avsutil::impl::CAvs::audio(void)");
 
             ::VideoInfo vi = mv_clip->GetVideoInfo();
 
@@ -126,7 +126,7 @@ namespace avsutil {
         }
 
         const unsigned int CAvs::bitdepth(const int sample_type) const {
-            DBGLOG(FUNCNAME << "(const ::VideoInfo&)");
+            DBGLOG("avsutil::impl::CAvs::bitdepth(const ::VideoInfo&)");
 
             switch (sample_type) {
                 case SAMPLE_INT8:
