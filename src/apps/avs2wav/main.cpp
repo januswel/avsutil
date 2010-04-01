@@ -224,7 +224,7 @@ void progress_cl(const unsigned __int64 processed, const unsigned __int64 max) {
         << "\r"
         << setw(10) << processed << "/" << max << " samples"
         << " (" << setw(6) << percentage << "%)"
-        << " elapsed time " << elapsed_time.get() << " sec";
+        << " elapsed time " << elapsed_time() << " sec";
 }
 
 ostream& operator <<(ostream& out, const AudioInfo& ai) {
