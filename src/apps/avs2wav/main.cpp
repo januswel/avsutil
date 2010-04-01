@@ -39,7 +39,7 @@ using namespace avsutil;
 ostream progresss(cout.rdbuf());
 
 // type converter routing through std::string;
-util::string::converter conv;
+util::string::tconv conv(locale::classic());
 
 // forward declarations
 // return true if redirected to file or connected to pipe

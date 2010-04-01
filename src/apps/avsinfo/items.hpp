@@ -13,6 +13,7 @@
 #include "../../helper/tconv.hpp"
 
 #include <bitset>
+#include <locale>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -66,8 +67,8 @@ namespace avsinfo {
                     const std::string delimiter;
                     static const unsigned int header_size;
                     // wrapper for utility object
-                    inline util::string::converter& tconv(void) const {
-                        static util::string::converter tconv;
+                    inline util::string::tconv& tconv(void) const {
+                        static util::string::tconv tconv(std::locale::classic());
                         return tconv;
                     }
 
