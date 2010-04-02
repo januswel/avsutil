@@ -10,8 +10,8 @@
 
 namespace avsinfo {
     namespace items {
-            const unsigned int item_traits::header_size = 20;
-            const char* item_traits::delimiter(void) { return ": "; }
+        const unsigned int item_traits::header_size = 20;
+        const char* item_traits::delimiter(void) { return ": "; }
 
         namespace video {
             // Width

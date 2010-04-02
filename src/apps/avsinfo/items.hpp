@@ -93,7 +93,7 @@ namespace avsinfo {
 
                     // output informations to ostream object
                     template<typename charT>
-                        inline std::ostream& output(std::basic_ostream<charT>& out, const info_t& info) const {
+                        std::basic_ostream<charT>& output(std::basic_ostream<charT>& out, const info_t& info) const {
                             if (is_human_friendly)
                                 return out
                                     << std::setw(itemTraitsT::header_size) << header() << itemTraitsT::delimiter()
