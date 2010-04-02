@@ -56,15 +56,16 @@ namespace avsinfo {
         };
 
         struct item_traits {
-            static const unsigned int header_size = 20;
-            static inline const char* delimiter(void) { return ": "; }
+            static const unsigned int header_size;
+            static const char* delimiter(void);
         };
 
         // the base class to represent an item to show
-        template<typename T, typename traitsT = item_traits>
+        template<typename infoT, typename itemTraitsT = item_traits>
             class basic_item : public pattern::observer::basic_observer<bool> {
                 public:
-                    typedef T   info_t;
+                    typedef infoT                           info_t;
+                    typedef basic_item<info_t, itemTraitsT> this_t;
 
                 protected:
                     // member variables
@@ -85,7 +86,7 @@ namespace avsinfo {
                     // destructor
                     virtual ~basic_item(void) {}
                     // assignment operator
-                    inline basic_item<T>& operator=(const basic_item<T>& rhs) {
+                    inline this_t& operator=(const this_t& rhs) {
                         is_human_friendly = rhs.is_human_friendly;
                         return *this;
                     }
@@ -95,7 +96,7 @@ namespace avsinfo {
                         inline std::ostream& output(std::basic_ostream<charT>& out, const info_t& info) const {
                             if (is_human_friendly)
                                 return out
-                                    << std::setw(traitsT::header_size) << header() << traitsT::delimiter()
+                                    << std::setw(itemTraitsT::header_size) << header() << itemTraitsT::delimiter()
                                     << value(info) << unit() << endl;
                             else
                                 return out << value(info) << endl;
@@ -138,29 +139,6 @@ namespace avsinfo {
 
                 NUMOF_ITEMS
             };
-
-            struct traits {
-                typedef Item                base_t;
-                typedef item_t              itemkind_t;
-                typedef avsutil::VideoInfo  info_t;
-                static const unsigned int numof_items = NUMOF_ITEMS;
-                static Item* create_item(item_t item) {
-                    switch (item) {
-                        case WIDTH:             return new Width;
-                        case HEIGHT:            return new Height;
-                        case RATIO:             return new Ratio;
-                        case FPS:               return new Fps;
-                        case FPS_FRACTION:      return new FpsFraction;
-                        case VIDEO_TIME:        return new VideoTime;
-                        case FRAMES:            return new Frames;
-                        case COLOR_SPACE:       return new ColorSpace;
-                        case BPP:               return new Bpp;
-                        case INTERLACE_TYPE:    return new InterlaceType;
-                        case FIELD_ORDER:       return new FieldOrder;
-                        default:                return NULL;
-                    }
-                }
-            };
         }
 
         // items to show, for audio stream
@@ -188,38 +166,69 @@ namespace avsinfo {
 
                 NUMOF_ITEMS
             };
-
-            struct traits {
-                typedef Item                base_t;
-                typedef item_t              itemkind_t;
-                typedef avsutil::AudioInfo  info_t;
-                static const unsigned int numof_items = NUMOF_ITEMS;
-                static Item* create_item(item_t item) {
-                    switch (item) {
-                        case CHANNELS:      return new Channels;
-                        case BIT_DEPTH:     return new BitDepth;
-                        case SAMPLE_TYPE:   return new SampleType;
-                        case AUDIO_TIME:    return new AudioTime;
-                        case SAMPLING_RATE: return new SamplingRate;
-                        case SAMPLES:       return new Samples;
-                        case BLOCK_SIZE:    return new BlockSize;
-                        default:            return NULL;
-                    }
-                }
-            };
         }
+
+        template<typename infoT> struct info_traits;
+        template<> struct info_traits<avsutil::VideoInfo> {
+            // typedefs
+            typedef avsutil::VideoInfo  info_t;
+            typedef basic_item<info_t>  base_t;
+            typedef video::item_t       itemkind_t;
+            // static variables
+            static const unsigned int numof_items = video::NUMOF_ITEMS;
+            // static functions
+            static base_t* create_item(itemkind_t item) {
+                switch (item) {
+                    case video::WIDTH:          return new video::Width;
+                    case video::HEIGHT:         return new video::Height;
+                    case video::RATIO:          return new video::Ratio;
+                    case video::FPS:            return new video::Fps;
+                    case video::FPS_FRACTION:   return new video::FpsFraction;
+                    case video::VIDEO_TIME:     return new video::VideoTime;
+                    case video::FRAMES:         return new video::Frames;
+                    case video::COLOR_SPACE:    return new video::ColorSpace;
+                    case video::BPP:            return new video::Bpp;
+                    case video::INTERLACE_TYPE: return new video::InterlaceType;
+                    case video::FIELD_ORDER:    return new video::FieldOrder;
+                    default:                    return NULL;
+                }
+            }
+        };
+
+        template<> struct info_traits<avsutil::AudioInfo> {
+            // typedefs
+            typedef avsutil::AudioInfo  info_t;
+            typedef basic_item<info_t>  base_t;
+            typedef audio::item_t       itemkind_t;
+            // static variables
+            static const unsigned int numof_items = audio::NUMOF_ITEMS;
+            // static functions
+            static base_t* create_item(itemkind_t item) {
+                switch (item) {
+                    case audio::CHANNELS:       return new audio::Channels;
+                    case audio::BIT_DEPTH:      return new audio::BitDepth;
+                    case audio::SAMPLE_TYPE:    return new audio::SampleType;
+                    case audio::AUDIO_TIME:     return new audio::AudioTime;
+                    case audio::SAMPLING_RATE:  return new audio::SamplingRate;
+                    case audio::SAMPLES:        return new audio::Samples;
+                    case audio::BLOCK_SIZE:     return new audio::BlockSize;
+                    default:                    return NULL;
+                }
+            }
+        };
 
         // the base class to represent items that should be outputed
         // This class also contains the order to show.
         // TODO: use reference-count pointer for base_t*
-        template<typename traitsT>
+        template<typename infoT, typename traitsT = info_traits<infoT> >
             class basic_items {
                 private:
+                    typedef infoT                           info_t;
                     typedef typename traitsT::base_t        base_t;
                     typedef std::vector<base_t*>            items_t;
                     typedef typename items_t::iterator      items_it;
                     typedef typename traitsT::itemkind_t    itemkind_t;
-                    typedef typename traitsT::info_t        info_t;
+                    typedef basic_items<infoT>              this_t;
 
                 private:
                     // member variables
@@ -232,7 +241,7 @@ namespace avsinfo {
 
                 public:
                     // add an item to show at the end of the order if still not specified.
-                    basic_items<traitsT>& add_item(itemkind_t itemkind) {
+                    this_t& add_item(itemkind_t itemkind) {
                         if (!specified_flag[itemkind]) {
                             base_t* new_item = traitsT::create_item(itemkind);
                             items.push_back(new_item);
@@ -243,7 +252,7 @@ namespace avsinfo {
                     }
 
                     // setter for status
-                    inline basic_items<traitsT>& notation(bool is_human_friendly) {
+                    inline this_t& notation(bool is_human_friendly) {
                         is_human_friendly
                             ? mv_notation.human_friendly()
                             : mv_notation.machine_friendly();
@@ -259,8 +268,8 @@ namespace avsinfo {
                         }
             };
 
-        typedef basic_items<video::traits> VideoItems;
-        typedef basic_items<audio::traits> AudioItems;
+        typedef basic_items<avsutil::VideoInfo> VideoItems;
+        typedef basic_items<avsutil::AudioInfo> AudioItems;
 
         namespace video {
             // for convenience
