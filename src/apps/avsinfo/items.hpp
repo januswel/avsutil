@@ -57,7 +57,10 @@ namespace avsinfo {
 
         struct item_traits {
             static const unsigned int header_size;
+            static const bool is_alignment;
+            static const bool is_preceding_delimiter;
             static const char* delimiter(void);
+            static const bool is_unit;
         };
 
         // the base class to represent an item to show
@@ -94,12 +97,26 @@ namespace avsinfo {
                     // output informations to ostream object
                     template<typename charT>
                         std::basic_ostream<charT>& output(std::basic_ostream<charT>& out, const info_t& info) const {
-                            if (is_human_friendly)
-                                return out
-                                    << std::setw(itemTraitsT::header_size) << header() << itemTraitsT::delimiter()
-                                    << value(info) << unit() << endl;
-                            else
+                            if (is_human_friendly) {
+                                if (itemTraitsT::is_alignment) {
+                                    out << std::setw(itemTraitsT::header_size);
+                                    if (itemTraitsT::is_preceding_delimiter) {
+                                        out << std::string(header()) + itemTraitsT::delimiter();
+                                    }
+                                    else {
+                                        out << header() << itemTraitsT::delimiter();
+                                    }
+                                }
+                                else {
+                                    out << header() << itemTraitsT::delimiter();
+                                }
+                                out << value(info);
+                                if (itemTraitsT::is_unit) out << unit();
+                                return out << endl;
+                            }
+                            else {
                                 return out << value(info) << endl;
+                            }
                         }
 
                     // implementation of virtual function
