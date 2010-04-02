@@ -82,12 +82,10 @@ namespace avsinfo {
                     virtual const std::string value(const info_t&) const = 0;
 
                 public:
-                    // constructor
-                    basic_item(void) {}
                     // destructor
                     virtual ~basic_item(void) {}
                     // assignment operator
-                    basic_item<T>& operator=(const basic_item<T>& rhs) {
+                    inline basic_item<T>& operator=(const basic_item<T>& rhs) {
                         is_human_friendly = rhs.is_human_friendly;
                         return *this;
                     }
