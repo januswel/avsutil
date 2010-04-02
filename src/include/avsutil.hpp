@@ -88,6 +88,7 @@ namespace avsutil {
                 case YUY2:      return "YUY2";
                 case YV12:      return "YV12";
                 case I420:      return "I420";
+                default:        return NULL;
             };
         }
 
