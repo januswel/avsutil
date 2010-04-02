@@ -25,7 +25,7 @@ class _name : public Item {                                 \
         const char* header(void) const;                     \
         const char* unit(void) const;                       \
         const std::string value(const info_t& vi) const;    \
-};
+}
 
 namespace avsinfo {
     namespace items {
@@ -112,17 +112,17 @@ namespace avsinfo {
             typedef basic_item<avsutil::VideoInfo> Item;
 
             // the declarations of classes for items to show
-            ITEM_CLASS_DECL(Width)
-            ITEM_CLASS_DECL(Height)
-            ITEM_CLASS_DECL(Ratio)
-            ITEM_CLASS_DECL(Fps)
-            ITEM_CLASS_DECL(FpsFraction)
-            ITEM_CLASS_DECL(VideoTime)
-            ITEM_CLASS_DECL(Frames)
-            ITEM_CLASS_DECL(ColorSpace)
-            ITEM_CLASS_DECL(Bpp)
-            ITEM_CLASS_DECL(InterlaceType)
-            ITEM_CLASS_DECL(FieldOrder)
+            ITEM_CLASS_DECL(Width);
+            ITEM_CLASS_DECL(Height);
+            ITEM_CLASS_DECL(Ratio);
+            ITEM_CLASS_DECL(Fps);
+            ITEM_CLASS_DECL(FpsFraction);
+            ITEM_CLASS_DECL(VideoTime);
+            ITEM_CLASS_DECL(Frames);
+            ITEM_CLASS_DECL(ColorSpace);
+            ITEM_CLASS_DECL(Bpp);
+            ITEM_CLASS_DECL(InterlaceType);
+            ITEM_CLASS_DECL(FieldOrder);
 
             // for convenience
             enum item_t {
@@ -170,13 +170,13 @@ namespace avsinfo {
             typedef basic_item<avsutil::AudioInfo> Item;
 
             // the declarations of classes for items to show
-            ITEM_CLASS_DECL(Channels)
-            ITEM_CLASS_DECL(BitDepth)
-            ITEM_CLASS_DECL(SampleType)
-            ITEM_CLASS_DECL(AudioTime)
-            ITEM_CLASS_DECL(SamplingRate)
-            ITEM_CLASS_DECL(Samples)
-            ITEM_CLASS_DECL(BlockSize)
+            ITEM_CLASS_DECL(Channels);
+            ITEM_CLASS_DECL(BitDepth);
+            ITEM_CLASS_DECL(SampleType);
+            ITEM_CLASS_DECL(AudioTime);
+            ITEM_CLASS_DECL(SamplingRate);
+            ITEM_CLASS_DECL(Samples);
+            ITEM_CLASS_DECL(BlockSize);
 
             // for convenience
             enum item_t {
