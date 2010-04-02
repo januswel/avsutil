@@ -55,8 +55,13 @@ namespace avsinfo {
                 }
         };
 
+        struct item_traits {
+            static const unsigned int header_size = 20;
+            static inline const char* delimiter(void) { return ": "; }
+        };
+
         // the base class to represent an item to show
-        template<typename T>
+        template<typename T, typename traitsT = item_traits>
             class basic_item : public pattern::observer::basic_observer<bool> {
                 public:
                     typedef T   info_t;
@@ -64,8 +69,6 @@ namespace avsinfo {
                 protected:
                     // member variables
                     bool is_human_friendly;
-                    const std::string delimiter;
-                    static const unsigned int header_size;
                     // wrapper for utility object
                     inline util::string::tconv& tconv(void) const {
                         static util::string::tconv tconv(std::locale::classic());
@@ -80,7 +83,7 @@ namespace avsinfo {
 
                 public:
                     // constructor
-                    basic_item(void) : delimiter(": ") {}
+                    basic_item(void) {}
                     // destructor
                     virtual ~basic_item(void) {}
                     // assignment operator
@@ -94,7 +97,7 @@ namespace avsinfo {
                         inline std::ostream& output(std::basic_ostream<charT>& out, const info_t& info) const {
                             if (is_human_friendly)
                                 return out
-                                    << std::setw(header_size) << header() << delimiter
+                                    << std::setw(traitsT::header_size) << header() << traitsT::delimiter()
                                     << value(info) << unit() << endl;
                             else
                                 return out << value(info) << endl;

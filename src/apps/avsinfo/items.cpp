@@ -10,10 +10,6 @@
 
 namespace avsinfo {
     namespace items {
-        // header sizes for fairing
-        const unsigned int basic_item<avsutil::VideoInfo>::header_size = 20;
-        const unsigned int basic_item<avsutil::AudioInfo>::header_size = 20;
-
         namespace video {
             // Width
             const char* Width::header(void) const { return "width"; }
