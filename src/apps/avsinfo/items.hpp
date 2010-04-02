@@ -83,17 +83,22 @@ namespace avsinfo {
                     basic_item(void) : delimiter(": ") {}
                     // destructor
                     virtual ~basic_item(void) {}
+                    // assignment operator
+                    basic_item<T>& operator=(const basic_item<T>& rhs) {
+                        is_human_friendly = rhs.is_human_friendly;
+                        return *this;
+                    }
 
                     // output informations to ostream object
                     template<typename charT>
-                    inline std::ostream& output(std::basic_ostream<charT>& out, const info_t& info) const {
-                        if (is_human_friendly)
-                            return out
-                                << std::setw(header_size) << header() << delimiter
-                                << value(info) << unit() << endl;
-                        else
-                            return out << value(info) << endl;
-                    }
+                        inline std::ostream& output(std::basic_ostream<charT>& out, const info_t& info) const {
+                            if (is_human_friendly)
+                                return out
+                                    << std::setw(header_size) << header() << delimiter
+                                    << value(info) << unit() << endl;
+                            else
+                                return out << value(info) << endl;
+                        }
 
                     // implementation of virtual function
                     void update(const state_t& s) { is_human_friendly = s; }
