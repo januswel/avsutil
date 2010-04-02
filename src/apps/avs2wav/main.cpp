@@ -51,7 +51,7 @@ void progress_cl(const unsigned __int64, const unsigned __int64);
 // output audio informations
 ostream& operator <<(ostream&, const AudioInfo&);
 
-int main(const unsigned int argc, const char* argv[]) {
+int main(const int argc, const char* argv[]) {
     // set global locale to use non-ascii characters for filenames
     locale::global(locale(""));
 
@@ -67,7 +67,7 @@ int main(const unsigned int argc, const char* argv[]) {
     string outputfile;
     unsigned int buf_samples = buf_samples_def;
     unsigned int buf_size = buf_size_def;
-    for (unsigned int i = 1; i < argc; ++i) {
+    for (int i = 1; i < argc; ++i) {
         const string arg(argv[i]);
         if (arg == "-h" || arg == "--help") {
             usage(cout);
