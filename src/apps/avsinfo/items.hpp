@@ -137,7 +137,7 @@ namespace avsinfo {
                 typedef Item                base_t;
                 typedef item_t              itemkind_t;
                 typedef avsutil::VideoInfo  info_t;
-                static inline unsigned int numof(void) { return NUMOF_ITEMS; }
+                static const unsigned int numof_items = NUMOF_ITEMS;
                 static Item* create_item(item_t item) {
                     switch (item) {
                         case WIDTH:             return new Width;
@@ -187,7 +187,7 @@ namespace avsinfo {
                 typedef Item                base_t;
                 typedef item_t              itemkind_t;
                 typedef avsutil::AudioInfo  info_t;
-                static inline unsigned int numof(void) { return NUMOF_ITEMS; }
+                static const unsigned int numof_items = NUMOF_ITEMS;
                 static Item* create_item(item_t item) {
                     switch (item) {
                         case CHANNELS:      return new Channels;
@@ -206,7 +206,7 @@ namespace avsinfo {
         // the base class to represent items that should be outputed
         // This class also contains the order to show.
         // TODO: use reference-count pointer for base_t*
-        template<typename traitsT, int numof>
+        template<typename traitsT>
             class basic_items {
                 private:
                     typedef typename traitsT::base_t        base_t;
@@ -220,13 +220,13 @@ namespace avsinfo {
                     // items to show, and showing order
                     items_t items;
                     // flags to check dupricative assignment
-                    std::bitset<numof> specified_flag;
+                    std::bitset<traitsT::numof_items> specified_flag;
                     // human-friendly or machine-friendly
                     Notation mv_notation;
 
                 public:
                     // add an item to show at the end of the order if still not specified.
-                    basic_items<traitsT, numof>& add_item(itemkind_t itemkind) {
+                    basic_items<traitsT>& add_item(itemkind_t itemkind) {
                         if (!specified_flag[itemkind]) {
                             base_t* new_item = traitsT::create_item(itemkind);
                             items.push_back(new_item);
@@ -237,7 +237,7 @@ namespace avsinfo {
                     }
 
                     // setter for status
-                    inline basic_items<traitsT, numof>&  notation(bool is_human_friendly) {
+                    inline basic_items<traitsT>& notation(bool is_human_friendly) {
                         is_human_friendly
                             ? mv_notation.human_friendly()
                             : mv_notation.machine_friendly();
@@ -246,15 +246,15 @@ namespace avsinfo {
 
                     // output contents
                     template<typename charT>
-                    void output(std::basic_ostream<charT>& out, const info_t& info) {
-                        for (items_it it = items.begin(); it != items.end(); ++it) {
-                            (*it)->output(out, info);
+                        void output(std::basic_ostream<charT>& out, const info_t& info) {
+                            for (items_it it = items.begin(); it != items.end(); ++it) {
+                                (*it)->output(out, info);
+                            }
                         }
-                    }
             };
 
-        typedef basic_items<video::traits, video::NUMOF_ITEMS> VideoItems;
-        typedef basic_items<audio::traits, audio::NUMOF_ITEMS> AudioItems;
+        typedef basic_items<video::traits> VideoItems;
+        typedef basic_items<audio::traits> AudioItems;
 
         namespace video {
             // for convenience
