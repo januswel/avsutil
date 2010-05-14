@@ -9,6 +9,9 @@
 contrib/vs9/*/Debug/*
 contrib/vs9/*/Release/*
 contrib/vs9/*/Independence/*
+contrib/vs10/*/Debug/*
+contrib/vs10/*/Release/*
+contrib/vs10/*/Independence/*
 
 # for vim
 *.swp
