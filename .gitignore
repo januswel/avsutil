@@ -2,13 +2,18 @@
 *.[oa]
 *.~
 
-# for Microsoft Visual Studio
+# for Microsoft Visual Studio 2008
 *.ncb
 *.vcproj.*.user
 *.suo
 contrib/vs9/*/Debug/*
 contrib/vs9/*/Release/*
 contrib/vs9/*/Independence/*
+
+# for Microsoft Visual Studio 2010
+*.vcxproj.user
+*.opensdf
+*.sdf
 contrib/vs10/*/Debug/*
 contrib/vs10/*/Release/*
 contrib/vs10/*/Independence/*
