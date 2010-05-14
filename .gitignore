@@ -6,16 +6,22 @@
 *.ncb
 *.vcproj.*.user
 *.suo
+contrib/vs9/*/Debug
 contrib/vs9/*/Debug/*
+contrib/vs9/*/Release
 contrib/vs9/*/Release/*
+contrib/vs9/*/Independence
 contrib/vs9/*/Independence/*
 
 # for Microsoft Visual Studio 2010
 *.vcxproj.user
 *.opensdf
 *.sdf
+contrib/vs10/*/Debug
 contrib/vs10/*/Debug/*
+contrib/vs10/*/Release
 contrib/vs10/*/Release/*
+contrib/vs10/*/Independence
 contrib/vs10/*/Independence/*
 
 # for vim
