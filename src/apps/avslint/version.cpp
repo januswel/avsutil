@@ -1,17 +1,20 @@
 /*
  * version.cpp
  *  Version definitions for avslint.
+ *
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
 #include "avslint.hpp"
-#include <iostream>
 
-const std::string version("1.0");
+#include <ostream>
 
-void version_license(std::ostream& out) {
-    out << "avslint version " << version << '\n'
+const char* Main::version(void) { return "1.10"; }
+
+void Main::version_license(std::ostream& out) {
+    out
+        << "avslint version " << version() << '\n'
         << "Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>\n"
         << '\n'
         << "This program is free software: you can redistribute it and/or modify\n"
