@@ -1,9 +1,9 @@
 /*
  * elapsed.hpp
- * a timer that has second precision
+ *  a class to measure time that has second precision
  *
- * written by janus_wel<janus.wel.3@gmail.com>
- * This source code is in the public domain, and has NO WARRANTY.
+ *  written by janus_wel<janus.wel.3@gmail.com>
+ *  This source code is in the public domain, and has NO WARRANTY.
  * */
 
 #ifndef ELAPSED_HPP
@@ -18,8 +18,8 @@ namespace util {
                 std::time_t base;
 
             public:
-                inline elapsed(void) { reset(); }
-                inline void reset(void) { std::time(&base); }
+                elapsed(void) { reset(); }
+                void reset(void) { std::time(&base); }
 
                 /*
                  *  A return type of this function is __int64
@@ -31,7 +31,7 @@ namespace util {
                  *  So the smallest type that represents all values of 52 bits
                  *  is __int64.
                  *  */
-                inline unsigned __int64 operator()(void) const {
+                unsigned __int64 operator()(void) const {
                     std::time_t current;
                     std::time(&current);
                     return static_cast<unsigned __int32>(std::difftime(current, base));

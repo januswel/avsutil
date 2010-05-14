@@ -10,7 +10,7 @@
 
 #include "../../include/avsutil.hpp"
 #include "../../helper/observer.hpp"
-#include "../../helper/tconv.hpp"
+#include "../../helper/typeconv.hpp"
 
 #include <bitset>
 #include <locale>
@@ -37,21 +37,21 @@ namespace avsinfo {
 
             protected:
                 // implementation of virtual function
-                const state_t& state(void) const { return is_human_friendly; }
+                const state_type& subject_state(void) const { return is_human_friendly; }
 
             public:
                 // constructor
                 explicit Notation(bool is_human_friendly = true)
-                    : is_human_friendly(is_human_friendly) { notify(); }
+                    : is_human_friendly(is_human_friendly) { notify_state(); }
 
                 // setter
                 inline void human_friendly(void) {
                     is_human_friendly = true;
-                    notify();
+                    notify_state();
                 }
                 inline void machine_friendly(void) {
                     is_human_friendly = false;
-                    notify();
+                    notify_state();
                 }
         };
 
@@ -74,8 +74,8 @@ namespace avsinfo {
                     // member variables
                     bool is_human_friendly;
                     // wrapper for utility object
-                    inline util::string::tconv& tconv(void) const {
-                        static util::string::tconv tconv(std::locale::classic());
+                    inline util::string::typeconverter& tconv(void) const {
+                        static util::string::typeconverter tconv(std::locale::classic());
                         return tconv;
                     }
 
@@ -120,7 +120,7 @@ namespace avsinfo {
                         }
 
                     // implementation of virtual function
-                    void update(const state_t& s) { is_human_friendly = s; }
+                    void update_state(const state_type& s) { is_human_friendly = s; }
             };
 
         // items to show, for video stream
@@ -262,7 +262,7 @@ namespace avsinfo {
                         if (!specified_flag[itemkind]) {
                             base_t* new_item = traitsT::create_item(itemkind);
                             items.push_back(new_item);
-                            mv_notation.attach(new_item);
+                            mv_notation.attach_observer(new_item);
                             specified_flag.set(itemkind);
                         }
                         return *this;

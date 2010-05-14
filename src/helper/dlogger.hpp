@@ -1,23 +1,21 @@
 /*
  * dlogger.hpp
- * The macros and classes to log for debugging
+ *  the macros and classes to log for debugging
  *
- * written by janus_wel<janus.wel.3@gmail.com>
- * This source code is in public domain, and has NO WARRANTY.
+ *  In order to disable, define the symbol NDEBUG:
+ *
+ *      > g++ -Wall --pedantic -DNDEBUG main.cpp
+ *      > cl /EHsc /W4 /DNDEBUG main.cpp
+ *
+ *  written by janus_wel<janus.wel.3@gmail.com>
+ *  This source code is in public domain, and has NO WARRANTY.
  * */
 
 #ifndef DLOGGER_HPP
 #define DLOGGER_HPP
 
-// for visual studio environment
-#ifdef _DEBUG
-#   ifdef _MSC_VER
-#       define DEBUG
-#   endif
-#endif
-
 // typical tricks
-#ifdef DEBUG
+#ifndef NDEBUG
 #   define DBGLOG(str)  (util::log::dflogger::logger()              \
                             << __FILE__ << "(" << __LINE__ << "): " \
                             << str << std::endl)
@@ -30,7 +28,7 @@
 #endif
 
 // class definition
-#ifdef DEBUG
+#ifndef NDEBUG
 
 #include <fstream>
 
@@ -38,17 +36,18 @@ namespace util {
     namespace log {
         // In order to be used without building object,
         // this class has only typedefs and static functions.
-        template<typename charT>
+        template<typename Char>
             struct basic_dflogger {
                 // typedefs
-                typedef charT   char_t;
-                typedef std::basic_ofstream<char_t>  ofstream_t;
+                typedef Char                            char_type;
+                typedef std::basic_ofstream<char_type>  ofstream_type;
 
                 // static functions
                 // fixed filename
-                inline static const char* filename(void) { return "debug.log"; }
-                inline static ofstream_t& logger(void) {
-                    static ofstream_t logger(filename(), std::ios::out | std::ios::trunc);
+                static const char* filename(void) { return "debug.log"; }
+                static ofstream_type& logger(void) {
+                    static ofstream_type logger(filename(),
+                            std::ios::out | std::ios::trunc);
                     return logger;
                 }
             };
@@ -59,7 +58,7 @@ namespace util {
     }
 }
 
-#endif // DEBUG
+#endif // NDEBUG
 
 #endif // DLOGGER_HPP
 

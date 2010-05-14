@@ -7,7 +7,7 @@
 
 #include "../../include/avsutil.hpp"
 #include "avs2wav.hpp"
-#include "../../helper/tconv.hpp"
+#include "../../helper/typeconv.hpp"
 #include "../../helper/elapsed.hpp"
 
 #include <string>
@@ -39,7 +39,7 @@ using namespace avsutil;
 ostream progresss(cout.rdbuf());
 
 // type converter routing through std::string;
-util::string::tconv conv(locale::classic());
+util::string::typeconverter conv(locale::classic());
 
 // forward declarations
 // return true if redirected to file or connected to pipe
