@@ -28,7 +28,7 @@ int Main::start(void) {
                     unknown_opt_parameters.end(), ", ") << "\n"
             << endl;
         usage(cerr);
-        return BAD_ARG;
+        return BAD_ARGUMENT;
     }
 
     // Option handling
@@ -45,12 +45,12 @@ int Main::start(void) {
     if (nonopt_parameters.size() > 1) {
         cerr << "Too many parameters" << endl;
         usage(cerr);
-        return BAD_ARG;
+        return BAD_ARGUMENT;
     }
     if (nonopt_parameters.empty()) {
         cerr << "Specify <inputfile>." << endl;
         usage(cerr);
-        return BAD_ARG;
+        return BAD_ARGUMENT;
     }
     const string_type& inputfile = nonopt_parameters[0];
 
@@ -73,6 +73,7 @@ int main(const int argc, const char* const argv[]) {
     }
     catch (const exception& ex) {
         cerr << "error: " << ex.what() << endl;
+        return Main::UNKNOWN;
     }
 }
 

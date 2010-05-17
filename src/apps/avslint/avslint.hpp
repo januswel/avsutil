@@ -14,9 +14,14 @@
 #include "../../helper/typeconv.hpp"
 
 class Main : public util::main::main {
-    private:
+    public:
         // return enumeration
-        enum {OK = 0, BAD_ARG, BAD_AVS, UNKNOWN};
+        enum return_type {
+            OK = 0,
+            BAD_ARGUMENT,
+            BAD_AVS,
+            UNKNOWN
+        };
 
     private:
         // utility
