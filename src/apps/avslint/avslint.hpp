@@ -69,6 +69,12 @@ public pattern::event::event_listener<priority_type> {
         // a kind of priority action
         // default: UNSPECIFIED
         priority_type priority;
+        string_type current_has_behind_parameters;
+
+    protected:
+        void handle_behind_parameters(const parameters_type& params) {
+            current_has_behind_parameters = *(params.current());
+        }
 
     public:
         // event handler

@@ -19,6 +19,16 @@ using namespace std;
 using namespace avsutil;
 
 int Main::start(void) {
+    // Handling multi-nonopt-parameters
+    if (!current_has_behind_parameters.empty()) {
+        cerr
+            << "Don't specify parameters behind <inputfile>: "
+                << current_has_behind_parameters << "\n"
+            << endl;
+        usage(cerr);
+        return BAD_ARGUMENT;
+    }
+
     // Treating unknown options
     if (!unknown_opt_parameters.empty()) {
         cerr
@@ -42,17 +52,12 @@ int Main::start(void) {
     }
 
     // Error handling for specifying an input file
-    if (nonopt_parameters.size() > 1) {
-        cerr << "Too many parameters" << endl;
-        usage(cerr);
-        return BAD_ARGUMENT;
-    }
-    if (nonopt_parameters.empty()) {
+    if (nonopt_parameter.empty()) {
         cerr << "Specify <inputfile>." << endl;
         usage(cerr);
         return BAD_ARGUMENT;
     }
-    const string_type& inputfile = nonopt_parameters[0];
+    const string_type& inputfile = nonopt_parameter;
 
     // Do it
     auto_ptr<Avs> avs(CreateAvsObj(inputfile.c_str()));
