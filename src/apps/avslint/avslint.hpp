@@ -10,10 +10,19 @@
 #ifndef AVSLINT_HPP
 #define AVSLINT_HPP
 
+#include "../../helper/event.hpp"
 #include "../../helper/main.hpp"
 #include "../../helper/typeconv.hpp"
 
-class Main : public util::main::main {
+enum priority_type {
+    VERSION,
+    HELP,
+    UNSPECIFIED
+};
+
+class Main :
+public util::main::main,
+public pattern::event::event_listener<priority_type> {
     public:
         // return enumeration
         enum return_type {
@@ -32,49 +41,49 @@ class Main : public util::main::main {
 
     private:
         // options
-        class opt_version_type : public option_type {
-            private:
-                bool state;
-
-            public:
-                opt_version_type(void) : state(false) {}
-
-            public:
-                bool operator()(void) { return state; }
-
+        class opt_version_type :
+        public option_type,
+        public pattern::event::event_source<priority_type> {
             protected:
                 const char_type* shortname(void) const { return "v"; }
                 const char_type* longname(void) const { return "version"; }
                 unsigned int handle_params(const parameters_type&) {
-                    state = true;
+                    dispatch_event(VERSION);
                     return 1;
                 }
         } opt_version;
 
-        class opt_help_type : public option_type {
-            private:
-                bool state;
-
-            public:
-                opt_help_type(void) : state(false) {}
-
-            public:
-                bool operator()(void) { return state; }
-
+        class opt_help_type :
+        public option_type,
+        public pattern::event::event_source<priority_type> {
             protected:
                 const char_type* shortname(void) const { return "h"; }
                 const char_type* longname(void) const { return "help"; }
                 unsigned int handle_params(const parameters_type&) {
-                    state = true;
+                    dispatch_event(HELP);
                     return 1;
                 }
         } opt_help;
 
+    private:
+        // a kind of priority action
+        // default: UNSPECIFIED
+        priority_type priority;
+
+    public:
+        // event handler
+        void handle_event(const priority_type& p) {
+            if (priority == UNSPECIFIED) priority = p;
+        }
+
     public:
         // constructor
-        Main(void) {
+        Main(void) : priority(UNSPECIFIED) {
             register_option(opt_version);
             register_option(opt_help);
+
+            opt_version.add_event_listener(this);
+            opt_help.add_event_listener(this);
         }
 
     public:

@@ -32,12 +32,12 @@ int Main::start(void) {
     }
 
     // Option handling
-    if (opt_help()) {
-        usage(cout);
-        return OK;
-    }
-    if (opt_version()) {
-        version_license(cout);
+    if (priority != UNSPECIFIED) {
+        switch (priority) {
+            case VERSION:   version_license(cout);  break;
+            case HELP:      usage(cout);            break;
+            default:        throw std::logic_error("unknown error");
+        }
         return OK;
     }
 
