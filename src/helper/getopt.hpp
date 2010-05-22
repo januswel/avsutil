@@ -13,6 +13,7 @@
 #include "cor.hpp"
 
 #include <cassert>
+#include <algorithm>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -106,11 +107,11 @@ namespace util {
          *          - handle_params(const parameters_type&)
          *              - handles the current parameter (or more parameters).
          *              - This member function must return a number of
-         *                processed parameters. e.g.: the option class that
+         *                processed parameters. E.g.: the option class that
          *                handles "-v" means "show version information" will
          *                eat up "-v" itself and return 1, the option class
          *                that handles "-s <size>" means "set size to <size>"
-         *                will eat up "-v" and "<size>", and return 2.
+         *                will eat up "-s" and "<size>", and return 2.
          * */
         template<typename Char, typename Traits = option_traits<Char> >
         class basic_option
@@ -193,12 +194,18 @@ namespace util {
          *      1. Define a class or struct that is derived from this class.
          *      2. Override the following member functions
          *
-         *          - handle_nonopt(const parameters_type&, bool)
-         *              - handles non-option parameters.
-         *              - The second parameter whose type is bool represents
-         *                whether the "current" parameter is unknown option or
-         *                not. If it has the option prefix this value is true,
-         *                otherwise false.
+         *          - handle_unknown_opt(const parameters_type&)
+         *              - handles unknown options.
+         *          - handle_behind_parameters(const parameters_type&)
+         *              - handles the non-option parameter that has other
+         *                parameters behind of itself. E.g.: "nonopt" of
+         *                following examples.
+         *
+         *                  > prog --opt nonopt extra
+         *                  > prog nonopt --unknownopt
+         *
+         *          - handle_nonopt(const parameters_type&)
+         *              - handles non-option parameters that be last.
          *
          *      3. Define some classes that is derived from the class
          *         basic_option.
@@ -206,7 +213,7 @@ namespace util {
          *         and 3, and register the subclasses's objects of the class
          *         basic_option on the subclass's object of this class by using
          *         the member function register_option().
-         *      5. Call the member function analyze() with an object of
+         *      5. Call the member function analyze_option() with an object of
          *         std::vector<string_type> that has parameters.
          * */
         template<typename Char>
@@ -225,6 +232,10 @@ namespace util {
 
             protected:
                 // member functions to be overridden
+                virtual unsigned int
+                    handle_unknown_opt(const parameters_type&) = 0;
+                virtual unsigned int
+                    handle_behind_parameters(const parameters_type&) = 0;
                 virtual unsigned int handle_nonopt(const parameters_type&) = 0;
 
             public:
@@ -235,7 +246,15 @@ namespace util {
                 // implementations for the virtual member functions of the
                 // super class
                 unsigned int at_end_of_chain(const parameters_type& params) {
-                    return handle_nonopt(params);
+                    if (option_type::has_opt_prefix(*(params.current()))) {
+                        return handle_unknown_opt(params);
+                    }
+                    else if (params.current() + 1  != params.end()) {
+                        return handle_behind_parameters(params);
+                    }
+                    else {
+                        return handle_nonopt(params);
+                    }
                 }
 
             public:
@@ -251,7 +270,7 @@ namespace util {
                 }
 
                 // main function
-                unsigned int analyze(string_array_type& data) {
+                unsigned int analyze_option(string_array_type& data) {
                     parameters_type params(data);
                     unsigned int processed = 0;
                     while (params.current() != params.end()) {
@@ -263,11 +282,11 @@ namespace util {
                     return processed;
                 }
 
-                unsigned int analyze(const int argc, const char_type* const argv[]) {
-                    string_array_type data;
-                    data.reserve(argc);
-                    for (int i = 1; i < argc; ++i) data.push_back(argv[i]);
-                    return analyze(data);
+                unsigned int analyze_option(const int argc, const char_type* const argv[]) {
+                    string_array_type data(argc - 1);
+                    data.reserve(argc - 1);
+                    std::copy(argv + 1, argv + argc, data.begin());
+                    return analyze_option(data);
                 }
         };
 

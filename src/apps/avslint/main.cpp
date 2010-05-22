@@ -19,27 +19,7 @@ using namespace std;
 using namespace avsutil;
 
 int Main::start(void) {
-    // Handling multi-nonopt-parameters
-    if (!current_has_behind_parameters.empty()) {
-        cerr
-            << "Don't specify parameters behind <inputfile>: "
-                << current_has_behind_parameters << "\n"
-            << endl;
-        usage(cerr);
-        return BAD_ARGUMENT;
-    }
-
-    // Treating unknown options
-    if (!unknown_opt_parameters.empty()) {
-        cerr
-            << "Unknown options: "
-            << tconv().join(
-                    unknown_opt_parameters.begin(),
-                    unknown_opt_parameters.end(), ", ") << "\n"
-            << endl;
-        usage(cerr);
-        return BAD_ARGUMENT;
-    }
+    preparation();
 
     // Option handling
     if (priority != UNSPECIFIED) {
@@ -52,12 +32,11 @@ int Main::start(void) {
     }
 
     // Error handling for specifying an input file
-    if (nonopt_parameter.empty()) {
+    if (inputfile.empty()) {
         cerr << "Specify <inputfile>." << endl;
         usage(cerr);
         return BAD_ARGUMENT;
     }
-    const string_type& inputfile = nonopt_parameter;
 
     // Do it
     auto_ptr<Avs> avs(CreateAvsObj(inputfile.c_str()));
@@ -73,12 +52,17 @@ int main(const int argc, const char* const argv[]) {
     try {
         locale::global(locale(""));
         Main main;
-        main.do_parameters(argc, argv);
+        main.analyze_option(argc, argv);
         return main.start();
+    }
+    catch (const avslint_error& ex) {
+        cerr << ex.what() << endl;
+        if (ex.return_value() == BAD_ARGUMENT) Main::usage(cerr);
+        return ex.return_value();
     }
     catch (const exception& ex) {
         cerr << "error: " << ex.what() << endl;
-        return Main::UNKNOWN;
+        return UNKNOWN;
     }
 }
 
