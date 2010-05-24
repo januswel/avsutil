@@ -109,9 +109,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\apps\avslint\avslint.hpp" />
+    <ClInclude Include="..\..\..\src\apps\avslint\main.hpp" />
+    <ClInclude Include="..\..\..\src\apps\avslint\option.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\apps\avslint\about.cpp" />
     <ClCompile Include="..\..\..\src\apps\avslint\main.cpp" />
+    <ClCompile Include="..\..\..\src\apps\avslint\name.cpp" />
     <ClCompile Include="..\..\..\src\apps\avslint\usage.cpp" />
     <ClCompile Include="..\..\..\src\apps\avslint\version.cpp" />
   </ItemGroup>

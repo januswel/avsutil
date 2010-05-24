@@ -1,0 +1,105 @@
+/*
+ * main.hpp
+ *  Declarations and definitions for basic flow of the program avslint
+ *
+ *  written by janus_wel<janus.wel.3@gmail.com>
+ *  This source code is in public domain, and has NO WARRANTY.
+ * */
+
+#ifndef MAIN_HPP
+#define MAIN_HPP
+
+#include "avslint.hpp"
+#include "option.hpp"
+
+#include <iostream>
+#include <list>
+
+#include "../../helper/getopt.hpp"
+#include "../../helper/event.hpp"
+#include "../../helper/typeconv.hpp"
+
+// global objects
+util::string::typeconverter tconv;
+
+class Main :
+public util::getopt::getopt,
+public pattern::event::event_listener<priority_type> {
+    private:
+        // objects to handle options
+        opt_version_type    opt_version;
+        opt_help_type       opt_help;
+
+        // a kind of priority action
+        // default: UNSPECIFIED
+        priority_type priority;
+
+        // member variables
+        string_type inputfile;
+        std::list<string_type> unknown_opt;
+
+    protected:
+        // implementations for virtual member functions of the super class
+        // util::getopt::getopt
+        unsigned int handle_unknown_opt(const parameters_type& params) {
+            // cash unknown options
+            unknown_opt.push_back(*(params.current()));
+            return 1;
+        }
+        unsigned int handle_behind_parameters(const parameters_type& params) {
+            // only one input is allowed
+            throw avslint_error(BAD_ARGUMENT,
+                      "Don't specify anything behind the nonopt parameter: "
+                    + *(params.current()) + "\n");
+        }
+        unsigned int handle_nonopt(const parameters_type& params) {
+            inputfile = *(params.current());
+            return 1;
+        }
+
+    public:
+        // event handler
+        void handle_event(const priority_type& p) {
+            if (priority == UNSPECIFIED) priority = p;
+        }
+
+    public:
+        // constructor
+        Main(void) : priority(UNSPECIFIED) {
+            // register options
+            register_option(opt_version);
+            register_option(opt_help);
+
+            // register event listeners
+            opt_version.add_event_listener(this);
+            opt_help.add_event_listener(this);
+        }
+
+        // option analysis and error handling
+        void preparation(void) {
+            if (!unknown_opt.empty()) {
+                throw avslint_error(BAD_ARGUMENT,
+                        "Unknown options: "
+                        + tconv.join(
+                            unknown_opt.begin(),
+                            unknown_opt.end(), ", ") + "\n");
+            }
+        }
+
+        // do it
+        int start(void) {
+            switch (priority) {
+                case VERSION:       about(std::cout);
+                                    return OK;
+                case HELP:          usage(std::cout);
+                                    return OK;
+                case UNSPECIFIED:   return main();
+                default:            throw std::logic_error("unknown error");
+            }
+        }
+
+        int main(void);
+};
+
+#endif // MAIN_HPP
+

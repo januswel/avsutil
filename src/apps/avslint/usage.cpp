@@ -10,7 +10,7 @@
 
 #include <ostream>
 
-void Main::usage(std::ostream& out) {
+void usage(std::ostream& out) {
     out
         << "Usage: avslint <inputfile>\n"
         << "       avslint options\n"

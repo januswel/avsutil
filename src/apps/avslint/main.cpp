@@ -9,6 +9,7 @@
 #include "../../include/avsutil.hpp"
 
 #include "avslint.hpp"
+#include "main.hpp"
 
 #include <iostream>
 #include <locale>
@@ -18,24 +19,10 @@
 using namespace std;
 using namespace avsutil;
 
-int Main::start(void) {
-    preparation();
-
-    // Option handling
-    if (priority != UNSPECIFIED) {
-        switch (priority) {
-            case VERSION:   version_license(cout);  break;
-            case HELP:      usage(cout);            break;
-            default:        throw std::logic_error("unknown error");
-        }
-        return OK;
-    }
-
+int Main::main(void) {
     // Error handling for specifying an input file
     if (inputfile.empty()) {
-        cerr << "Specify <inputfile>." << endl;
-        usage(cerr);
-        return BAD_ARGUMENT;
+        throw avslint_error(BAD_ARGUMENT, "Specify <inputfile>.\n");
     }
 
     // Do it
@@ -53,11 +40,12 @@ int main(const int argc, const char* const argv[]) {
         locale::global(locale(""));
         Main main;
         main.analyze_option(argc, argv);
+        main.preparation();
         return main.start();
     }
     catch (const avslint_error& ex) {
         cerr << ex.what() << endl;
-        if (ex.return_value() == BAD_ARGUMENT) Main::usage(cerr);
+        if (ex.return_value() == BAD_ARGUMENT) usage(cerr);
         return ex.return_value();
     }
     catch (const exception& ex) {
