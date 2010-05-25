@@ -70,8 +70,8 @@ class opt_buffers_type
 
             if (buf_size < buf_size_min) {
                 throw avs2wav_error(BAD_ARGUMENT,
-                        "Size of buffers for output is required at least: "
-                        + tconv.strfrom(buf_size_min) + "\n"
+                        "Size of buffers for output must be "
+                        + tconv.strfrom(buf_size_min) + " or bigger.\n"
                         + "Check the argument of \"" + *(params.current())
                         + "\" option.\n");
             }
@@ -104,8 +104,8 @@ class opt_samples_type
 
             if (buf_samples < buf_samples_min) {
                 throw avs2wav_error(BAD_ARGUMENT,
-                        "A number of samples processed at one time must be bigger than: "
-                        + tconv.strfrom(buf_samples_min) + "\n"
+                        "A number of samples processed at one time must be "
+                        + tconv.strfrom(buf_samples_min) + " or bigger.\n"
                         + "Check the argument of \"" + *(params.current())
                         + "\" option.\n");
             }
