@@ -12,10 +12,11 @@
 
 void usage(std::ostream& out) {
     out
-        << "Usage: avslint <inputfile>\n"
-        << "       avslint options\n"
+        << "Usage: " << name() << " <inputfile>\n"
+        << "       " << name() << " options\n"
+        << "\n"
         << "Options:\n"
-        << "    -h, --help      Shows this help\n"
+        << "    -h, --help      Shows this help messages.\n"
         << "    -v, --version   Shows version and license informations.\n"
         << std::endl;
 }
