@@ -1,12 +1,14 @@
 /*
  * usage.cpp
  *  Usage definitions for avs2wav.
+ *
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
 #include "avs2wav.hpp"
-#include <iostream>
+
+#include <ostream>
 
 void usage(std::ostream& out) {
     out << "Usage: avs2wav [options] <inputfile> [| othercommands]\n"

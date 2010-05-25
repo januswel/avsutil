@@ -1,126 +1,58 @@
 /*
  * avs2wav main.cpp
  *  extract audio data as RIFF WAV format, from avs file
+ *
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
-#include "../../include/avsutil.hpp"
 #include "avs2wav.hpp"
-#include "../../helper/typeconv.hpp"
-#include "../../helper/elapsed.hpp"
+#include "main.hpp"
 
-#include <string>
-#include <iostream>
+#include "../../include/avsutil.hpp"
+
+#include "../../helper/elapsed.hpp"
+#include "../../helper/io.hpp"
+
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <locale>
-#include <vector>
-#include <stdexcept>
 #include <memory>   // fot std::auto_ptr
-
-#ifdef _MSC_VER
-#   include <io.h>      // for _isatty(1), _setmode(2)
-#   include <fcntl.h>   // for _setmode(2)
-#   include <stdio.h>   // for _fileno(1)
-#else
-#   include <unistd.h>  // for fileno(1)
-#   include <stdio.h>   // for isatty(1)
-#endif
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 // using namespaces
 using namespace std;
 using namespace avsutil;
 
-// global object
+// global objects
+util::string::typeconverter tconv(locale::classic());
 // progresss is abbr of "progress stream"
 // this stream is used in progress_cl()
 // streambuf is stdout fow now
 ostream progresss(cout.rdbuf());
 
-// type converter routing through std::string;
-util::string::typeconverter conv(locale::classic());
-
 // forward declarations
-// return true if redirected to file or connected to pipe
-bool is_connected(void);
-// set stdout to binary mode
-void set_stdout_binary(void);
 // callback function for Audio::write()
 void progress_cl(const unsigned __int64, const unsigned __int64);
 // output audio informations
 ostream& operator <<(ostream&, const AudioInfo&);
 
-int main(const int argc, const char* argv[]) {
-    // set global locale to use non-ascii characters for filenames
-    locale::global(locale(""));
-
+int Main::main(void) {
     // constants
     const unsigned int header_width = 24;
-    const unsigned int buf_samples_def = 4096;
-    const unsigned int buf_size_def = 4096;
-    const unsigned int buf_samples_min = 1;
-    const unsigned int buf_size_min = 2;
-
-    // analyze options
-    string inputfile;
-    string outputfile;
-    unsigned int buf_samples = buf_samples_def;
-    unsigned int buf_size = buf_size_def;
-    for (int i = 1; i < argc; ++i) {
-        const string arg(argv[i]);
-        if (arg == "-h" || arg == "--help") {
-            usage(cout);
-            return OK;
-        }
-        else if (arg == "-v" || arg == "--version") {
-            version_license(cout);
-            return OK;
-        }
-        else if (arg == "-b" || arg == "--buffers") {
-            buf_size = conv.strto<unsigned int>(argv[++i]);
-            if (buf_size < buf_size_min) {
-                cerr << "Size of buffers for output is required at least: "
-                     << buf_size_min << endl
-                     << "Check the argument with \"-b\" option." << endl;
-                return BAD_ARG;
-            }
-        }
-        else if (arg == "-s" || arg == "--samples") {
-            buf_samples = conv.strto<unsigned int>(argv[++i]);
-            if (buf_samples < buf_samples_min) {
-                cerr << "A number of samples processed at one time is required at least: "
-                     << buf_samples_min << endl
-                     << "Check the argument with \"-s\" option." << endl;
-                return BAD_ARG;
-            }
-        }
-        else if (arg == "-o" || arg == "--output") {
-            outputfile = argv[++i];
-        }
-        else if (arg[0] == '-') {
-            cerr << "Unknown option: \"" << arg << '"' << endl;
-            usage(cerr);
-            return BAD_ARG;
-        }
-        else {
-            inputfile = arg;
-            break;
-        }
-    }
 
     if (inputfile.empty()) {
-        cerr << "Specify <inputfile>." << endl;
-        usage(cerr);
-        return BAD_ARG;
+        throw avs2wav_error(BAD_ARGUMENT, "Specify <inputfile>\n");
     }
 
     try {
         // read in avs file
         auto_ptr<Avs> avs(CreateAvsObj(inputfile.c_str()));
         if (!avs->is_fine()) {
-            cerr << avs->errmsg() << endl;
-            return BAD_AVS;
+            throw avs2wav_error(BAD_AVS, avs->errmsg());
         }
 
         // get audio stream
@@ -128,8 +60,8 @@ int main(const int argc, const char* argv[]) {
         AudioInfo ai = audio->info();
 
         if (!ai.exists) {
-            cerr << "no audio in the file: " << inputfile << endl;
-            return BAD_AVS;
+            throw avs2wav_error(BAD_AVS,
+                    "Specified file has no audio stream: " + inputfile);
         }
 
         // preparations
@@ -142,7 +74,7 @@ int main(const int argc, const char* argv[]) {
 
         // settings for infos, outputs and progresss
         // this is true if redirected to file or connected to pipe
-        if (!is_connected()) {
+        if (!util::io::is_redirected()) {
             // if output to file
 
             // set output filename if it isn't decided still
@@ -168,7 +100,7 @@ int main(const int argc, const char* argv[]) {
             progresss.rdbuf(cerr.rdbuf());
             infos.rdbuf(cerr.rdbuf());
             // set stdout to binary mode (Windows only)
-            set_stdout_binary();
+            util::io::set_stdout_binary();
         }
 
         infos
@@ -202,21 +134,6 @@ int main(const int argc, const char* argv[]) {
     return OK;
 }
 
-// definitions of functions
-bool inline is_connected(void) {
-#ifdef _MSC_VER
-    return !_isatty(_fileno(stdout));
-#else
-    return !isatty(fileno(stdout));
-#endif
-}
-
-void inline set_stdout_binary(void) {
-#ifdef _MSC_VER
-    _setmode(_fileno(stdout), _O_BINARY);
-#endif
-}
-
 void progress_cl(const unsigned __int64 processed, const unsigned __int64 max) {
     static util::time::elapsed elapsed_time;
     float percentage = (static_cast<float>(processed) / static_cast<float>(max)) * 100;
@@ -238,7 +155,7 @@ ostream& operator <<(ostream& out, const AudioInfo& ai) {
         case 2: channels = "stereo"; break;
         case 6: channels = "5.1ch";  break;
         default:
-            channels.assign(conv.strfrom(ai.channels)).append("ch");
+            channels.assign(tconv.strfrom(ai.channels)).append("ch");
             break;
     }
     float sampling_rate = static_cast<float>(ai.sampling_rate) / 1000;
@@ -255,3 +172,23 @@ ostream& operator <<(ostream& out, const AudioInfo& ai) {
 
     return out;
 }
+
+int main(const int argc, const char* argv[]) {
+    try {
+        std::locale::global(std::locale(""));
+        Main main;
+        main.analyze_option(argc, argv);
+        main.preparation();
+        return main.start();
+    }
+    catch (const avs2wav_error& ex) {
+        std::cerr << ex.what() << std::endl;
+        if (ex.return_value() == BAD_ARGUMENT) usage(std::cerr);
+        return ex.return_value();
+    }
+    catch (const std::exception& ex) {
+        std::cerr << "error: " << ex.what() << std::endl;
+        return UNKNOWN;
+    }
+}
+
