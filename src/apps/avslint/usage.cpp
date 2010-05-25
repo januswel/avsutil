@@ -16,7 +16,7 @@ void usage(std::ostream& out) {
         << "       " << name() << " options\n"
         << "\n"
         << "Options:\n"
-        << "    -h, --help      Shows this help messages.\n"
+        << "    -h, --help      Shows these help messages.\n"
         << "    -v, --version   Shows version and license informations.\n"
         << std::endl;
 }
