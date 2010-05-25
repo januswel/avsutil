@@ -19,6 +19,9 @@
 using namespace std;
 using namespace avsutil;
 
+// global objects
+util::string::typeconverter tconv;
+
 int Main::main(void) {
     // Error handling for specifying an input file
     if (inputfile.empty()) {
