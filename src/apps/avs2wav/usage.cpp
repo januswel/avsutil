@@ -11,9 +11,11 @@
 #include <ostream>
 
 void usage(std::ostream& out) {
-    out << "Usage: avs2wav [options] <inputfile> [| othercommands]\n"
+    out
+        << "Usage: " << name() << " [options] <inputfile> [| othercommands]\n"
+        << "\n"
         << "Options:\n"
-        << "    -h, --help      Shows this help\n"
+        << "    -h, --help      Shows these help messages.\n"
         << "    -v, --version   Shows version and license informations.\n"
         << "\n"
         << "    -s N            Sets a number of samples processed at one time to N.\n"
