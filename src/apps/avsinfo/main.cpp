@@ -21,6 +21,32 @@ using namespace avsutil;
 using namespace avsinfo::general;
 using namespace avsinfo::items;
 
+void add_all_video_items(VideoItems& items) {
+    using namespace avsinfo::items::video;
+    items.add_item(WIDTH)
+        .add_item(HEIGHT)
+        .add_item(RATIO)
+        .add_item(FPS)
+        .add_item(FPS_FRACTION)
+        .add_item(VIDEO_TIME)
+        .add_item(FRAMES)
+        .add_item(COLOR_SPACE)
+        .add_item(BPP)
+        .add_item(INTERLACE_TYPE)
+        .add_item(FIELD_ORDER);
+}
+
+void add_all_audio_items(AudioItems& items) {
+    using namespace avsinfo::items::audio;
+    items.add_item(CHANNELS)
+        .add_item(BIT_DEPTH)
+        .add_item(SAMPLE_TYPE)
+        .add_item(AUDIO_TIME)
+        .add_item(SAMPLING_RATE)
+        .add_item(SAMPLES)
+        .add_item(BLOCK_SIZE);
+}
+
 int main(const int argc, const char* const argv[]) {
     // set global locale to use non-ascii characters for filenames
     locale::global(locale(""));
@@ -45,18 +71,18 @@ int main(const int argc, const char* const argv[]) {
             continue;
         }
         else if (arg == "-a" || arg == "--all") {
-            video::add_all_items(video_items);
-            audio::add_all_items(audio_items);
+            add_all_video_items(video_items);
+            add_all_audio_items(audio_items);
             no_options_flag = false;
             continue;
         }
         else if (arg == "-i" || arg == "--video") {
-            video::add_all_items(video_items);
+            add_all_video_items(video_items);
             no_options_flag = false;
             continue;
         }
         else if (arg == "-u" || arg == "--audio") {
-            audio::add_all_items(audio_items);
+            add_all_audio_items(audio_items);
             no_options_flag = false;
             continue;
         }
@@ -67,8 +93,8 @@ int main(const int argc, const char* const argv[]) {
         }
         else {
             if (no_options_flag) {
-                video::add_all_items(video_items);
-                audio::add_all_items(audio_items);
+                add_all_video_items(video_items);
+                add_all_audio_items(audio_items);
             }
             inputfile = arg;
             break;

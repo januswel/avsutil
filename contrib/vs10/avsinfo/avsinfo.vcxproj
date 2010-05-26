@@ -111,7 +111,6 @@
     <ClInclude Include="..\..\..\src\apps\avsinfo\avsinfo.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\apps\avsinfo\items.cpp" />
     <ClCompile Include="..\..\..\src\apps\avsinfo\main.cpp" />
     <ClCompile Include="..\..\..\src\apps\avsinfo\usage.cpp" />
     <ClCompile Include="..\..\..\src\apps\avsinfo\version.cpp" />
