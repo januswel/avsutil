@@ -20,13 +20,18 @@
 #include "../../helper/event.hpp"
 #include "../../helper/typeconv.hpp"
 
+// argument macros
 #define OPT_OBJ_DECL(_name) opt_##_name##_type  opt_##_name
 
 #define OPT_VIDEO_ACTION(_name) \
-case OPT_##_name:   video_items.add_item(video::##_name); break;
+case OPT_##_name:   video_items.add_item(video::##_name); break
 
 #define OPT_AUDIO_ACTION(_name) \
-case OPT_##_name:   audio_items.add_item(audio::##_name); break;
+case OPT_##_name:   audio_items.add_item(audio::##_name); break
+
+#define REGISTER_OPT(_name)             \
+register_option(opt_##_name);           \
+opt_##_name##.add_event_listener(this)
 
 class Main
     : public util::getopt::getopt,
@@ -34,14 +39,13 @@ class Main
       public pattern::event::event_listener<opt_event_type> {
     private:
         // objects to handle options
-        opt_version_type        opt_version;
-        opt_help_type           opt_help;
-        opt_human_type          opt_human;
-        opt_machine_type        opt_machine;
-        opt_all_type            opt_all;
-        opt_video_type          opt_video;
-        opt_audio_type          opt_audio;
-
+        OPT_OBJ_DECL(version);
+        OPT_OBJ_DECL(help);
+        OPT_OBJ_DECL(readable);
+        OPT_OBJ_DECL(machine);
+        OPT_OBJ_DECL(all);
+        OPT_OBJ_DECL(video);
+        OPT_OBJ_DECL(audio);
         OPT_OBJ_DECL(width);
         OPT_OBJ_DECL(height);
         OPT_OBJ_DECL(ratio);
@@ -99,7 +103,7 @@ class Main
         void handle_event(const opt_event_type& e) {
             using namespace avsinfo::items;
             switch (e) {
-                case OPT_HUMAN:     is_human_friendly = true;   break;
+                case OPT_READABLE:  is_human_friendly = true;   break;
                 case OPT_MACHINE:   is_human_friendly = false;  break;
                 case OPT_ALL:       add_all_video_items(video_items);
                                     add_all_audio_items(audio_items);
@@ -136,59 +140,31 @@ class Main
     public:
         // constructor
         Main(void) : priority(UNSPECIFIED), is_human_friendly(true) {
-            // register options
-            register_option(opt_version);
-            register_option(opt_help);
-            register_option(opt_human);
-            register_option(opt_machine);
-            register_option(opt_all);
-            register_option(opt_video);
-            register_option(opt_audio);
-            register_option(opt_width);
-            register_option(opt_height);
-            register_option(opt_ratio);
-            register_option(opt_fps);
-            register_option(opt_fpsfraction);
-            register_option(opt_videotime);
-            register_option(opt_frames);
-            register_option(opt_colorspace);
-            register_option(opt_bpp);
-            register_option(opt_interlacetype);
-            register_option(opt_fieldorder);
-            register_option(opt_channels);
-            register_option(opt_bitdepth);
-            register_option(opt_sampletype);
-            register_option(opt_audiotime);
-            register_option(opt_samplingrate);
-            register_option(opt_samples);
-            register_option(opt_blocksize);
-
-            // register event listeners
-            opt_version.add_event_listener(this);
-            opt_help.add_event_listener(this);
-            opt_human.add_event_listener(this);
-            opt_machine.add_event_listener(this);
-            opt_all.add_event_listener(this);
-            opt_video.add_event_listener(this);
-            opt_audio.add_event_listener(this);
-            opt_width.add_event_listener(this);
-            opt_height.add_event_listener(this);
-            opt_ratio.add_event_listener(this);
-            opt_fps.add_event_listener(this);
-            opt_fpsfraction.add_event_listener(this);
-            opt_videotime.add_event_listener(this);
-            opt_frames.add_event_listener(this);
-            opt_colorspace.add_event_listener(this);
-            opt_bpp.add_event_listener(this);
-            opt_interlacetype.add_event_listener(this);
-            opt_fieldorder.add_event_listener(this);
-            opt_channels.add_event_listener(this);
-            opt_bitdepth.add_event_listener(this);
-            opt_sampletype.add_event_listener(this);
-            opt_audiotime.add_event_listener(this);
-            opt_samplingrate.add_event_listener(this);
-            opt_samples.add_event_listener(this);
-            opt_blocksize.add_event_listener(this);
+            REGISTER_OPT(version);
+            REGISTER_OPT(help);
+            REGISTER_OPT(readable);
+            REGISTER_OPT(machine);
+            REGISTER_OPT(all);
+            REGISTER_OPT(video);
+            REGISTER_OPT(audio);
+            REGISTER_OPT(width);
+            REGISTER_OPT(height);
+            REGISTER_OPT(ratio);
+            REGISTER_OPT(fps);
+            REGISTER_OPT(fpsfraction);
+            REGISTER_OPT(videotime);
+            REGISTER_OPT(frames);
+            REGISTER_OPT(colorspace);
+            REGISTER_OPT(bpp);
+            REGISTER_OPT(interlacetype);
+            REGISTER_OPT(fieldorder);
+            REGISTER_OPT(channels);
+            REGISTER_OPT(bitdepth);
+            REGISTER_OPT(sampletype);
+            REGISTER_OPT(audiotime);
+            REGISTER_OPT(samplingrate);
+            REGISTER_OPT(samples);
+            REGISTER_OPT(blocksize);
         }
 
         // option analysis and error handling

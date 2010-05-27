@@ -16,7 +16,7 @@
 
 enum opt_event_type {
     // events to inform a format
-    OPT_HUMAN,
+    OPT_READABLE,
     OPT_MACHINE,
 
     // events to specify items to show
@@ -73,68 +73,28 @@ class opt_help_type
         }
 };
 
-// options to determine notation
-class opt_human_type
-    : public util::getopt::option,
-      public pattern::event::event_source<opt_event_type> {
-    protected:
-        const char_type* shortname(void) const { return "r"; }
-        const char_type* longname(void) const { return "readable"; }
-        unsigned int handle_params(const parameters_type&) {
-            dispatch_event(OPT_HUMAN);
-            return 1;
-        }
-};
+#define OPT_GENERAL_DECL(_name, _short, _event)                     \
+class opt_##_name##_type                                            \
+    : public util::getopt::option,                                  \
+      public pattern::event::event_source<opt_event_type> {         \
+    protected:                                                      \
+        const char_type* shortname(void) const { return #_short; }  \
+        const char_type* longname(void) const { return #_name; }    \
+        unsigned int handle_params(const parameters_type&) {        \
+            dispatch_event(_event);                                 \
+            return 1;                                               \
+        }                                                           \
+}
 
-class opt_machine_type
-    : public util::getopt::option,
-      public pattern::event::event_source<opt_event_type> {
-    protected:
-        const char_type* shortname(void) const { return "m"; }
-        const char_type* longname(void) const { return "machine"; }
-        unsigned int handle_params(const parameters_type&) {
-            dispatch_event(OPT_MACHINE);
-            return 1;
-        }
-};
+// options to determine format
+OPT_GENERAL_DECL(readable,  r,  OPT_READABLE);
+OPT_GENERAL_DECL(machine,   m,  OPT_MACHINE);
 
 // options to specify items to show
 // packages
-class opt_all_type
-    : public util::getopt::option,
-      public pattern::event::event_source<opt_event_type> {
-    protected:
-        const char_type* shortname(void) const { return "a"; }
-        const char_type* longname(void) const { return "all"; }
-        unsigned int handle_params(const parameters_type&) {
-            dispatch_event(OPT_ALL);
-            return 1;
-        }
-};
-
-class opt_video_type
-    : public util::getopt::option,
-      public pattern::event::event_source<opt_event_type> {
-    protected:
-        const char_type* shortname(void) const { return "i"; }
-        const char_type* longname(void) const { return "video"; }
-        unsigned int handle_params(const parameters_type&) {
-            dispatch_event(OPT_VIDEO);
-            return 1;
-        }
-};
-
-class opt_audio_type
-    : public util::getopt::option,
-      public pattern::event::event_source<opt_event_type> {
-    protected:
-        const char_type* shortname(void) const { return "u"; }
-        const char_type* longname(void) const { return "audio"; }
-        unsigned int handle_params(const parameters_type&) {
-            dispatch_event(OPT_AUDIO);
-            return 1;
-        }
-};
+OPT_GENERAL_DECL(all,       a,  OPT_ALL);
+OPT_GENERAL_DECL(video,     i,  OPT_VIDEO);
+OPT_GENERAL_DECL(audio,     u,  OPT_AUDIO);
 
 // individuals
 #define OPT_INDIVIDUAL_DECL(_name, _event)                          \
