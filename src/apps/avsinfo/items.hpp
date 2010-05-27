@@ -149,6 +149,8 @@ namespace avsinfo {
                     return *this;
                 }
 
+                bool empty(void) { return items.empty(); }
+
                 // output contents
                 template<typename Char>
                 void
@@ -163,6 +165,32 @@ namespace avsinfo {
 
         typedef basic_items<avsutil::VideoInfo> VideoItems;
         typedef basic_items<avsutil::AudioInfo> AudioItems;
+
+        void add_all_video_items(VideoItems& items) {
+            using namespace avsinfo::items::video;
+            items.add_item(WIDTH)
+                .add_item(HEIGHT)
+                .add_item(RATIO)
+                .add_item(FPS)
+                .add_item(FPS_FRACTION)
+                .add_item(VIDEO_TIME)
+                .add_item(FRAMES)
+                .add_item(COLOR_SPACE)
+                .add_item(BPP)
+                .add_item(INTERLACE_TYPE)
+                .add_item(FIELD_ORDER);
+        }
+
+        void add_all_audio_items(AudioItems& items) {
+            using namespace avsinfo::items::audio;
+            items.add_item(CHANNELS)
+                .add_item(BIT_DEPTH)
+                .add_item(SAMPLE_TYPE)
+                .add_item(AUDIO_TIME)
+                .add_item(SAMPLING_RATE)
+                .add_item(SAMPLES)
+                .add_item(BLOCK_SIZE);
+        }
     }
 }
 

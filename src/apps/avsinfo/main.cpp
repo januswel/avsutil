@@ -1,120 +1,46 @@
 /*
  * avsinfo main.cpp
  *  Shows informations of AviSynth script
+ *
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
-#include "../../include/avsutil.hpp"
 #include "avsinfo.hpp"
+#include "main.hpp"
 #include "items.hpp"
+
+#include "../../include/avsutil.hpp"
 
 #include <iomanip>
 #include <iostream>
 #include <locale>
 #include <memory>   // for std::auto_ptr
-#include <string>
+#include <stdexcept>
 
 // using namespaces
 using namespace std;
 using namespace avsutil;
-using namespace avsinfo::general;
 using namespace avsinfo::items;
 
-void add_all_video_items(VideoItems& items) {
-    using namespace avsinfo::items::video;
-    items.add_item(WIDTH)
-        .add_item(HEIGHT)
-        .add_item(RATIO)
-        .add_item(FPS)
-        .add_item(FPS_FRACTION)
-        .add_item(VIDEO_TIME)
-        .add_item(FRAMES)
-        .add_item(COLOR_SPACE)
-        .add_item(BPP)
-        .add_item(INTERLACE_TYPE)
-        .add_item(FIELD_ORDER);
-}
+// global objects
+util::string::typeconverter tconv(locale::classic());
 
-void add_all_audio_items(AudioItems& items) {
-    using namespace avsinfo::items::audio;
-    items.add_item(CHANNELS)
-        .add_item(BIT_DEPTH)
-        .add_item(SAMPLE_TYPE)
-        .add_item(AUDIO_TIME)
-        .add_item(SAMPLING_RATE)
-        .add_item(SAMPLES)
-        .add_item(BLOCK_SIZE);
-}
-
-int main(const int argc, const char* const argv[]) {
-    // set global locale to use non-ascii characters for filenames
-    locale::global(locale(""));
-
-    string inputfile;
-    bool no_options_flag = true;
-    bool is_human_friendly = true;
-    VideoItems video_items;
-    AudioItems audio_items;
-    for (int i = 1; i < argc; ++i) {
-        const string arg(argv[i]);
-        if (arg == "-h" || arg == "--help") {
-            usage(cout);
-            return OK;
-        }
-        else if (arg == "-v" || arg == "--version") {
-            version_license(cout);
-            return OK;
-        }
-        else if (arg == "-m" || arg == "--machine") {
-            is_human_friendly = false;
-            continue;
-        }
-        else if (arg == "-a" || arg == "--all") {
-            add_all_video_items(video_items);
-            add_all_audio_items(audio_items);
-            no_options_flag = false;
-            continue;
-        }
-        else if (arg == "-i" || arg == "--video") {
-            add_all_video_items(video_items);
-            no_options_flag = false;
-            continue;
-        }
-        else if (arg == "-u" || arg == "--audio") {
-            add_all_audio_items(audio_items);
-            no_options_flag = false;
-            continue;
-        }
-        else if (arg[0] == '-') {
-            cerr << "Unknown option: \"" << arg << '"' << endl;
-            usage(cerr);
-            return BAD_ARG;
-        }
-        else {
-            if (no_options_flag) {
-                add_all_video_items(video_items);
-                add_all_audio_items(audio_items);
-            }
-            inputfile = arg;
-            break;
-        }
+int Main::main(void) {
+    if (inputfile.empty()) {
+        throw avsinfo_error(BAD_ARGUMENT, "Specify <inputfile>\n");
     }
 
-    if (inputfile.empty()) {
-        cerr << "Specify <inputfile>." << endl;
-        usage(cerr);
-        return BAD_ARG;
+    if (video_items.empty() && audio_items.empty()) {
+        add_all_video_items(video_items);
+        add_all_audio_items(audio_items);
     }
 
     // preparations
     auto_ptr<Avs> avs(CreateAvsObj(inputfile.c_str()));
     if (!avs->is_fine()) {
-        cout << avs->errmsg() << endl;
-        return BAD_AVS;
+        throw avsinfo_error(BAD_AVS, avs->errmsg());
     }
-
-    cout << left;
 
     // video stream items
     auto_ptr<Video> video(avs->video());
@@ -139,5 +65,24 @@ int main(const int argc, const char* const argv[]) {
     }
 
     return OK;
+}
+
+int main(const int argc, const char* const argv[]) {
+    try {
+        std::locale::global(std::locale(""));
+        Main main;
+        main.analyze_option(argc, argv);
+        main.preparation();
+        return main.start();
+    }
+    catch (const avsinfo_error& ex) {
+        std::cerr << ex.what() << std::endl;
+        if (ex.return_value() == BAD_ARGUMENT) usage(std::cerr);
+        return ex.return_value();
+    }
+    catch (const std::exception& ex) {
+        std::cerr << "error: " << ex.what() << std::endl;
+        return UNKNOWN;
+    }
 }
 
