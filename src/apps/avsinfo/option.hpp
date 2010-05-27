@@ -20,10 +20,32 @@ enum opt_event_type {
     OPT_MACHINE,
 
     // events to specify items to show
-    // package
+    // packages
     OPT_ALL,
     OPT_VIDEO,
     OPT_AUDIO,
+
+    // individuals
+    // for video
+    OPT_WIDTH,
+    OPT_HEIGHT,
+    OPT_RATIO,
+    OPT_FPS,
+    OPT_FPS_FRACTION,
+    OPT_VIDEO_TIME,
+    OPT_FRAMES,
+    OPT_COLOR_SPACE,
+    OPT_BPP,
+    OPT_INTERLACE_TYPE,
+    OPT_FIELD_ORDER,
+    // for audio
+    OPT_CHANNELS,
+    OPT_BIT_DEPTH,
+    OPT_SAMPLE_TYPE,
+    OPT_AUDIO_TIME,
+    OPT_SAMPLING_RATE,
+    OPT_SAMPLES,
+    OPT_BLOCK_SIZE
 };
 
 // option definitions
@@ -77,6 +99,7 @@ class opt_machine_type
 };
 
 // options to specify items to show
+// packages
 class opt_all_type
     : public util::getopt::option,
       public pattern::event::event_source<opt_event_type> {
@@ -112,6 +135,41 @@ class opt_audio_type
             return 1;
         }
 };
+
+// individuals
+#define OPT_INDIVIDUAL_DECL(_name, _event)                          \
+class opt_##_name##_type                                            \
+    : public util::getopt::option,                                  \
+      public pattern::event::event_source<opt_event_type> {         \
+    protected:                                                      \
+        const char_type* longname(void) const { return #_name; }    \
+        unsigned int handle_params(const parameters_type&) {        \
+            dispatch_event(_event);                                 \
+            return 1;                                               \
+        }                                                           \
+}
+
+// for video
+OPT_INDIVIDUAL_DECL(width,          OPT_WIDTH);
+OPT_INDIVIDUAL_DECL(height,         OPT_HEIGHT);
+OPT_INDIVIDUAL_DECL(ratio,          OPT_RATIO);
+OPT_INDIVIDUAL_DECL(fps,            OPT_FPS);
+OPT_INDIVIDUAL_DECL(fpsfraction,    OPT_FPS_FRACTION);
+OPT_INDIVIDUAL_DECL(videotime,      OPT_VIDEO_TIME);
+OPT_INDIVIDUAL_DECL(frames,         OPT_FRAMES);
+OPT_INDIVIDUAL_DECL(colorspace,     OPT_COLOR_SPACE);
+OPT_INDIVIDUAL_DECL(bpp,            OPT_BPP);
+OPT_INDIVIDUAL_DECL(interlacetype,  OPT_INTERLACE_TYPE);
+OPT_INDIVIDUAL_DECL(fieldorder,     OPT_FIELD_ORDER);
+
+// for audio
+OPT_INDIVIDUAL_DECL(channels,       OPT_CHANNELS);
+OPT_INDIVIDUAL_DECL(bitdepth,       OPT_BIT_DEPTH);
+OPT_INDIVIDUAL_DECL(sampletype,     OPT_SAMPLE_TYPE);
+OPT_INDIVIDUAL_DECL(audiotime,      OPT_AUDIO_TIME);
+OPT_INDIVIDUAL_DECL(samplingrate,   OPT_SAMPLING_RATE);
+OPT_INDIVIDUAL_DECL(samples,        OPT_SAMPLES);
+OPT_INDIVIDUAL_DECL(blocksize,      OPT_BLOCK_SIZE);
 
 #endif // OPTION_HPP
 

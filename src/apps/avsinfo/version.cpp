@@ -8,5 +8,5 @@
 
 #include "avsinfo.hpp"
 
-const char* version(void) { return "1.20"; }
+const char* version(void) { return "1.30"; }
 
