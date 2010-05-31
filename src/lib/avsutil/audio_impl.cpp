@@ -51,17 +51,17 @@ namespace avsutil {
         void CAudio::write_data(std::ostream& out) const {
             DBGLOG("avsutil::impl::CAudio::write_data(std::ostream&)");
 
-            unsigned __int32 buf_size = mv_buf_samples * mv_info->channels * (mv_info->bit_depth / 8);
+            uint32_t buf_size = mv_buf_samples * mv_info->channels * (mv_info->bit_depth / 8);
             std::vector<char> buf(buf_size);
             DBGLOG("actual buffer size is: "
                     << mv_buf_samples << " * " << mv_info->channels << " * " << (mv_info->bit_depth / 8)
                     << " = " << buf_size);
 
-            unsigned __int64 start = 0;
-            unsigned __int64 times = mv_info->numof_samples / mv_buf_samples;
-            unsigned __int64 reminder = mv_info->numof_samples - times * mv_buf_samples;
+            uint64_t start = 0;
+            uint64_t times = mv_info->numof_samples / mv_buf_samples;
+            uint64_t reminder = mv_info->numof_samples - times * mv_buf_samples;
 
-            for (unsigned __int64 i = 0; i < times; start += mv_buf_samples, ++i) {
+            for (uint64_t i = 0; i < times; start += mv_buf_samples, ++i) {
                 if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info->numof_samples);
                 mv_avs->audio_data(&buf[0], start, mv_buf_samples);
                 out.write(&buf[0], buf_size);

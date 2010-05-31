@@ -69,7 +69,7 @@ namespace avsutil {
                  *      bl: back left       (for 5.1ch)
                  *      br: back right      (for 5.1ch)
                  * */
-                void audio_data(char* buf, const unsigned __int64 start, const unsigned __int64 count);
+                void audio_data(char* buf, const uint64_t start, const uint64_t count);
         };
 
         class CVideo: public Video {
@@ -90,9 +90,9 @@ namespace avsutil {
             private:
                 CAvs* mv_avs;
                 std::auto_ptr<AudioInfo> mv_info;
-                void (*mv_progress_callback)(const unsigned __int64, const unsigned __int64);
-                unsigned __int32 mv_buf_samples;
-                static const unsigned __int64 mv_buf_samples_default = 4096;
+                void (*mv_progress_callback)(const uint64_t, const uint64_t);
+                uint32_t mv_buf_samples;
+                static const uint64_t mv_buf_samples_default = 4096;
 
             private:
                 // utilities
@@ -107,10 +107,10 @@ namespace avsutil {
                 // implementations for interfaces
                 AudioInfo& info(void) { return *(mv_info.get()); }
                 void write(std::ostream&) const;
-                void progress_callback(void (*progress_callback)(const unsigned __int64, const unsigned __int64)) {
+                void progress_callback(void (*progress_callback)(const uint64_t, const uint64_t)) {
                     mv_progress_callback = progress_callback;
                 }
-                void buf_samples(const unsigned __int32 buf_samples) {
+                void buf_samples(const uint32_t buf_samples) {
                     mv_buf_samples = buf_samples;
                 }
         };

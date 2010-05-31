@@ -51,9 +51,10 @@ enum { AVISYNTH_INTERFACE_VERSION = 3 };
 // COM interface macros
 #include <objbase.h>
 
+#include <stdint.h>
 
 // Raster types used by VirtualDub & Avisynth
-#define in64 (__int64)(unsigned short)
+#define in64 (int64_t)(unsigned short)
 typedef unsigned long	Pixel;    // this will break on 64-bit machines!
 typedef unsigned long	Pixel32;
 typedef unsigned char	Pixel8;
@@ -150,7 +151,7 @@ struct VideoInfo {
 
   int audio_samples_per_second;   // 0 means no audio
   int sample_type;                // as of 2.5
-  __int64 num_audio_samples;      // changed as of 2.5
+  int64_t num_audio_samples;      // changed as of 2.5
   int nchannels;                  // as of 2.5
 
   // Imagetype properties
@@ -184,10 +185,10 @@ struct VideoInfo {
   int BytesFromPixels(int pixels) const { return pixels * (BitsPerPixel()>>3); }   // Will not work on planar images, but will return only luma planes
   int RowSize() const { return BytesFromPixels(width); }  // Also only returns first plane on planar images
   int BMPSize() const { if (IsPlanar()) {int p = height * ((RowSize()+3) & ~3); p+=p>>1; return p;  } return height * ((RowSize()+3) & ~3); }
-  __int64 AudioSamplesFromFrames(__int64 frames) const { return (fps_numerator && HasVideo()) ? ((__int64)(frames) * audio_samples_per_second * fps_denominator / fps_numerator) : 0; }
-  int FramesFromAudioSamples(__int64 samples) const { return (fps_denominator && HasAudio()) ? (int)((samples * (__int64)fps_numerator)/((__int64)fps_denominator * (__int64)audio_samples_per_second)) : 0; }
-  __int64 AudioSamplesFromBytes(__int64 bytes) const { return HasAudio() ? bytes / BytesPerAudioSample() : 0; }
-  __int64 BytesFromAudioSamples(__int64 samples) const { return samples * BytesPerAudioSample(); }
+  int64_t AudioSamplesFromFrames(int64_t frames) const { return (fps_numerator && HasVideo()) ? ((int64_t)(frames) * audio_samples_per_second * fps_denominator / fps_numerator) : 0; }
+  int FramesFromAudioSamples(int64_t samples) const { return (fps_denominator && HasAudio()) ? (int)((samples * (int64_t)fps_numerator)/((int64_t)fps_denominator * (int64_t)audio_samples_per_second)) : 0; }
+  int64_t AudioSamplesFromBytes(int64_t bytes) const { return HasAudio() ? bytes / BytesPerAudioSample() : 0; }
+  int64_t BytesFromAudioSamples(int64_t samples) const { return samples * BytesPerAudioSample(); }
   int AudioChannels() const { return HasAudio() ? nchannels : 0; }
   int SampleType() const{ return sample_type;}
   bool IsSampleType(int testtype) const{ return !!(sample_type&testtype);}
@@ -249,17 +250,17 @@ struct VideoInfo {
 
   // Range protected multiply-divide of FPS
   void MulDivFPS(unsigned multiplier, unsigned divisor) {
-	unsigned __int64 numerator   = UInt32x32To64(fps_numerator,   multiplier);
-	unsigned __int64 denominator = UInt32x32To64(fps_denominator, divisor);
+	uint64_t numerator   = UInt32x32To64(fps_numerator,   multiplier);
+	uint64_t denominator = UInt32x32To64(fps_denominator, divisor);
 
-	unsigned __int64 x=numerator, y=denominator;
+	uint64_t x=numerator, y=denominator;
 	while (y) {   // find gcd
-	  unsigned __int64 t = x%y; x = y; y = t;
+	  uint64_t t = x%y; x = y; y = t;
 	}
 	numerator   /= x; // normalize
 	denominator /= x;
 
-	unsigned __int64 temp = numerator | denominator; // Just looking top bit
+	uint64_t temp = numerator | denominator; // Just looking top bit
 	unsigned u = 0;
 	//while (temp & 0xffffffff80000000) { // or perhaps > 16777216*2
 	while (temp > 16777216*2) { // or perhaps > 16777216*2
@@ -431,7 +432,7 @@ public:
 
   virtual PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env) = 0;
   virtual bool __stdcall GetParity(int n) = 0;  // return field parity if field_based, else parity of first field in frame
-  virtual void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env) = 0;  // start and count are in samples
+  virtual void __stdcall GetAudio(void* buf, int64_t start, int64_t count, IScriptEnvironment* env) = 0;  // start and count are in samples
   virtual void __stdcall SetCacheHints(int cachehints,int frame_range) = 0 ;  // We do not pass cache requests upwards, only to the next filter.
   virtual const VideoInfo& __stdcall GetVideoInfo() = 0;
   virtual __stdcall ~IClip() {}
@@ -514,7 +515,7 @@ public:
   AVSValue(const PClip& c) { type = 'c'; clip = c.GetPointerWithAddRef(); }
   AVSValue(bool b) { type = 'b'; boolean = b; }
   AVSValue(int i) { type = 'i'; integer = i; }
-//  AVSValue(__int64 l) { type = 'l'; longlong = l; }
+//  AVSValue(int64_t l) { type = 'l'; longlong = l; }
   AVSValue(float f) { type = 'f'; floating_pt = f; }
   AVSValue(double f) { type = 'f'; floating_pt = float(f); }
   AVSValue(const char* s) { type = 's'; string = s; }
@@ -566,7 +567,7 @@ private:
     float floating_pt;
     const char* string;
     const AVSValue* array;
-//    __int64 longlong;
+//    int64_t longlong;
   };
 
   void Assign(const AVSValue* src, bool init) {
@@ -575,8 +576,8 @@ private:
     if (!init && IsClip() && clip)
       clip->Release();
     // make sure this copies the whole struct!
-    ((__int32*)this)[0] = ((__int32*)src)[0];
-    ((__int32*)this)[1] = ((__int32*)src)[1];
+    ((int32_t*)this)[0] = ((int32_t*)src)[0];
+    ((int32_t*)this)[1] = ((int32_t*)src)[1];
   }
 };
 
@@ -589,7 +590,7 @@ protected:
 public:
   GenericVideoFilter(PClip _child) : child(_child) { vi = child->GetVideoInfo(); }
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env) { return child->GetFrame(n, env); }
-  void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env) { child->GetAudio(buf, start, count, env); }
+  void __stdcall GetAudio(void* buf, int64_t start, int64_t count, IScriptEnvironment* env) { child->GetAudio(buf, start, count, env); }
   const VideoInfo& __stdcall GetVideoInfo() { return vi; }
   bool __stdcall GetParity(int n) { return child->GetParity(n); }
   void __stdcall SetCacheHints(int cachehints,int frame_range) { } ;  // We do not pass cache requests upwards, only to the next filter.
@@ -628,7 +629,7 @@ class ConvertAudio : public GenericVideoFilter
 {
 public:
   ConvertAudio(PClip _clip, int prefered_format);
-  void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
+  void __stdcall GetAudio(void* buf, int64_t start, int64_t count, IScriptEnvironment* env);
   void __stdcall SetCacheHints(int cachehints,int frame_range);  // We do pass cache requests upwards, to the cache!
 
   static PClip Create(PClip clip, int sample_type, int prefered_type);

@@ -36,7 +36,7 @@ ostream progresss(cout.rdbuf());
 
 // forward declarations
 // callback function for Audio::write()
-void progress_cl(const unsigned __int64, const unsigned __int64);
+void progress_cl(const uint64_t, const uint64_t);
 // output audio informations
 ostream& operator <<(ostream&, const AudioInfo&);
 
@@ -134,7 +134,7 @@ int Main::main(void) {
     return OK;
 }
 
-void progress_cl(const unsigned __int64 processed, const unsigned __int64 max) {
+void progress_cl(const uint64_t processed, const uint64_t max) {
     static util::time::elapsed elapsed_time;
     float percentage = (static_cast<float>(processed) / static_cast<float>(max)) * 100;
     progresss

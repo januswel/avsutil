@@ -63,7 +63,7 @@ namespace avsutil {
             }
         }
 
-        void CAvs::audio_data(char* buf, const unsigned __int64 start, const unsigned __int64 count) {
+        void CAvs::audio_data(char* buf, const uint64_t start, const uint64_t count) {
             DBGLOG("avsutil::impl::CAvs::audio_data(char*, " << start << ", " << count << ")");
 
             mv_clip->GetAudio(buf, start, count, mv_se.get());

@@ -10,6 +10,7 @@
 
 #include <stdexcept>
 #include <ostream>
+#include <stdint.h>
 
 namespace avsutil {
     // forward declarations
@@ -93,33 +94,33 @@ namespace avsutil {
         }
 
         bool exists;
-        unsigned __int32 width;             // a number of horizontal pixels
-        unsigned __int32 height;            // a number of scan lines
-        double time;                        // numof_frames * fps_denominator / fps_numerator
-        double fps;                         // fps_numerator / fps_denominator
-        unsigned __int32 fps_numerator;
-        unsigned __int32 fps_denominator;
-        unsigned __int32 numof_frames;      // a number of frames
-        fourcc_t color_space;               // represented by FOURCC
-        unsigned __int16 bpp;               // effective bit per pixcel
-        bool is_fieldbased;                 // field-based if true, frame-based if false
-        bool is_tff;                        // Top Field First if true, Bottom Field First if false
-                                            // This should be evaluated only when is_fieldbased is true.
+        uint32_t width;             // a number of horizontal pixels
+        uint32_t height;            // a number of scan lines
+        double time;                // numof_frames * fps_denominator / fps_numerator
+        double fps;                 // fps_numerator / fps_denominator
+        uint32_t fps_numerator;
+        uint32_t fps_denominator;
+        uint32_t numof_frames;      // a number of frames
+        fourcc_t color_space;       // represented by FOURCC
+        uint16_t bpp;               // effective bit per pixcel
+        bool is_fieldbased;         // field-based if true, frame-based if false
+        bool is_tff;                // Top Field First if true, Bottom Field First if false
+                                    // This should be evaluated only when is_fieldbased is true.
         // AviSynth doesn't contain this information (in 2.58)
-        //bool is_progressive;              // progressive if true, interlaced if false
+        //bool is_progressive;        // progressive if true, interlaced if false
 
         // constructor for convenience with new statement
         VideoInfo(
                 bool exists,
-                unsigned __int32 width,
-                unsigned __int32 height,
+                uint32_t width,
+                uint32_t height,
                 double time,
                 double fps,
-                unsigned __int32 fps_numerator,
-                unsigned __int32 fps_denominator,
-                unsigned __int32 numof_frames,
+                uint32_t fps_numerator,
+                uint32_t fps_denominator,
+                uint32_t numof_frames,
                 fourcc_t color_space,
-                unsigned __int16 bpp,
+                uint16_t bpp,
                 bool is_fieldbased,
                 bool is_tff
                 ) :
@@ -146,13 +147,13 @@ namespace avsutil {
             // output audio data in the format of RIFF linear PCM
             virtual void write(std::ostream&) const = 0;
             // setter for the function to show progress
-            virtual void progress_callback(void (*progress_callback)(const unsigned __int64 processed_samples, const unsigned __int64 total_samples)) = 0;
+            virtual void progress_callback(void (*progress_callback)(const uint64_t processed_samples, const uint64_t total_samples)) = 0;
             // setter for a samples of a buffer
             // default is 4096
             // an actual buffer size is:
             //      min     buf_samples *  1 byte ( 8bit, mono)
             //      max     buf_samples * 24 byte (32bit, 5.1ch)
-            virtual void buf_samples(const unsigned __int32) = 0;
+            virtual void buf_samples(const uint32_t) = 0;
 
             // typical destructor
             virtual ~Audio(void) {}
@@ -161,24 +162,24 @@ namespace avsutil {
     // informations of audio stream
     struct AudioInfo {
         bool exists;
-        unsigned __int16 channels;      // left, [right, [center, ...]]
-        unsigned __int16 bit_depth;     // a.k.a sample precision
-        bool is_int;                    // int if true, float if false
-        double time;                    // numof_samples / sampling_rate
-        unsigned __int32 sampling_rate; // a.k.a sampling frequency
-        unsigned __int64 numof_samples; // a number of samples
-        unsigned __int16 block_size;    // bytes per sample: channels * (bit_depth / 8)
+        uint16_t channels;      // left, [right, [center, ...]]
+        uint16_t bit_depth;     // a.k.a sample precision
+        bool is_int;            // int if true, float if false
+        double time;            // numof_samples / sampling_rate
+        uint32_t sampling_rate; // a.k.a sampling frequency
+        uint64_t numof_samples; // a number of samples
+        uint16_t block_size;    // bytes per sample: channels * (bit_depth / 8)
 
         // constructor for convenience with new statement
         AudioInfo(
                 bool exists,
-                unsigned __int16 channels,
-                unsigned __int16 bit_depth,
+                uint16_t channels,
+                uint16_t bit_depth,
                 bool is_int,
                 double time,
-                unsigned __int32 sampling_rate,
-                unsigned __int64 numof_samples,
-                unsigned __int16 block_size
+                uint32_t sampling_rate,
+                uint64_t numof_samples,
+                uint16_t block_size
                 ) :
             exists(exists),
             channels(channels),
