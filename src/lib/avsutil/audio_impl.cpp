@@ -6,7 +6,7 @@
  * */
 
 #include "avsutil_impl.hpp"
-#include "../wav/wav.hpp"
+#include "../../helper/wav.hpp"
 #include <vector>
 #include "../../helper/dlogger.hpp"
 
@@ -37,34 +37,15 @@ namespace avsutil {
         void CAudio::write_header(std::ostream& out) const {
             DBGLOG("avsutil::impl::CAudio::write_header(std::ostream&)");
 
-            unsigned __int32 data_size = static_cast<unsigned __int32>(mv_info->numof_samples) * mv_info->block_size;
-            unsigned __int32 riff_size = data_size + wav::riff_header_size;
-            unsigned __int32 data_per_sec = mv_info->sampling_rate * mv_info->block_size;
-            unsigned __int16 fmt_type = wav::LINEAR_PCM;
-
-            wav::RiffHeader rh = {
-                wav::general_type,
-                riff_size,
-                {
-                    wav::riff_type,
-                    {
-                        wav::fmt_mark,
-                        wav::fmt_chunk_size,
-                        fmt_type,
-                        mv_info->channels,
-                        mv_info->sampling_rate,
-                        data_per_sec,
-                        mv_info->block_size,
-                        mv_info->bit_depth
-                    },
-                    {
-                        wav::data_mark,
-                        data_size
-                    }
-                }
+            format::riff_wav::elements_type elements = {
+                mv_info->channels,
+                mv_info->bit_depth,
+                static_cast<uint32_t>(mv_info->numof_samples),
+                mv_info->sampling_rate
             };
+            format::riff_wav::header_type header(elements);
 
-            out << rh;
+            out << header;
         }
 
         void CAudio::write_data(std::ostream& out) const {

@@ -103,16 +103,6 @@
     <ClCompile Include="..\..\..\src\lib\avsutil\avs_impl.cpp" />
     <ClCompile Include="..\..\..\src\lib\avsutil\video_impl.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\wav\wav.vcxproj">
-      <Project>{3c207a91-bc84-4a65-b8f0-5b21969f90c0}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <Private>true</Private>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
