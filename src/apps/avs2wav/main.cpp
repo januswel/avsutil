@@ -35,10 +35,10 @@ util::string::typeconverter tconv(locale::classic());
 ostream progresss(cout.rdbuf());
 
 // forward declarations
-// callback function for Audio::write()
+// callback function for audio_type::write()
 void progress_cl(const uint64_t, const uint64_t);
 // output audio informations
-ostream& operator <<(ostream&, const AudioInfo&);
+ostream& operator <<(ostream&, const audio_type::info_type&);
 
 int Main::main(void) {
     // constants
@@ -50,14 +50,14 @@ int Main::main(void) {
 
     try {
         // read in avs file
-        auto_ptr<Avs> avs(CreateAvsObj(inputfile.c_str()));
+        auto_ptr<avs_type> avs(create_avs(inputfile.c_str()));
         if (!avs->is_fine()) {
             throw avs2wav_error(BAD_AVS, avs->errmsg());
         }
 
         // get audio stream
-        auto_ptr<Audio> audio(avs->audio());
-        AudioInfo ai = audio->info();
+        audio_type* audio = avs->audio();
+        audio_type::info_type ai = audio->info();
 
         if (!ai.exists) {
             throw avs2wav_error(BAD_AVS,
@@ -113,12 +113,12 @@ int Main::main(void) {
         // allocate buffer
         std::vector<char> internalbuf(buf_size);
         outputs.rdbuf()->pubsetbuf(&internalbuf[0], buf_size);
-        // set values to Audio
+        // set values to audio_type
         audio->buf_samples(buf_samples);
         audio->progress_callback(progress_cl);
 
         // do it
-        outputs << audio.get();
+        outputs << audio;
 
         infos
             << endl
@@ -144,7 +144,7 @@ void progress_cl(const uint64_t processed, const uint64_t max) {
         << " elapsed time " << elapsed_time() << " sec";
 }
 
-ostream& operator <<(ostream& out, const AudioInfo& ai) {
+ostream& operator <<(ostream& out, const audio_type::info_type& ai) {
     // constants
     static const unsigned int header_width = 18;
 

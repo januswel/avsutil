@@ -1,31 +1,54 @@
 /*
  * video_impl.cpp
- *  Definitions for CVideo class
+ *  Definitions for cvideo_type class
+ *
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
 #include "avsutil_impl.hpp"
+
 #include "../../helper/dlogger.hpp"
 
 namespace avsutil {
     namespace impl {
-        CVideo::CVideo(CAvs* avs, std::auto_ptr<VideoInfo> info)
-            : mv_avs(avs), mv_info(info) {
-                DBGLOG("avsutil::impl::CVideo::CVideo(CAvs*, std::auto_ptr<VideoInfo>)\n"
-                        << "video stream "      << (mv_info->exists ? "exists" : "doesn't exist") << "\n"
-                        << "width: "            << mv_info->width << "px\n"
-                        << "height: "           << mv_info->height << "px\n"
-                        << "fps: "              << mv_info->fps << "(" << mv_info->fps_numerator << "/" << mv_info->fps_denominator << ")\n"
-                        << "time: "             << mv_info->time << "sec (" << mv_info->numof_frames << "frames)\n"
-                        << "color space: "      << mv_info->color_space << "\n"
-                        << "bits per pixel: "   << mv_info->bpp << "\n"
-                        << (mv_info->is_fieldbased ? (mv_info->is_tff ? "field based(top field first)" : "field based(bottom field first)") : "frame based"));
-            }
+        cvideo_type::cvideo_type(PClip clip, IScriptEnvironment* se)
+            : mv_clip(clip), mv_se(se) {
+                DBGLOG( "avsutil::impl::cvideo_type::"
+                        "cvideo_type(Pclip, IScriptEnvironment*)");
 
-        CVideo::~CVideo(void) {
-            DBGLOG("avsutil::impl::CVideo::~CVideo(void)");
-        }
+                const VideoInfo vi = mv_clip->GetVideoInfo();
+                info_type info = {
+                    vi.HasVideo(),
+                    vi.width,
+                    vi.height,
+                    static_cast<double>(vi.num_frames) * vi.fps_denominator
+                        / vi.fps_numerator,
+                    static_cast<double>(vi.fps_numerator) / vi.fps_denominator,
+                    vi.fps_numerator,
+                    vi.fps_denominator,
+                    vi.num_frames,
+                    fourcc(vi.pixel_type),
+                    vi.BitsPerPixel(),
+                    vi.IsFieldBased(),
+                    vi.IsTFF()
+                };
+                mv_info = info;
+
+                DBGLOG( "\n"
+                        "exists: " << mv_info.exists << "\n"
+                        "width: " << mv_info.width << "\n"
+                        "height: " << mv_info.height << "\n"
+                        "time: " << mv_info.time << "\n"
+                        "fps: " << mv_info.fps << "\n"
+                        "fps_numerator: " << mv_info.fps_numerator << "\n"
+                        "fps_denominator: " << mv_info.fps_denominator << "\n"
+                        "numof_frames: " << mv_info.numof_frames << "\n"
+                        "color_space: " << mv_info.fourcc_name() << "\n"
+                        "bpp: " << mv_info.bpp << "\n"
+                        "is_fieldbased: " << mv_info.is_fieldbased << "\n"
+                        "is_tff: " << mv_info.is_tff << "\n");
+            }
     }
 }
 

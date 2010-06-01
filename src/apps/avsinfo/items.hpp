@@ -27,8 +27,8 @@ namespace avsinfo {
         // infomation traits
         template<typename Info> struct info_traits;
         // for video
-        template<> struct info_traits<avsutil::VideoInfo> {
-            typedef avsutil::VideoInfo  info_type;
+        template<> struct info_traits<avsutil::video_type::info_type> {
+            typedef avsutil::video_type::info_type  info_type;
             typedef video::Item         item_type;
             typedef video::item_type    itemkind_type;
 
@@ -53,8 +53,8 @@ namespace avsinfo {
             }
         };
         // for audio
-        template<> struct info_traits<avsutil::AudioInfo> {
-            typedef avsutil::AudioInfo  info_type;
+        template<> struct info_traits<avsutil::audio_type::info_type> {
+            typedef avsutil::audio_type::info_type  info_type;
             typedef audio::Item         item_type;
             typedef audio::item_type    itemkind_type;
 
@@ -163,8 +163,8 @@ namespace avsinfo {
                 }
             };
 
-        typedef basic_items<avsutil::VideoInfo> VideoItems;
-        typedef basic_items<avsutil::AudioInfo> AudioItems;
+        typedef basic_items<avsutil::video_type::info_type> VideoItems;
+        typedef basic_items<avsutil::audio_type::info_type> AudioItems;
 
         void add_all_video_items(VideoItems& items) {
             using namespace avsinfo::items::video;

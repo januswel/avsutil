@@ -29,7 +29,7 @@ int Main::main(void) {
     }
 
     // Do it
-    auto_ptr<Avs> avs(CreateAvsObj(inputfile.c_str()));
+    auto_ptr<avs_type> avs(create_avs(inputfile.c_str()));
     if (!avs->is_fine()) {
         cerr << avs->errmsg() << endl;
         return BAD_AVS;

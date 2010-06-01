@@ -30,13 +30,13 @@ namespace avsinfo {
             };
 
             // declarations and definitions for classes of items to show
-            typedef basic_item<avsutil::AudioInfo, char> Item;
+            typedef basic_item<avsutil::audio_type::info_type, char> Item;
 
             class Channels : public Item {
                 protected:
                     const char* header(void) const { return "channels"; }
                     const char* unit(void) const { return ""; }
-                    string_type value(const avsutil::AudioInfo& ai) const {
+                    string_type value(const avsutil::audio_type::info_type& ai) const {
                         if (is_human_friendly) {
                             switch (ai.channels) {
                                 case 1:
@@ -59,7 +59,7 @@ namespace avsinfo {
                 protected:
                     const char* header(void) const { return "bit depth"; }
                     const char* unit(void) const { return "bits"; }
-                    string_type BitDepth::value(const avsutil::AudioInfo& ai) const {
+                    string_type BitDepth::value(const avsutil::audio_type::info_type& ai) const {
                         return tconv().strfrom(ai.bit_depth);
                     }
             };
@@ -68,7 +68,7 @@ namespace avsinfo {
                 protected:
                     const char* header(void) const { return "sample type"; }
                     const char* unit(void) const { return ""; }
-                    string_type value(const avsutil::AudioInfo& ai) const {
+                    string_type value(const avsutil::audio_type::info_type& ai) const {
                         return is_human_friendly
                             ? std::string(ai.is_int ? "int" : "float")
                             : tconv().strfrom(ai.is_int);
@@ -79,7 +79,7 @@ namespace avsinfo {
                 protected:
                     const char* header(void) const { return "time of audio"; }
                     const char* unit(void) const { return "sec"; }
-                    string_type value(const avsutil::AudioInfo& ai) const {
+                    string_type value(const avsutil::audio_type::info_type& ai) const {
                         return tconv().strfrom(ai.time);
                     }
             };
@@ -88,7 +88,7 @@ namespace avsinfo {
                 protected:
                     const char* header(void) const { return "sampling rate"; }
                     const char* unit(void) const { return "KHz"; }
-                    string_type value(const avsutil::AudioInfo& ai) const {
+                    string_type value(const avsutil::audio_type::info_type& ai) const {
                         return is_human_friendly
                             ? tconv().strfrom(static_cast<double>(ai.sampling_rate) / 1000)
                             : tconv().strfrom(ai.sampling_rate);
@@ -99,7 +99,7 @@ namespace avsinfo {
                 protected:
                     const char* header(void) const { return "a number of samples"; }
                     const char* unit(void) const { return ""; }
-                    string_type value(const avsutil::AudioInfo& ai) const {
+                    string_type value(const avsutil::audio_type::info_type& ai) const {
                         return tconv().strfrom(ai.numof_samples);
                     }
             };
@@ -108,7 +108,7 @@ namespace avsinfo {
                 protected:
                     const char* header(void) const { return "block size"; }
                     const char* unit(void) const { return "bytes"; }
-                    string_type value(const avsutil::AudioInfo& ai) const {
+                    string_type value(const avsutil::audio_type::info_type& ai) const {
                         return tconv().strfrom(ai.block_size);
                     }
             };

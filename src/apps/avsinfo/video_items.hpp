@@ -36,13 +36,13 @@ namespace avsinfo {
             };
 
             // declarations and definitions for classes of items to show
-            typedef basic_item<avsutil::VideoInfo, char> Item;
+            typedef basic_item<avsutil::video_type::info_type, char> Item;
 
             class Width : public Item {
                 protected:
                     const char_type* header(void) const { return "width"; }
                     const char_type* unit(void) const { return "px"; }
-                    string_type value(const avsutil::VideoInfo& vi) const {
+                    string_type value(const avsutil::video_type::info_type& vi) const {
                         return tconv().strfrom(vi.width);
                     }
             };
@@ -51,7 +51,7 @@ namespace avsinfo {
                 protected:
                     const char_type* header(void) const { return "height"; }
                     const char_type* unit(void) const { return "px"; }
-                    string_type value(const avsutil::VideoInfo& vi) const {
+                    string_type value(const avsutil::video_type::info_type& vi) const {
                         return tconv().strfrom(vi.height);
                     }
             };
@@ -60,7 +60,7 @@ namespace avsinfo {
                 protected:
                     const char_type* header(void) const { return "ratio"; }
                     const char_type* unit(void) const { return ""; }
-                    string_type value(const avsutil::VideoInfo& vi) const {
+                    string_type value(const avsutil::video_type::info_type& vi) const {
                         const unsigned int gcd = util::math::calc_gcd(vi.width, vi.height);
                         return tconv().strfrom(vi.width/gcd) + ':' + tconv().strfrom(vi.height/gcd);
                     }
@@ -70,7 +70,7 @@ namespace avsinfo {
                 protected:
                     const char_type* header(void) const { return "FPS"; }
                     const char_type* unit(void) const { return ""; }
-                    string_type value(const avsutil::VideoInfo& vi) const {
+                    string_type value(const avsutil::video_type::info_type& vi) const {
                         return tconv().strfrom(vi.fps);
                     }
             };
@@ -79,7 +79,7 @@ namespace avsinfo {
                 protected:
                     const char_type* header(void) const { return "FPS(fraction)"; }
                     const char_type* unit(void) const { return ""; }
-                    string_type value(const avsutil::VideoInfo& vi) const {
+                    string_type value(const avsutil::video_type::info_type& vi) const {
                         return tconv().strfrom(vi.fps_numerator) + '/' + tconv().strfrom(vi.fps_denominator);
                     }
             };
@@ -88,7 +88,7 @@ namespace avsinfo {
                 protected:
                     const char_type* header(void) const { return "time of video"; }
                     const char_type* unit(void) const { return "sec"; }
-                    string_type value(const avsutil::VideoInfo& vi) const {
+                    string_type value(const avsutil::video_type::info_type& vi) const {
                         return tconv().strfrom(vi.time);
                     }
             };
@@ -97,7 +97,7 @@ namespace avsinfo {
                 protected:
                     const char_type* header(void) const { return "a number of frames"; }
                     const char_type* unit(void) const { return ""; }
-                    string_type value(const avsutil::VideoInfo& vi) const {
+                    string_type value(const avsutil::video_type::info_type& vi) const {
                         return tconv().strfrom(vi.numof_frames);
                     }
             };
@@ -106,8 +106,8 @@ namespace avsinfo {
                 protected:
                     const char_type* header(void) const { return "color space"; }
                     const char_type* unit(void) const { return ""; }
-                    string_type value(const avsutil::VideoInfo& vi) const {
-                        return string_type(avsutil::VideoInfo::fourcc_name(vi.color_space));
+                    string_type value(const avsutil::video_type::info_type& vi) const {
+                        return string_type(vi.fourcc_name());
                     }
             };
 
@@ -115,7 +115,7 @@ namespace avsinfo {
                 protected:
                     const char_type* header(void) const { return "bits per pixel"; }
                     const char_type* unit(void) const { return "bits"; }
-                    string_type value(const avsutil::VideoInfo& vi) const {
+                    string_type value(const avsutil::video_type::info_type& vi) const {
                         return tconv().strfrom(vi.bpp);
                     }
             };
@@ -124,7 +124,7 @@ namespace avsinfo {
                 protected:
                     const char_type* header(void) const { return "interlace type"; }
                     const char_type* unit(void) const { return ""; }
-                    string_type value(const avsutil::VideoInfo& vi) const {
+                    string_type value(const avsutil::video_type::info_type& vi) const {
                         return is_human_friendly
                             ? string_type(vi.is_fieldbased ? "field based" : "frame based")
                             : tconv().strfrom(vi.is_fieldbased);
@@ -135,7 +135,7 @@ namespace avsinfo {
                 protected:
                     const char_type* header(void) const { return "field order"; }
                     const char_type* unit(void) const { return ""; }
-                    string_type value(const avsutil::VideoInfo& vi) const {
+                    string_type value(const avsutil::video_type::info_type& vi) const {
                         return is_human_friendly
                             ? string_type(vi.is_tff ? "top field first" : "bottom field first")
                             : tconv().strfrom(vi.is_tff);

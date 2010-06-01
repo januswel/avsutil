@@ -1,43 +1,31 @@
 /*
  * avs_impl.cpp
- *  Definitions for CAvs class
+ *  Definitions for cavs_type class
+ *
  *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
 #include "avsutil_impl.hpp"
+
 #include "../../helper/dlogger.hpp"
 
 namespace avsutil {
     // implementations for functions
-    Avs* CreateAvsObj(void) {
-        DBGLOG("avsutil::CreateAvsObj(void)");
-
-        return new impl::CAvs();
+    avs_type* create_avs(void) {
+        DBGLOG("avsutil::create_avs(void)");
+        return new impl::cavs_type();
     }
-    Avs* CreateAvsObj(const char* filename) {
-        DBGLOG("avsutil::CreateAvsObj(\"" << filename << "\")");
-
-        return new impl::CAvs(filename);
+    avs_type* create_avs(const char* filename) {
+        DBGLOG("avsutil::create_avs(\"" << filename << "\")");
+        avs_type* avs = new impl::cavs_type();
+        avs->open(filename);
+        return avs;
     }
 
     namespace impl {
-        CAvs::CAvs(void) : mv_se(CreateScriptEnvironment()), mv_is_fine(true) {
-            DBGLOG("avsutil::impl::CAvs::CAvs(void)");
-        }
-
-        CAvs::CAvs(const char* avsfile) : mv_se(CreateScriptEnvironment()), mv_is_fine(true) {
-            DBGLOG("avsutil::impl::CAvs::CAvs(const char*)");
-
-            open(avsfile);
-        }
-
-        CAvs::~CAvs(void) {
-            DBGLOG("avsutil::impl::CAvs::~CAvs(void)");
-        }
-
-        void CAvs::open(const char* avsfile) {
-            DBGLOG("avsutil::impl::CAvs::open(\"" << avsfile << "\")");
+        void cavs_type::open(const char* avsfile) {
+            DBGLOG("avsutil::impl::cavs_type::open(\"" << avsfile << "\")");
 
             try {
                 // pack the filename as the argument of AviSynth filter
@@ -60,87 +48,6 @@ namespace avsutil {
             catch (std::exception& ex) {
                 mv_is_fine = false;
                 mv_errmsg = ex.what();
-            }
-        }
-
-        void CAvs::audio_data(char* buf, const uint64_t start, const uint64_t count) {
-            DBGLOG("avsutil::impl::CAvs::audio_data(char*, " << start << ", " << count << ")");
-
-            mv_clip->GetAudio(buf, start, count, mv_se.get());
-        }
-
-        Video* CAvs::video(void) {
-            DBGLOG("avsutil::impl::CAvs::video(void)");
-
-            ::VideoInfo vi = mv_clip->GetVideoInfo();
-
-            // build a CVideo object
-            std::auto_ptr<VideoInfo> pi(new VideoInfo(
-                        vi.HasVideo(),
-                        vi.width,
-                        vi.height,
-                        static_cast<double>(vi.num_frames) * vi.fps_denominator / vi.fps_numerator,
-                        static_cast<double>(vi.fps_numerator) / vi.fps_denominator,
-                        vi.fps_numerator,
-                        vi.fps_denominator,
-                        vi.num_frames,
-                        fourcc(vi.pixel_type),
-                        vi.BitsPerPixel(),
-                        vi.IsFieldBased(),
-                        vi.IsTFF()
-                        ));
-
-            return new CVideo(this, pi);
-        }
-
-        const VideoInfo::fourcc_t CAvs::fourcc(const int pixel_type) const {
-            switch (pixel_type) {
-                case ::VideoInfo::CS_BGR24:
-                case ::VideoInfo::CS_BGR32:     return VideoInfo::RGB;
-                case ::VideoInfo::CS_YUY2:      return VideoInfo::YUY2;
-                case ::VideoInfo::CS_YV12:      return VideoInfo::YV12;
-                case ::VideoInfo::CS_I420:      return VideoInfo::I420;
-                case ::VideoInfo::CS_UNKNOWN:
-                default:                        return VideoInfo::UNKOWN;
-            }
-        }
-
-        Audio* CAvs::audio(void) {
-            DBGLOG("avsutil::impl::CAvs::audio(void)");
-
-            ::VideoInfo vi = mv_clip->GetVideoInfo();
-
-            // build a CAudio object
-            std::auto_ptr<AudioInfo> ai(new AudioInfo(
-                        vi.HasAudio(),
-                        vi.AudioChannels(),
-                        bitdepth(vi.sample_type),
-                        (vi.sample_type == SAMPLE_FLOAT ? false : true),
-                        static_cast<double>(vi.num_audio_samples) / vi.SamplesPerSecond(),
-                        vi.SamplesPerSecond(),
-                        vi.num_audio_samples,
-                        vi.BytesPerAudioSample()
-                        ));
-
-            return new CAudio(this, ai);
-        }
-
-        const unsigned int CAvs::bitdepth(const int sample_type) const {
-            DBGLOG("avsutil::impl::CAvs::bitdepth(const ::VideoInfo&)");
-
-            switch (sample_type) {
-                case SAMPLE_INT8:
-                    return 8;
-                case SAMPLE_INT16:
-                    return 16;
-                case SAMPLE_INT24:
-                    return 24;
-                case SAMPLE_INT32:
-                    return 32;
-                case SAMPLE_FLOAT:
-                    return sizeof(float) * 8;
-                default:
-                    return 0;
             }
         }
     }
