@@ -17,6 +17,7 @@
 
 #include <ostream>
 #include <string>
+#include <vector>
 
 namespace avsutil {
     namespace impl {
@@ -68,6 +69,7 @@ namespace avsutil {
             private:
                 void write_header(std::ostream&) const;
                 void write_data(std::ostream&) const;
+                void write_data(std::ostream&, progress_callback_type) const;
 
                 // utility functions
                 const unsigned int bit_depth(const int sample_type) const {
@@ -103,7 +105,9 @@ namespace avsutil {
                 void write(std::ostream& out) const {
                     DBGLOG("avsutil::impl::caudio_type::write(std::ostream&)");
                     write_header(out);
-                    write_data(out);
+                    (mv_progress_callback == NULL)
+                        ? write_data(out)
+                        : write_data(out, mv_progress_callback);
                 }
                 void
                 progress_callback(progress_callback_type progress_callback) {

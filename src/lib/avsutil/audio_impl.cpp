@@ -62,42 +62,77 @@ namespace avsutil {
         void caudio_type::write_data(std::ostream& out) const {
             DBGLOG("avsutil::impl::caudio_type::write_data(std::ostream&)");
 
-            uint32_t buf_size = mv_buf_samples * mv_info.channels * (mv_info.bit_depth / 8);
-            std::vector<char> buf(buf_size);
+            uint32_t buf_size =
+                mv_buf_samples * mv_info.channels * (mv_info.bit_depth / 8);
             DBGLOG("actual buffer size is: "
-                    << mv_buf_samples << " * " << mv_info.channels << " * " << (mv_info.bit_depth / 8)
-                    << " = " << buf_size);
+                    << mv_buf_samples << " * " << mv_info.channels
+                    << " * " << (mv_info.bit_depth / 8) << " = " << buf_size);
+
+            std::vector<char> b(buf_size);
+            char* buf = &b[0];
 
             uint64_t start = 0;
             uint64_t times = mv_info.numof_samples / mv_buf_samples;
             uint64_t reminder = mv_info.numof_samples - times * mv_buf_samples;
 
             for (uint64_t i = 0; i < times; start += mv_buf_samples, ++i) {
-                if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info.numof_samples);
-                audio_data(&buf[0], start, mv_buf_samples);
-                out.write(&buf[0], buf_size);
+                audio_data(buf, start, mv_buf_samples);
+                out.write(buf, buf_size);
             }
 
             if (reminder > 0) {
-                if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info.numof_samples);
-                audio_data(&buf[0], start, reminder);
-                out.write(&buf[0], mv_info.block_size * static_cast<size_t>(reminder));
+                audio_data(buf, start, reminder);
+                out.write(buf, mv_info.block_size * static_cast<size_t>(reminder));
+                start += reminder;
+            }
+        }
+
+        void caudio_type::write_data(std::ostream& out, progress_callback_type callback) const {
+            DBGLOG("avsutil::impl::caudio_type::write_data(std::ostream&)");
+
+            uint32_t buf_size =
+                mv_buf_samples * mv_info.channels * (mv_info.bit_depth / 8);
+            DBGLOG("actual buffer size is: "
+                    << mv_buf_samples << " * " << mv_info.channels
+                    << " * " << (mv_info.bit_depth / 8) << " = " << buf_size);
+
+            std::vector<char> b(buf_size);
+            char* buf = &b[0];
+
+            uint64_t start = 0;
+            uint64_t times = mv_info.numof_samples / mv_buf_samples;
+            uint64_t reminder = mv_info.numof_samples - times * mv_buf_samples;
+
+            for (uint64_t i = 0; i < times; start += mv_buf_samples, ++i) {
+                (*callback)(start, mv_info.numof_samples);
+                audio_data(buf, start, mv_buf_samples);
+                out.write(buf, buf_size);
+            }
+
+            if (reminder > 0) {
+                (*callback)(start, mv_info.numof_samples);
+                audio_data(buf, start, reminder);
+                out.write(buf, mv_info.block_size * static_cast<size_t>(reminder));
                 start += reminder;
             }
 
-            if (mv_progress_callback != NULL) (*mv_progress_callback)(start, mv_info.numof_samples);
+            (*callback)(start, mv_info.numof_samples);
         }
     }
 
-    std::ostream& operator <<(std::ostream& out, const audio_type& audio) {
-        DBGLOG("avsutil::operator <<(std::ostream&, const avsutil::audio_type&)");
+    std::ostream&
+    operator <<(std::ostream& out, const audio_type& audio) {
+        DBGLOG( "avsutil::operator <<"
+                "(std::ostream&, const avsutil::audio_type&)");
 
         audio.write(out);
         return out;
     }
 
-    std::ostream& operator <<(std::ostream& out, const audio_type* const audio) {
-        DBGLOG("avsutil::operator <<(std::ostream&, const avsutil::audio_type* const)");
+    std::ostream&
+    operator <<(std::ostream& out, const audio_type* const audio) {
+        DBGLOG( "avsutil::operator <<"
+                "(std::ostream&, const avsutil::audio_type* const)");
 
         audio->write(out);
         return out;
