@@ -69,6 +69,7 @@ namespace avsutil {
                     << " * " << (mv_info.bit_depth / 8) << " = " << buf_size);
 
             std::vector<char> b(buf_size);
+            b.reserve(buf_size);
             char* buf = &b[0];
 
             uint64_t start = 0;
@@ -97,6 +98,7 @@ namespace avsutil {
                     << " * " << (mv_info.bit_depth / 8) << " = " << buf_size);
 
             std::vector<char> b(buf_size);
+            b.reserve(buf_size);
             char* buf = &b[0];
 
             uint64_t start = 0;
