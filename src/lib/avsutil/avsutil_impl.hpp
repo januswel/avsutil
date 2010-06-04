@@ -14,18 +14,50 @@
 #include "avisynth.h"
 
 #include "../../helper/dlogger.hpp"
+#include "../../helper/algorithm.hpp"
 
 #include <ostream>
 #include <string>
-#include <vector>
+#include <list>
 
 namespace avsutil {
     namespace impl {
+        class cframe_type : public frame_type {
+            private:
+                PVideoFrame frame;
+                info_type mv_info;
+
+            public:
+                // constructor
+                cframe_type(PVideoFrame frame) : frame(frame) {
+                    DBGLOG( "avsutil::impl::cframe_type::"
+                            "cframe_type(PVideoFrame)");
+                    mv_info.width = frame->GetRowSize() / 3;
+                    mv_info.pitch = frame->GetPitch();
+                    mv_info.height = frame->GetHeight();
+                }
+
+                void write_header(std::ostream&) const;
+                void write_data(std::ostream&) const;
+
+            public:
+                // implementations of the member functions of the super class
+                // frame_type
+                const info_type& info(void) const { return mv_info; }
+
+                void write(std::ostream& out) const {
+                    DBGLOG("avsutil::impl::cframe_type::write(std::ostream&)");
+                    write_header(out);
+                    write_data(out);
+                }
+        };
+
         class cvideo_type: public video_type {
             private:
                 PClip mv_clip;
                 IScriptEnvironment* mv_se;
                 info_type mv_info;
+                std::list<frame_type*> frames;
 
             private:
                 // utility functions
@@ -47,11 +79,29 @@ namespace avsutil {
                 cvideo_type(PClip clip, IScriptEnvironment* se);
                 ~cvideo_type(void) {
                     DBGLOG("avsutil::impl::cvideo_type::~cvideo_type(void)");
+                    std::for_each(frames.begin(), frames.end(),
+                            util::algorithm::sweeper());
                 }
 
                 // implementations for the member functions of the super class
                 // video_type
                 const info_type& info(void) const { return mv_info; }
+
+                frame_type* frame(uint32_t n) {
+                    if (mv_clip->GetVideoInfo().IsRGB24()) {
+                        DBGLOG("convert to RGB24");
+                        AVSValue clip = mv_clip;
+                        AVSValue args = AVSValue(&clip, 1);
+                        AVSValue converted =
+                            mv_se->Invoke("ConvertToRGB24", args);
+                        mv_clip = converted.AsClip();
+                    }
+
+                    frame_type* frame =
+                        new cframe_type(mv_clip->GetFrame(n, mv_se));
+                    frames.push_back(frame);
+                    return frame;
+                }
         };
 
         class caudio_type : public audio_type {
