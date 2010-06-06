@@ -13,7 +13,7 @@
 namespace avsutil {
     namespace impl {
         cvideo_type::cvideo_type(PClip clip, IScriptEnvironment* se)
-            : mv_clip(clip), mv_se(se) {
+            : mv_clip(clip), mv_rgb_clip(clip), mv_se(se) {
                 DBGLOG( "avsutil::impl::cvideo_type::"
                         "cvideo_type(Pclip, IScriptEnvironment*)");
 

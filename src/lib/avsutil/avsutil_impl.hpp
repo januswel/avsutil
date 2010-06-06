@@ -35,6 +35,13 @@ namespace avsutil {
                     mv_info.width = frame->GetRowSize() / 3;
                     mv_info.pitch = frame->GetPitch();
                     mv_info.height = frame->GetHeight();
+                    DBGLOG( "\n"
+                            "width: " << mv_info.width << "\n"
+                            "pitch: " << mv_info.pitch << "\n"
+                            "height: " << mv_info.height << "\n");
+                }
+                ~cframe_type(void) {
+                    DBGLOG( "avsutil::impl::cframe_type::~cframe_type(void)");
                 }
 
                 void write_header(std::ostream&) const;
@@ -55,6 +62,7 @@ namespace avsutil {
         class cvideo_type: public video_type {
             private:
                 PClip mv_clip;
+                PClip mv_rgb_clip;
                 IScriptEnvironment* mv_se;
                 info_type mv_info;
                 std::list<frame_type*> frames;
@@ -88,17 +96,17 @@ namespace avsutil {
                 const info_type& info(void) const { return mv_info; }
 
                 frame_type* frame(uint32_t n) {
-                    if (mv_clip->GetVideoInfo().IsRGB24()) {
+                    if (!mv_rgb_clip->GetVideoInfo().IsRGB24()) {
                         DBGLOG("convert to RGB24");
-                        AVSValue clip = mv_clip;
+                        AVSValue clip = mv_rgb_clip;
                         AVSValue args = AVSValue(&clip, 1);
                         AVSValue converted =
                             mv_se->Invoke("ConvertToRGB24", args);
-                        mv_clip = converted.AsClip();
+                        mv_rgb_clip = converted.AsClip();
                     }
 
                     frame_type* frame =
-                        new cframe_type(mv_clip->GetFrame(n, mv_se));
+                        new cframe_type(mv_rgb_clip->GetFrame(n, mv_se));
                     frames.push_back(frame);
                     return frame;
                 }
