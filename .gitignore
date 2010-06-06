@@ -6,12 +6,18 @@
 *.ncb
 *.vcproj.*.user
 *.suo
-contrib/vs9/*/Debug
-contrib/vs9/*/Debug/*
-contrib/vs9/*/Release
-contrib/vs9/*/Release/*
-contrib/vs9/*/Independence
-contrib/vs9/*/Independence/*
+contrib/vs*/*/Debug
+contrib/vs*/*/Debug/*
+contrib/vs*/*/Release
+contrib/vs*/*/Release/*
+contrib/vs*/*/Independence
+contrib/vs*/*/Independence/*
+contrib/vs*/Debug
+contrib/vs*/Debug/*
+contrib/vs*/Release
+contrib/vs*/Release/*
+contrib/vs*/Independence
+contrib/vs*/Independence/*
 
 # for Microsoft Visual Studio 2010
 *.vcxproj.user
