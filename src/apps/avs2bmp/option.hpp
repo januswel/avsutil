@@ -68,11 +68,18 @@ class opt_frame_type
                         "Specify target frame: " + current + "\n");
             }
 
-            const unsigned int frame = tconv.strto<unsigned int>(*next);
+            const string_type& param = *next;
+            if (!checker.is_integer(param) | !checker.is_positive(param)) {
+                throw avs2bmp_error(BAD_ARGUMENT,
+                        "An argument should be positive integer number: " +
+                        current + " " + param + "\n");
+            }
+
+            const unsigned int frame = tconv.strto<unsigned int>(param);
             if (frame == 0) {
                 throw avs2bmp_error(BAD_ARGUMENT,
                         "Target frame[s] should be a number beginning with"
-                        " ONE: " + current + " " + *next + "\n");
+                        " ONE: " + current + " " + param + "\n");
             }
 
             event_opt_uint event = {OPT_FRAME, frame};
@@ -98,12 +105,23 @@ class opt_range_type
                         "Specify frames: " + current + "\n");
             }
 
+            const string_type& param01 = *next01;
+            const string_type& param02 = *next02;
+            if (       !checker.is_integer(param01)
+                    |  !checker.is_positive(param01)
+                    |  !checker.is_integer(param02)
+                    |  !checker.is_positive(param02)) {
+                throw avs2bmp_error(BAD_ARGUMENT,
+                        "Arguments should be positive integer number: " +
+                        current + " " + param01 + " " + param02 + "\n");
+            }
+
             const unsigned int first = tconv.strto<unsigned int>(*next01);
             const unsigned int last = tconv.strto<unsigned int>(*next02);
             if (first == 0 || last == 0) {
                 throw avs2bmp_error(BAD_ARGUMENT,
                         "Target frames should be a number beginning with"
-                        " ONE: " + current + " " + *next01 + " " + *next02 +
+                        " ONE: " + current + " " + param01 + " " + param02 +
                         "\n");
             }
 
@@ -130,7 +148,14 @@ class opt_time_type
                         "Specify target frame: " + current + "\n");
             }
 
-            const double time = tconv.strto<double>(*next);
+            const string_type& param = *next;
+            if (!checker.is_real(param) | !checker.is_positive(param)) {
+                throw avs2bmp_error(BAD_ARGUMENT,
+                        "An argument should be positive real number: " +
+                        current + " " + param + "\n");
+            }
+
+            const double time = tconv.strto<double>(param);
             dispatch_event(timerange_type(time, time));
 
             return 2;
@@ -153,8 +178,19 @@ class opt_trange_type
                         "Specify frames: " + current + "\n");
             }
 
-            const double first = tconv.strto<double>(*next01);
-            const double last = tconv.strto<double>(*next02);
+            const string_type& param01 = *next01;
+            const string_type& param02 = *next02;
+            if (       !checker.is_real(param01)
+                    |  !checker.is_positive(param01)
+                    |  !checker.is_real(param02)
+                    |  !checker.is_positive(param02)) {
+                throw avs2bmp_error(BAD_ARGUMENT,
+                        "Arguments should be positive integer number: " +
+                        current + " " + param01 + " " + param02 + "\n");
+            }
+
+            const double first = tconv.strto<double>(param01);
+            const double last = tconv.strto<double>(param02);
 
             (first < last)
                 ? dispatch_event(timerange_type(first, last))
@@ -200,7 +236,14 @@ class opt_digit_type
                         "Specify N: " + current + "\n");
             }
 
-            event_opt_uint event = {OPT_DIGIT, tconv.strto<unsigned int>(*next)};
+            const string_type& param = *next;
+            if (!checker.is_integer(param) | !checker.is_positive(param)) {
+                throw avs2bmp_error(BAD_ARGUMENT,
+                        "An argument should be positive integer number: " +
+                        current + " " + param + "\n");
+            }
+
+            event_opt_uint event = {OPT_DIGIT, tconv.strto<unsigned int>(param)};
             dispatch_event(event);
 
             return 2;

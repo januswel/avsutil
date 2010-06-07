@@ -21,6 +21,7 @@ using namespace avsutil;
 
 // global objects
 util::string::typeconverter tconv(locale::classic());
+util::string::check checker(locale::classic());
 
 int Main::main(void) {
     auto_ptr<avs_type> avs(avsutil::create_avs(inputfile.c_str()));

@@ -12,6 +12,7 @@
 #include <stdexcept>
 
 #include "../../helper/typeconv.hpp"
+#include "../../helper/strcheck.hpp"
 
 // enumerations for return expression
 enum return_type {
@@ -29,6 +30,7 @@ enum priority_type {
 
 // global objects
 extern util::string::typeconverter tconv;
+extern util::string::check checker;
 
 // functions to give meta informations
 const char* name(void);

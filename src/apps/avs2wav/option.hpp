@@ -59,20 +59,28 @@ class opt_buffers_type
         const char_type* longname(void) const { return "buffers"; }
         unsigned int handle_params(const parameters_type& params) {
             parameters_type::const_iterator next = params.current() + 1;
+            const string_type& current = *(params.current());
 
             if (next == params.end()) {
                 throw avs2wav_error(BAD_ARGUMENT,
                         "Specify size of buffers: "
-                        + *(params.current()) + "\n");
+                        + current + "\n");
             }
 
-            unsigned int buf_size = tconv.strto<unsigned int>(*next);
+            const string_type& param = *next;
+            if (!checker.is_integer(param) | !checker.is_positive(param)) {
+                throw avs2wav_error(BAD_ARGUMENT,
+                        "An argument should be positive integer number: " +
+                        current + " " + param + "\n");
+            }
+
+            unsigned int buf_size = tconv.strto<unsigned int>(param);
 
             if (buf_size < buf_size_min) {
                 throw avs2wav_error(BAD_ARGUMENT,
                         "Size of buffers for output must be "
                         + tconv.strfrom(buf_size_min) + " or bigger.\n"
-                        + "Check the argument of \"" + *(params.current())
+                        + "Check the argument of \"" + current
                         + "\" option.\n");
             }
 
@@ -93,20 +101,28 @@ class opt_samples_type
         const char_type* longname(void) const { return "samples"; }
         unsigned int handle_params(const parameters_type& params) {
             parameters_type::const_iterator next = params.current() + 1;
+            const string_type& current = *(params.current());
 
             if (next == params.end()) {
                 throw avs2wav_error(BAD_ARGUMENT,
                         "Specify a number of samples processed at one time: "
-                        + *(params.current()) + "\n");
+                        + current + "\n");
             }
 
-            unsigned int buf_samples = tconv.strto<unsigned int>(*next);
+            const string_type& param = *next;
+            if (!checker.is_integer(param) | !checker.is_positive(param)) {
+                throw avs2wav_error(BAD_ARGUMENT,
+                        "An argument should be positive integer number: " +
+                        current + " " + param + "\n");
+            }
+
+            unsigned int buf_samples = tconv.strto<unsigned int>(param);
 
             if (buf_samples < buf_samples_min) {
                 throw avs2wav_error(BAD_ARGUMENT,
                         "A number of samples processed at one time must be "
                         + tconv.strfrom(buf_samples_min) + " or bigger.\n"
-                        + "Check the argument of \"" + *(params.current())
+                        + "Check the argument of \"" + current
                         + "\" option.\n");
             }
 

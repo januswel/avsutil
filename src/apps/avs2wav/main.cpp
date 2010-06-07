@@ -29,6 +29,7 @@ using namespace avsutil;
 
 // global objects
 util::string::typeconverter tconv(locale::classic());
+util::string::check checker(locale::classic());
 // progresss is abbr of "progress stream"
 // this stream is used in progress_cl()
 // streambuf is stdout fow now
