@@ -13,12 +13,13 @@
 
 #include "avisynth.h"
 
-#include "../../helper/dlogger.hpp"
 #include "../../helper/algorithm.hpp"
+#include "../../helper/dlogger.hpp"
 
+#include <list>
+#include <memory>
 #include <ostream>
 #include <string>
-#include <list>
 
 namespace avsutil {
     namespace impl {
@@ -208,8 +209,16 @@ namespace avsutil {
 
         class cavs_type : public avs_type {
             private:
-                // types defined by avisynth.h
-                IScriptEnvironment* mv_se;
+                /*
+                 *  "delete"ing the object of IScriptEnvironment in the
+                 *  destructor in this class is a cause of an unknown exception
+                 *  with the AviSynth function FFMpegSource that is difficult
+                 *  to cope: maybe, because the time to call the destructor is
+                 *  too early.
+                 *  So there is a need for delaying a release of the object, by
+                 *  using std::auto_ptr.
+                 * */
+                std::auto_ptr<IScriptEnvironment> mv_se;
                 PClip mv_clip;
 
                 // member variable
@@ -230,9 +239,8 @@ namespace avsutil {
                 }
                 ~cavs_type(void) {
                     DBGLOG("avsutil::impl::cavs_type::~cavs_type(void)");
-                    delete mv_se;
-                    if (mv_video != NULL) delete mv_video;
                     if (mv_audio != NULL) delete mv_audio;
+                    if (mv_video != NULL) delete mv_video;
                 }
 
                 // implementations for the member functions of the super class
@@ -242,14 +250,20 @@ namespace avsutil {
                 const char* filename(void) { return mv_filename.c_str(); }
                 bool is_fine(void) { return mv_is_fine; }
                 const char* errmsg(void) { return mv_errmsg.c_str(); }
+
+                /*
+                 *  An object of this class has a possession of mv_se,
+                 *  cvideo_type and caudio_type objects are just allowed to
+                 *  borrow mv_se.
+                 * */
                 video_type* video(void) {
                     if (mv_video == NULL) mv_video =
-                        new cvideo_type(mv_clip, mv_se);
+                        new cvideo_type(mv_clip, mv_se.get());
                     return mv_video;
                 }
                 audio_type* audio(void) {
                     if (mv_audio == NULL) mv_audio =
-                        new caudio_type(mv_clip, mv_se);
+                        new caudio_type(mv_clip, mv_se.get());
                     return mv_audio;
                 }
         };
