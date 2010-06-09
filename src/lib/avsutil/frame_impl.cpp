@@ -13,6 +13,21 @@
 
 namespace avsutil {
     namespace impl {
+        cframe_type::cframe_type(PVideoFrame frame)
+        : frame(frame) {
+            DBGLOG( "avsutil::impl::cframe_type::"
+                    "cframe_type(PVideoFrame)");
+
+            mv_info.width = frame->GetRowSize() / 3;
+            mv_info.pitch = frame->GetPitch();
+            mv_info.height = frame->GetHeight();
+
+            DBGLOG( "\n"
+                    "width: " << mv_info.width << "\n"
+                    "pitch: " << mv_info.pitch << "\n"
+                    "height: " << mv_info.height << "\n");
+        }
+
         void cframe_type::write_header(std::ostream& out) const {
             format::windows_bitmap::elements_type elements = {
                 mv_info.width,

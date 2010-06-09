@@ -16,6 +16,8 @@
 #include "../../helper/algorithm.hpp"
 #include "../../helper/dlogger.hpp"
 
+#include <algorithm>
+#include <functional>
 #include <list>
 #include <memory>
 #include <ostream>
@@ -30,17 +32,7 @@ namespace avsutil {
 
             public:
                 // constructor
-                cframe_type(PVideoFrame frame) : frame(frame) {
-                    DBGLOG( "avsutil::impl::cframe_type::"
-                            "cframe_type(PVideoFrame)");
-                    mv_info.width = frame->GetRowSize() / 3;
-                    mv_info.pitch = frame->GetPitch();
-                    mv_info.height = frame->GetHeight();
-                    DBGLOG( "\n"
-                            "width: " << mv_info.width << "\n"
-                            "pitch: " << mv_info.pitch << "\n"
-                            "height: " << mv_info.height << "\n");
-                }
+                cframe_type(PVideoFrame frame);
                 ~cframe_type(void) {
                     DBGLOG( "avsutil::impl::cframe_type::~cframe_type(void)");
                 }
@@ -66,7 +58,9 @@ namespace avsutil {
                 PClip mv_rgb_clip;
                 IScriptEnvironment* mv_se;
                 info_type mv_info;
-                std::list<frame_type*> frames;
+
+                typedef std::list<cframe_type*>  cframes_type;
+                cframes_type cframes;
 
             private:
                 // utility functions
@@ -88,7 +82,7 @@ namespace avsutil {
                 cvideo_type(PClip clip, IScriptEnvironment* se);
                 ~cvideo_type(void) {
                     DBGLOG("avsutil::impl::cvideo_type::~cvideo_type(void)");
-                    std::for_each(frames.begin(), frames.end(),
+                    std::for_each(cframes.rbegin(), cframes.rend(),
                             util::algorithm::sweeper());
                 }
 
@@ -106,10 +100,10 @@ namespace avsutil {
                         mv_rgb_clip = converted.AsClip();
                     }
 
-                    frame_type* frame =
+                    cframe_type* cframe =
                         new cframe_type(mv_rgb_clip->GetFrame(n, mv_se));
-                    frames.push_back(frame);
-                    return frame;
+                    cframes.push_back(cframe);
+                    return cframe;
                 }
         };
 
@@ -132,7 +126,7 @@ namespace avsutil {
 
                 // utility functions
                 const unsigned int bit_depth(const int sample_type) const {
-                    DBGLOG("avsutil::impl::cavs_type::"
+                    DBGLOG("avsutil::impl::caudio_type::"
                             "bitdepth(const int sample_type)");
 
                     switch (sample_type) {
@@ -201,7 +195,7 @@ namespace avsutil {
                 void
                 audio_data( char* buf,
                             const uint64_t start, const uint64_t count) const {
-                    DBGLOG("avsutil::impl::cavs_type::audio_data(char*, "
+                    DBGLOG("avsutil::impl::caudio_type::audio_data(char*, "
                             << start << ", " << count << ")");
                     mv_clip->GetAudio(buf, start, count, mv_se);
                 }
