@@ -39,7 +39,7 @@ namespace avsutil {
                 mv_clip = imported.AsClip();
 
                 // store filename
-                mv_filename.assign(avsfile);
+                mv_filepath = avsfile;
             }
             catch (AvisynthError& avserr) {
                 mv_is_fine = false;

@@ -9,13 +9,14 @@
 #ifndef AVSUTIL_HPP
 #define AVSUTIL_HPP
 
-#include <stdexcept>
 #include <ostream>
+#include <stdexcept>
 #include <stdint.h>
 
 namespace avsutil {
     // forward declarations
     class video_type;
+    class frame_type;
     class audio_type;
 
     /*
@@ -28,9 +29,9 @@ namespace avsutil {
             // to open a file
             virtual void open(const char*) = 0;
             // get informations
-            virtual const char* filename(void) = 0;
-            virtual bool is_fine(void) = 0;
-            virtual const char* errmsg(void) = 0;
+            virtual const char* filepath(void) const = 0;
+            virtual bool is_fine(void) const = 0;
+            virtual const char* errmsg(void) const = 0;
 
             virtual video_type* video(void) = 0;
             virtual audio_type* audio(void) = 0;
@@ -43,28 +44,6 @@ namespace avsutil {
     // The returned pointer MUST be "delete"ed.
     avs_type* create_avs(void);
     avs_type* create_avs(const char* filename);
-
-    class frame_type {
-        public:
-            // informations of a frame
-            struct info_type {
-                uint16_t width;
-                uint16_t pitch;
-                uint16_t height;
-            };
-
-            // typical destructor
-            virtual ~frame_type(void) {}
-
-            // get informations
-            virtual const info_type& info(void) const = 0;
-            // output frame data in the format of 24bit Windows Bitmap
-            virtual void write(std::ostream&) const = 0;
-    };
-
-    // output frame data in the format of 24bit Windows Bitmap
-    std::ostream& operator <<(std::ostream&, const frame_type&);
-    std::ostream& operator <<(std::ostream&, const frame_type* const);
 
     // for a video stream
     class video_type {
@@ -149,6 +128,29 @@ namespace avsutil {
             // typical destructor
             virtual ~video_type(void) {}
     };
+
+    // for a frame in video stream
+    class frame_type {
+        public:
+            // informations of a frame
+            struct info_type {
+                uint16_t width;
+                uint16_t pitch;
+                uint16_t height;
+            };
+
+            // typical destructor
+            virtual ~frame_type(void) {}
+
+            // get informations
+            virtual const info_type& info(void) const = 0;
+            // output frame data in the format of 24bit Windows Bitmap
+            virtual void write(std::ostream&) const = 0;
+    };
+
+    // output frame data in the format of 24bit Windows Bitmap
+    std::ostream& operator <<(std::ostream&, const frame_type&);
+    std::ostream& operator <<(std::ostream&, const frame_type* const);
 
     // for an audio stream
     class audio_type {

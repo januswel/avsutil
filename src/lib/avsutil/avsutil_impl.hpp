@@ -217,7 +217,7 @@ namespace avsutil {
 
                 // member variable
                 bool mv_is_fine;
-                std::string mv_filename;
+                std::string mv_filepath;
                 std::string mv_errmsg;
                 video_type* mv_video;
                 audio_type* mv_audio;
@@ -241,9 +241,11 @@ namespace avsutil {
                 // avs_type
                 void open(const char* avsfile);
 
-                const char* filename(void) { return mv_filename.c_str(); }
-                bool is_fine(void) { return mv_is_fine; }
-                const char* errmsg(void) { return mv_errmsg.c_str(); }
+                const char* filepath(void) const {
+                    return mv_filepath.c_str();
+                }
+                bool is_fine(void) const { return mv_is_fine; }
+                const char* errmsg(void) const { return mv_errmsg.c_str(); }
 
                 /*
                  *  An object of this class has a possession of mv_se,
