@@ -137,6 +137,7 @@ namespace avsutil {
                 uint16_t width;
                 uint16_t pitch;
                 uint16_t height;
+                uint32_t nth;
             };
 
             // typical destructor

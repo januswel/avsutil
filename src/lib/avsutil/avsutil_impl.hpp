@@ -32,7 +32,7 @@ namespace avsutil {
 
             public:
                 // constructor
-                cframe_type(PVideoFrame frame);
+                cframe_type(PVideoFrame frame, uint32_t n);
                 ~cframe_type(void) {
                     DBGLOG( "avsutil::impl::cframe_type::~cframe_type(void)");
                 }
@@ -54,12 +54,13 @@ namespace avsutil {
 
         class cvideo_type: public video_type {
             private:
+                typedef std::list<cframe_type*>  cframes_type;
+
+            private:
                 PClip mv_clip;
                 PClip mv_rgb_clip;
                 IScriptEnvironment* mv_se;
                 info_type mv_info;
-
-                typedef std::list<cframe_type*>  cframes_type;
                 cframes_type cframes;
 
             private:
@@ -101,7 +102,7 @@ namespace avsutil {
                     }
 
                     cframe_type* cframe =
-                        new cframe_type(mv_rgb_clip->GetFrame(n, mv_se));
+                        new cframe_type(mv_rgb_clip->GetFrame(n, mv_se), n);
                     cframes.push_back(cframe);
                     return cframe;
                 }
