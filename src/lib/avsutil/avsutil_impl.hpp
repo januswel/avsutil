@@ -25,14 +25,18 @@
 
 namespace avsutil {
     namespace impl {
+        // forward decralations
+        class cvideo_type;
+
         class cframe_type : public frame_type {
             private:
                 PVideoFrame frame;
                 info_type mv_info;
+                cvideo_type* video;
 
             public:
                 // constructor
-                explicit cframe_type(PVideoFrame frame, uint32_t n);
+                explicit cframe_type(PVideoFrame frame, uint32_t n, cvideo_type* video);
                 ~cframe_type(void) {
                     DBGLOG( "avsutil::impl::cframe_type::~cframe_type(void)");
                 }
@@ -51,6 +55,8 @@ namespace avsutil {
                     write_header(out);
                     write_data(out);
                 }
+
+                void release(void) const;
         };
 
         class cvideo_type: public video_type {
@@ -88,6 +94,18 @@ namespace avsutil {
                             util::algorithm::sweeper());
                 }
 
+                void release_frame(const cframe_type* const target) {
+                    cframes_type::iterator found =
+                        std::find(
+                                cframes.begin(), cframes.end(),
+                                target);
+
+                    if (found != cframes.end()) {
+                        delete *found;
+                        cframes.erase(found);
+                    }
+                }
+
                 // implementations for the member functions of the super class
                 // video_type
                 const info_type& info(void) const { return mv_info; }
@@ -114,7 +132,7 @@ namespace avsutil {
 
                     // not found and create
                     cframe_type* created =
-                        new cframe_type(mv_rgb_clip->GetFrame(n, mv_se), n);
+                        new cframe_type(mv_rgb_clip->GetFrame(n, mv_se), n, this);
                     cframes.push_back(created);
                     return *created;
                 }

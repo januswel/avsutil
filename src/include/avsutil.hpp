@@ -168,6 +168,8 @@ namespace avsutil {
             virtual const info_type& info(void) const = 0;
             // output frame data in the format of 24bit Windows Bitmap
             virtual void write(std::ostream&) const = 0;
+
+            virtual void release(void) const = 0;
     };
 
     // output frame data in the format of 24bit Windows Bitmap
