@@ -39,6 +39,7 @@ namespace avsutil {
 
                 void write_header(std::ostream&) const;
                 void write_data(std::ostream&) const;
+                bool is_me(uint32_t n) const { return mv_info.nth == n; }
 
             public:
                 // implementations of the member functions of the super class
@@ -101,10 +102,21 @@ namespace avsutil {
                         mv_rgb_clip = converted.AsClip();
                     }
 
-                    cframe_type* cframe =
+                    cframes_type::iterator found =
+                        std::find_if(
+                                cframes.begin(), cframes.end(),
+                                std::bind2nd(std::mem_fun(
+                                        &avsutil::impl::cframe_type::is_me
+                                        ), n));
+
+                    // found
+                    if (found != cframes.end()) return **found;
+
+                    // not found and create
+                    cframe_type* created =
                         new cframe_type(mv_rgb_clip->GetFrame(n, mv_se), n);
-                    cframes.push_back(cframe);
-                    return *cframe;
+                    cframes.push_back(created);
+                    return *created;
                 }
         };
 
