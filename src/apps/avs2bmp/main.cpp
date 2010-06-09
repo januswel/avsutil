@@ -86,6 +86,8 @@ int Main::main(void) {
         }
 
         fout << frame;
+
+        frame.release();
     }
 
     return OK;
