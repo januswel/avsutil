@@ -29,9 +29,9 @@ int Main::main(void) {
     }
 
     // Do it
-    auto_ptr<avs_type> avs(create_avs(inputfile.c_str()));
-    if (!avs->is_fine()) {
-        cerr << avs->errmsg() << endl;
+    avs_type& avs = manager().load(inputfile.c_str());
+    if (!avs.is_fine()) {
+        cerr << avs.errmsg() << endl;
         return BAD_AVS;
     }
 

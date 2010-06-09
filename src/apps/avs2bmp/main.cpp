@@ -24,12 +24,12 @@ util::string::typeconverter tconv(locale::classic());
 util::string::check checker(locale::classic());
 
 int Main::main(void) {
-    auto_ptr<avs_type> avs(avsutil::create_avs(inputfile.c_str()));
-    if (!avs->is_fine()) {
-        throw avs2bmp_error(BAD_AVS, avs->errmsg());
+    avs_type& avs = manager().load(inputfile.c_str());
+    if (!avs.is_fine()) {
+        throw avs2bmp_error(BAD_AVS, avs.errmsg());
     }
-    video_type* video = avs->video();
-    video_type::info_type info = video->info();
+    video_type& video = avs.video();
+    video_type::info_type info = video.info();
 
     // preparations and error handlings
     for (timerange_array_type::const_iterator itr = timerange_array.begin();
@@ -68,7 +68,7 @@ int Main::main(void) {
     for (target_frames_type::const_iterator itr = target_frames.begin();
             itr != target_frames.end(); ++itr) {
         unsigned int n = *itr;
-        frame_type* frame = video->frame(n - 1);
+        frame_type& frame = video.frame(n - 1);
 
         padding.clear();
         padding.str("");

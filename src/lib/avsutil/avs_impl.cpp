@@ -12,15 +12,9 @@
 
 namespace avsutil {
     // implementations for functions
-    avs_type* create_avs(void) {
-        DBGLOG("avsutil::create_avs(void)");
-        return new impl::cavs_type();
-    }
-    avs_type* create_avs(const char* filename) {
-        DBGLOG("avsutil::create_avs(\"" << filename << "\")");
-        avs_type* avs = new impl::cavs_type();
-        avs->open(filename);
-        return avs;
+    manager_type& manager(void) {
+        static impl::cmanager_type manager;
+        return manager;
     }
 
     namespace impl {

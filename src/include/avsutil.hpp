@@ -15,9 +15,37 @@
 
 namespace avsutil {
     // forward declarations
+    class avs_type;
     class video_type;
     class frame_type;
     class audio_type;
+
+    /*
+     *  A class to manage AVS files.
+     * */
+    struct manager_type {
+        /*
+         *  Reads the file that is located on "filepath" and returns the
+         *  reference of avs_type. Use as follwings:
+         *
+         *      using namespace avsutil;
+         *
+         *      // note: binding by reference
+         *      avs_type& avs = manager().load("funny_animal.avs");
+         * */
+        virtual avs_type& load(const char* filepath) = 0;
+
+        /*
+         *  Use this member function when you don't need an object of a class
+         *  avs_type any longer and you are nervous about a space efficiency.
+         * */
+        virtual void unload(const avs_type& avs) = 0;
+
+        virtual ~manager_type(void) {}
+    };
+
+    // A function to start
+    manager_type& manager(void);
 
     /*
      * A class has basic features about AVS,
@@ -26,24 +54,17 @@ namespace avsutil {
      * */
     class avs_type {
         public:
-            // to open a file
-            virtual void open(const char*) = 0;
             // get informations
             virtual const char* filepath(void) const = 0;
             virtual bool is_fine(void) const = 0;
             virtual const char* errmsg(void) const = 0;
 
-            virtual video_type* video(void) = 0;
-            virtual audio_type* audio(void) = 0;
+            virtual video_type& video(void) = 0;
+            virtual audio_type& audio(void) = 0;
 
             // typical destructor
             virtual ~avs_type(void) {}
     };
-
-    // These instantiate the object about AVS.
-    // The returned pointer MUST be "delete"ed.
-    avs_type* create_avs(void);
-    avs_type* create_avs(const char* filename);
 
     // for a video stream
     class video_type {
@@ -123,7 +144,7 @@ namespace avsutil {
         public:
             // get informations
             virtual const info_type& info(void) const = 0;
-            virtual frame_type* frame(uint32_t) = 0;
+            virtual frame_type& frame(uint32_t) = 0;
 
             // typical destructor
             virtual ~video_type(void) {}

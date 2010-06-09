@@ -39,7 +39,9 @@ namespace avsutil {
         }
 
         void cframe_type::write_data(std::ostream& out) const {
-            out.write(util::cast::constpointer_cast<const char*>(frame->GetReadPtr()),
+            out.write(
+                    util::cast::constpointer_cast<const char*>(
+                        frame->GetReadPtr()),
                     mv_info.pitch * mv_info.height);
         }
     }

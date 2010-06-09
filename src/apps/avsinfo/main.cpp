@@ -37,13 +37,13 @@ int Main::main(void) {
     }
 
     // preparations
-    auto_ptr<avs_type> avs(create_avs(inputfile.c_str()));
-    if (!avs->is_fine()) {
-        throw avsinfo_error(BAD_AVS, avs->errmsg());
+    avs_type& avs = manager().load(inputfile.c_str());
+    if (!avs.is_fine()) {
+        throw avsinfo_error(BAD_AVS, avs.errmsg());
     }
 
     // video stream items
-    const video_type::info_type vi = avs->video()->info();;
+    const video_type::info_type vi = avs.video().info();;
 
     if (vi.exists) {
         video_items.notation(is_human_friendly).output(cout, vi);
@@ -53,7 +53,7 @@ int Main::main(void) {
     }
 
     // audio stream items
-    const audio_type::info_type ai = avs->audio()->info();
+    const audio_type::info_type ai = avs.audio().info();
 
     if (ai.exists) {
         audio_items.notation(is_human_friendly).output(cout, ai);

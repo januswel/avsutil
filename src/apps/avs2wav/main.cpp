@@ -51,14 +51,14 @@ int Main::main(void) {
 
     try {
         // read in avs file
-        auto_ptr<avs_type> avs(create_avs(inputfile.c_str()));
-        if (!avs->is_fine()) {
-            throw avs2wav_error(BAD_AVS, avs->errmsg());
+        avs_type& avs = manager().load(inputfile.c_str());
+        if (!avs.is_fine()) {
+            throw avs2wav_error(BAD_AVS, avs.errmsg());
         }
 
         // get audio stream
-        audio_type* audio = avs->audio();
-        audio_type::info_type ai = audio->info();
+        audio_type& audio = avs.audio();
+        audio_type::info_type ai = audio.info();
 
         if (!ai.exists) {
             throw avs2wav_error(BAD_AVS,
@@ -115,8 +115,8 @@ int Main::main(void) {
         std::vector<char> internalbuf(buf_size);
         outputs.rdbuf()->pubsetbuf(&internalbuf[0], buf_size);
         // set values to audio_type
-        audio->buf_samples(buf_samples);
-        audio->progress_callback(progress_cl);
+        audio.buf_samples(buf_samples);
+        audio.progress_callback(progress_cl);
 
         // do it
         outputs << audio;

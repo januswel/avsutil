@@ -91,7 +91,7 @@ namespace avsutil {
                 // video_type
                 const info_type& info(void) const { return mv_info; }
 
-                frame_type* frame(uint32_t n) {
+                frame_type& frame(uint32_t n) {
                     if (!mv_rgb_clip->GetVideoInfo().IsRGB24()) {
                         DBGLOG("convert to RGB24");
                         AVSValue clip = mv_rgb_clip;
@@ -104,7 +104,7 @@ namespace avsutil {
                     cframe_type* cframe =
                         new cframe_type(mv_rgb_clip->GetFrame(n, mv_se), n);
                     cframes.push_back(cframe);
-                    return cframe;
+                    return *cframe;
                 }
         };
 
@@ -238,10 +238,14 @@ namespace avsutil {
                     if (mv_video != NULL) delete mv_video;
                 }
 
-                // implementations for the member functions of the super class
-                // avs_type
                 void open(const char* avsfile);
 
+                bool is_me(const char* filepath) const {
+                    return (mv_filepath.compare(filepath) == 0);
+                }
+
+                // implementations for the member functions of the super class
+                // avs_type
                 const char* filepath(void) const {
                     return mv_filepath.c_str();
                 }
@@ -253,15 +257,69 @@ namespace avsutil {
                  *  cvideo_type and caudio_type objects are just allowed to
                  *  borrow mv_se.
                  * */
-                video_type* video(void) {
+                video_type& video(void) {
                     if (mv_video == NULL) mv_video =
                         new cvideo_type(mv_clip, mv_se.get());
-                    return mv_video;
+                    return *mv_video;
                 }
-                audio_type* audio(void) {
+                audio_type& audio(void) {
                     if (mv_audio == NULL) mv_audio =
                         new caudio_type(mv_clip, mv_se.get());
-                    return mv_audio;
+                    return *mv_audio;
+                }
+        };
+
+        class cmanager_type : public manager_type {
+            private:
+                typedef std::list<cavs_type*> cavses_type;
+
+            private:
+                cavses_type cavses;
+
+            public:
+                cmanager_type(void) {
+                    DBGLOG("cavs_loader_type::cavs_loader_type(void)");
+                }
+                ~cmanager_type(void) {
+                    DBGLOG("cavs_loader_type::~cavs_loader_type(void)");
+                    std::for_each(
+                            cavses.rbegin(), cavses.rend(),
+                            util::algorithm::sweeper());
+                }
+
+                avs_type& load(const char* file_path) {
+                    DBGLOG("cavs_loader_type::load(" << file_path << ")");
+
+                    cavses_type::iterator found =
+                        std::find_if(
+                                cavses.begin(), cavses.end(),
+                                std::bind2nd(std::mem_fun(
+                                        &avsutil::impl::cavs_type::is_me
+                                        ), file_path));
+
+                    // found
+                    if (found != cavses.end()) return **found;
+
+                    // not found and create
+                    cavs_type* created = new impl::cavs_type();
+                    created->open(file_path);
+                    cavses.push_back(created);
+                    return *created;
+                }
+
+                void unload(const avs_type& target) {
+                    DBGLOG( "cavs_loader_type::release("
+                            << target.filepath() << ")");
+
+                    cavses_type::iterator found =
+                        std::find(
+                                cavses.begin(), cavses.end(),
+                                &target);
+
+                    if (found != cavses.end()) {
+                        delete *found;
+                        cavses.erase(found);
+                    }
                 }
         };
     }
