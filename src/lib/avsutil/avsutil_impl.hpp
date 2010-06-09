@@ -32,7 +32,7 @@ namespace avsutil {
 
             public:
                 // constructor
-                cframe_type(PVideoFrame frame, uint32_t n);
+                explicit cframe_type(PVideoFrame frame, uint32_t n);
                 ~cframe_type(void) {
                     DBGLOG( "avsutil::impl::cframe_type::~cframe_type(void)");
                 }
@@ -81,7 +81,7 @@ namespace avsutil {
 
             public:
                 // constructor and destructor
-                cvideo_type(PClip clip, IScriptEnvironment* se);
+                explicit cvideo_type(PClip clip, IScriptEnvironment* se);
                 ~cvideo_type(void) {
                     DBGLOG("avsutil::impl::cvideo_type::~cvideo_type(void)");
                     std::for_each(cframes.rbegin(), cframes.rend(),
@@ -160,7 +160,7 @@ namespace avsutil {
 
             public:
                 // constructor and destructor
-                caudio_type(PClip clip, IScriptEnvironment* se);
+                explicit caudio_type(PClip clip, IScriptEnvironment* se);
                 ~caudio_type(void) {
                     DBGLOG("avsutil::impl::caudio_type::~caudio_type(void)");
                 }
