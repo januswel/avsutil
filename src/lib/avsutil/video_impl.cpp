@@ -44,6 +44,16 @@ namespace avsutil {
             cframes.push_back(created);
             return *created;
         }
+
+        void cvideo_type::release_frame(const cframe_type* const target) {
+            cframes_type::iterator found =
+                std::find(cframes.begin(), cframes.end(), target);
+
+            if (found != cframes.end()) {
+                delete *found;
+                cframes.erase(found);
+            }
+        }
     }
 }
 
