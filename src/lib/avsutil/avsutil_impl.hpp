@@ -30,13 +30,22 @@ namespace avsutil {
 
         class cframe_type : public frame_type {
             private:
-                PVideoFrame frame;
-                info_type mv_info;
+                const PVideoFrame frame;
+                const info_type mv_info;
                 cvideo_type* video;
 
             public:
                 // constructor
-                explicit cframe_type(PVideoFrame frame, uint32_t n, cvideo_type* video);
+                explicit cframe_type(   PVideoFrame frame, cvideo_type* video,
+                                        const info_type& info)
+                    : frame(frame), mv_info(info), video(video) {
+                        DBGLOG( "avsutil::impl::cframe_type::"
+                                "cframe_type(PVideoFrame)\n"
+                                "width: " << mv_info.width << "\n"
+                                "pitch: " << mv_info.pitch << "\n"
+                                "height: " << mv_info.height << "\n");
+                    }
+
                 ~cframe_type(void) {
                     DBGLOG( "avsutil::impl::cframe_type::~cframe_type(void)");
                 }
@@ -64,16 +73,16 @@ namespace avsutil {
                 typedef std::list<cframe_type*>  cframes_type;
 
             private:
-                PClip mv_clip;
+                const PClip mv_clip;
                 PClip mv_rgb_clip;
                 IScriptEnvironment* mv_se;
-                info_type mv_info;
+                const info_type mv_info;
                 cframes_type cframes;
 
-            private:
+            public:
                 // utility functions
-                const info_type::fourcc_type
-                fourcc(const int pixel_type) const {
+                static const info_type::fourcc_type
+                fourcc(const int pixel_type) {
                     switch (pixel_type) {
                         case VideoInfo::CS_BGR24:
                         case VideoInfo::CS_BGR32:   return info_type::RGB;
@@ -87,7 +96,26 @@ namespace avsutil {
 
             public:
                 // constructor and destructor
-                explicit cvideo_type(PClip clip, IScriptEnvironment* se);
+                explicit cvideo_type(   PClip clip, IScriptEnvironment* se,
+                                        const info_type& info)
+                    : mv_clip(clip), mv_rgb_clip(clip),
+                      mv_se(se), mv_info(info) {
+                          DBGLOG( "avsutil::impl::cvideo_type::"
+                                  "cvideo_type(Pclip, IScriptEnvironment*)\n"
+                                  "exists: " << mv_info.exists << "\n"
+                                  "width: " << mv_info.width << "\n"
+                                  "height: " << mv_info.height << "\n"
+                                  "time: " << mv_info.time << "\n"
+                                  "fps: " << mv_info.fps << "\n"
+                                  "fps_numerator: " << mv_info.fps_numerator << "\n"
+                                  "fps_denominator: " << mv_info.fps_denominator << "\n"
+                                  "numof_frames: " << mv_info.numof_frames << "\n"
+                                  "color_space: " << mv_info.fourcc_name() << "\n"
+                                  "bpp: " << mv_info.bpp << "\n"
+                                  "is_fieldbased: " << mv_info.is_fieldbased << "\n"
+                                  "is_tff: " << mv_info.is_tff << "\n");
+                      }
+
                 ~cvideo_type(void) {
                     DBGLOG("avsutil::impl::cvideo_type::~cvideo_type(void)");
                     std::for_each(cframes.rbegin(), cframes.rend(),
@@ -109,41 +137,15 @@ namespace avsutil {
                 // implementations for the member functions of the super class
                 // video_type
                 const info_type& info(void) const { return mv_info; }
-
-                frame_type& frame(uint32_t n) {
-                    if (!mv_rgb_clip->GetVideoInfo().IsRGB24()) {
-                        DBGLOG("convert to RGB24");
-                        AVSValue clip = mv_rgb_clip;
-                        AVSValue args = AVSValue(&clip, 1);
-                        AVSValue converted =
-                            mv_se->Invoke("ConvertToRGB24", args);
-                        mv_rgb_clip = converted.AsClip();
-                    }
-
-                    cframes_type::iterator found =
-                        std::find_if(
-                                cframes.begin(), cframes.end(),
-                                std::bind2nd(std::mem_fun(
-                                        &avsutil::impl::cframe_type::is_me
-                                        ), n));
-
-                    // found
-                    if (found != cframes.end()) return **found;
-
-                    // not found and create
-                    cframe_type* created =
-                        new cframe_type(mv_rgb_clip->GetFrame(n, mv_se), n, this);
-                    cframes.push_back(created);
-                    return *created;
-                }
+                frame_type& frame(uint32_t n);
         };
 
         class caudio_type : public audio_type {
             private:
                 // member variables
-                PClip mv_clip;
+                const PClip mv_clip;
                 IScriptEnvironment* mv_se;
-                info_type mv_info;
+                const info_type mv_info;
                 progress_callback_type mv_progress_callback;
                 uint32_t mv_buf_samples;
 
@@ -155,8 +157,9 @@ namespace avsutil {
                 void write_data(std::ostream&) const;
                 void write_data(std::ostream&, progress_callback_type) const;
 
+            public:
                 // utility functions
-                const unsigned int bit_depth(const int sample_type) const {
+                static const unsigned int bit_depth(const int sample_type) {
                     DBGLOG("avsutil::impl::caudio_type::"
                             "bitdepth(const int sample_type)");
 
@@ -178,7 +181,23 @@ namespace avsutil {
 
             public:
                 // constructor and destructor
-                explicit caudio_type(PClip clip, IScriptEnvironment* se);
+                explicit caudio_type(   PClip clip, IScriptEnvironment* se,
+                                        const info_type& info)
+                    : mv_clip(clip), mv_se(se), mv_info(info),
+                      mv_progress_callback(NULL),
+                      mv_buf_samples(mv_buf_samples_default) {
+                        DBGLOG("avsutil::impl::caudio_type::"
+                                "caudio_type(PClip, IScriptEnvironment*)\n"
+                                "exists: " << mv_info.exists << "\n"
+                                "channels: " << mv_info.channels << "\n"
+                                "bit_depth: " << mv_info.bit_depth << "\n"
+                                "is_int: " << mv_info.is_int << "\n"
+                                "time: " << mv_info.time << "\n"
+                                "sampling_rate: " << mv_info.sampling_rate << "\n"
+                                "numof_samples: " << mv_info.numof_samples << "\n"
+                                "block_size: " << mv_info.block_size << "\n");
+                    }
+
                 ~caudio_type(void) {
                     DBGLOG("avsutil::impl::caudio_type::~caudio_type(void)");
                 }
@@ -282,21 +301,8 @@ namespace avsutil {
                 bool is_fine(void) const { return mv_is_fine; }
                 const char* errmsg(void) const { return mv_errmsg.c_str(); }
 
-                /*
-                 *  An object of this class has a possession of mv_se,
-                 *  cvideo_type and caudio_type objects are just allowed to
-                 *  borrow mv_se.
-                 * */
-                video_type& video(void) {
-                    if (mv_video == NULL) mv_video =
-                        new cvideo_type(mv_clip, mv_se.get());
-                    return *mv_video;
-                }
-                audio_type& audio(void) {
-                    if (mv_audio == NULL) mv_audio =
-                        new caudio_type(mv_clip, mv_se.get());
-                    return *mv_audio;
-                }
+                video_type& video(void);
+                audio_type& audio(void);
         };
 
         class cmanager_type : public manager_type {

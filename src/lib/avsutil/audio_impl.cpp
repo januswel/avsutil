@@ -15,36 +15,6 @@
 
 namespace avsutil {
     namespace impl {
-        caudio_type::caudio_type(PClip clip, IScriptEnvironment* se)
-            : mv_clip(clip), mv_se(se), mv_progress_callback(NULL),
-            mv_buf_samples(mv_buf_samples_default) {
-                DBGLOG("avsutil::impl::caudio_type::"
-                        "caudio_type(PClip, IScriptEnvironment*)\n");
-                const VideoInfo vi = mv_clip->GetVideoInfo();
-                info_type info = {
-                    vi.HasAudio(),
-                    vi.AudioChannels(),
-                    bit_depth(vi.sample_type),
-                    (vi.sample_type == SAMPLE_FLOAT ? false : true),
-                    static_cast<double>(vi.num_audio_samples)
-                        / vi.SamplesPerSecond(),
-                    vi.SamplesPerSecond(),
-                    vi.num_audio_samples,
-                    vi.BytesPerAudioSample()
-                };
-                mv_info = info;
-
-                DBGLOG( "\n"
-                        "exists: " << mv_info.exists << "\n"
-                        "channels: " << mv_info.channels << "\n"
-                        "bit_depth: " << mv_info.bit_depth << "\n"
-                        "is_int: " << mv_info.is_int << "\n"
-                        "time: " << mv_info.time << "\n"
-                        "sampling_rate: " << mv_info.sampling_rate << "\n"
-                        "numof_samples: " << mv_info.numof_samples << "\n"
-                        "block_size: " << mv_info.block_size << "\n");
-            }
-
         void caudio_type::write_header(std::ostream& out) const {
             DBGLOG("avsutil::impl::caudio_type::write_header(std::ostream&)");
 

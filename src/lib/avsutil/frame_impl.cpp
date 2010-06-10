@@ -13,23 +13,7 @@
 
 namespace avsutil {
     namespace impl {
-        cframe_type::cframe_type(PVideoFrame frame, uint32_t n, cvideo_type* video)
-        : frame(frame), video(video) {
-            DBGLOG( "avsutil::impl::cframe_type::"
-                    "cframe_type(PVideoFrame)");
-
-            mv_info.width = frame->GetRowSize() / 3;
-            mv_info.pitch = frame->GetPitch();
-            mv_info.height = frame->GetHeight();
-            mv_info.nth = n;
-
-            DBGLOG( "\n"
-                    "width: " << mv_info.width << "\n"
-                    "pitch: " << mv_info.pitch << "\n"
-                    "height: " << mv_info.height << "\n");
-        }
-
-        inline void cframe_type::release(void) const {
+        void cframe_type::release(void) const {
             video->release_frame(this);
         }
 

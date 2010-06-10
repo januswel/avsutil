@@ -12,43 +12,38 @@
 
 namespace avsutil {
     namespace impl {
-        cvideo_type::cvideo_type(PClip clip, IScriptEnvironment* se)
-            : mv_clip(clip), mv_rgb_clip(clip), mv_se(se) {
-                DBGLOG( "avsutil::impl::cvideo_type::"
-                        "cvideo_type(Pclip, IScriptEnvironment*)");
-
-                const VideoInfo vi = mv_clip->GetVideoInfo();
-                info_type info = {
-                    vi.HasVideo(),
-                    vi.width,
-                    vi.height,
-                    static_cast<double>(vi.num_frames) * vi.fps_denominator
-                        / vi.fps_numerator,
-                    static_cast<double>(vi.fps_numerator) / vi.fps_denominator,
-                    vi.fps_numerator,
-                    vi.fps_denominator,
-                    vi.num_frames,
-                    fourcc(vi.pixel_type),
-                    vi.BitsPerPixel(),
-                    vi.IsFieldBased(),
-                    vi.IsTFF()
-                };
-                mv_info = info;
-
-                DBGLOG( "\n"
-                        "exists: " << mv_info.exists << "\n"
-                        "width: " << mv_info.width << "\n"
-                        "height: " << mv_info.height << "\n"
-                        "time: " << mv_info.time << "\n"
-                        "fps: " << mv_info.fps << "\n"
-                        "fps_numerator: " << mv_info.fps_numerator << "\n"
-                        "fps_denominator: " << mv_info.fps_denominator << "\n"
-                        "numof_frames: " << mv_info.numof_frames << "\n"
-                        "color_space: " << mv_info.fourcc_name() << "\n"
-                        "bpp: " << mv_info.bpp << "\n"
-                        "is_fieldbased: " << mv_info.is_fieldbased << "\n"
-                        "is_tff: " << mv_info.is_tff << "\n");
+        frame_type& cvideo_type::frame(uint32_t n) {
+            if (!mv_rgb_clip->GetVideoInfo().IsRGB24()) {
+                DBGLOG("convert to RGB24");
+                AVSValue clip = mv_rgb_clip;
+                AVSValue args = AVSValue(&clip, 1);
+                AVSValue converted =
+                    mv_se->Invoke("ConvertToRGB24", args);
+                mv_rgb_clip = converted.AsClip();
             }
+
+            cframes_type::iterator found =
+                std::find_if(
+                        cframes.begin(), cframes.end(),
+                        std::bind2nd(std::mem_fun(
+                                &avsutil::impl::cframe_type::is_me
+                                ), n));
+
+            // found
+            if (found != cframes.end()) return **found;
+
+            // not found and create
+            PVideoFrame frame = mv_rgb_clip->GetFrame(n, mv_se);
+            const cframe_type::info_type info = {
+                frame->GetRowSize() / 3,
+                frame->GetPitch(),
+                frame->GetHeight(),
+                n
+            };
+            cframe_type* created = new cframe_type(frame , this, info);
+            cframes.push_back(created);
+            return *created;
+        }
     }
 }
 
