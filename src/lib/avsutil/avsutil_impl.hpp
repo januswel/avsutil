@@ -123,7 +123,7 @@ namespace avsutil {
                                   "fps_numerator: " << mv_info.fps_numerator << "\n"
                                   "fps_denominator: " << mv_info.fps_denominator << "\n"
                                   "numof_frames: " << mv_info.numof_frames << "\n"
-                                  "color_space: " << mv_info.fourcc_name() << "\n"
+                                  "color_space: " << mv_info.fourcc_name(mv_info.color_space) << "\n"
                                   "bpp: " << mv_info.bpp << "\n"
                                   "is_fieldbased: " << mv_info.is_fieldbased << "\n"
                                   "is_tff: " << mv_info.is_tff << "\n");

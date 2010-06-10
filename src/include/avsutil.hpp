@@ -21,7 +21,7 @@ namespace avsutil {
     struct audio_type;
 
     /*
-     *  A class to manage AVS files.
+     *  a class to manage AVS files
      * */
     struct manager_type {
         /*
@@ -41,6 +41,7 @@ namespace avsutil {
          * */
         virtual void unload(const avs_type& avs) = 0;
 
+        // destructor
         virtual ~manager_type(void) {}
     };
 
@@ -53,25 +54,31 @@ namespace avsutil {
      *  E.g.: opening AVS file and getting audio informations.
      * */
     struct avs_type {
-        // get informations
+        // Returns informations
+        // a file path of specified AVS
         virtual const char* filepath(void) const = 0;
+        // a status of an object
         virtual bool is_fine(void) const = 0;
+        // Some messages to show causes of an error when is_fine() returns
+        // false.
         virtual const char* errmsg(void) const = 0;
 
+        // Returns the objects to treat video/audio streams.
         virtual video_type& video(void) = 0;
         virtual audio_type& audio(void) = 0;
 
-        // typical destructor
+        // destructor
         virtual ~avs_type(void) {}
     };
 
-    // for a video stream
+    // a class for a video stream
     struct video_type {
         // informations of a video stream
         struct info_type {
             /*
-             *  Enumerations for representation as color spaces (pixel
+             *  Enumerations for representations as the color spaces (pixel
              *  type) by FOURCC
+             *
              *      refer: http://www.fourcc.org/
              * */
             enum fourcc_type {
@@ -105,7 +112,7 @@ namespace avsutil {
                 I420
             };
 
-            const char* fourcc_name(void) const {
+            static const char* fourcc_name(fourcc_type color_space) {
                 switch(color_space) {
                     case RGB:       return "RGB";
                     case YUY2:      return "YUY2";
@@ -139,15 +146,16 @@ namespace avsutil {
                                           // interlaced if false
         };
 
-        // get informations
+        // Returns informations about a video stream.
         virtual const info_type& info(void) const = 0;
+        // Returns a frame object.
         virtual frame_type& frame(uint32_t) = 0;
 
-        // typical destructor
+        // destructor
         virtual ~video_type(void) {}
     };
 
-    // for a frame in video stream
+    // a class for a frame in a video stream.
     struct frame_type {
         // informations of a frame
         struct info_type {
@@ -157,24 +165,24 @@ namespace avsutil {
             uint32_t nth;
         };
 
-        // typical destructor
-        virtual ~frame_type(void) {}
-
-        // get informations
+        // Returns informations about a frame.
         virtual const info_type& info(void) const = 0;
-        // output frame data in the format of 24bit Windows Bitmap
+        // Outputs frame data in the format of 24bit Windows Bitmap.
         virtual void write(std::ostream&) const = 0;
-
+        // Releases a frame object from a memory space.
         virtual void release(void) const = 0;
+
+        // destructor
+        virtual ~frame_type(void) {}
     };
 
-    // output frame data in the format of 24bit Windows Bitmap
+    // Outputs frame data in the format of 24bit Windows Bitmap
     std::ostream& operator <<(std::ostream&, const frame_type&);
     std::ostream& operator <<(std::ostream&, const frame_type* const);
 
-    // for an audio stream
+    // a class for an audio stream
     struct audio_type {
-        // informations of audio stream
+        // informations of an audio stream
         struct info_type {
             bool exists;
             uint16_t channels;      // left, [right, [center, ...]]
@@ -187,28 +195,32 @@ namespace avsutil {
                                     // channels * (bit_depth / 8)
         };
 
+        // for convenience
         typedef void (*progress_callback_type)(
                 const uint64_t processed_samples,
                 const uint64_t total_samples);
 
-        // get informations
+        // Returns informations about an audio stream.
         virtual const info_type& info(void) const = 0;
-        // output audio data in the format of RIFF linear PCM
+        // Outputs audio data in the format of RIFF linear PCM.
         virtual void write(std::ostream&) const = 0;
-        // setter for the function to show progress
+        // Sets a function to show progress.
         virtual void progress_callback(progress_callback_type) = 0;
-        // setter for a samples of a buffer
-        // default is 4096
-        // an actual buffer size is:
-        //      min     buf_samples *  1 byte ( 8bit, mono)
-        //      max     buf_samples * 24 byte (32bit, 5.1ch)
+        /*
+         *  Sets a buffer size to read/write audio samples
+         *
+         *  default: 4096
+         *  An actual buffer size is:
+         *      min     buf_samples *  1 byte ( 8bit, mono)
+         *      max     buf_samples * 24 byte (32bit, 5.1ch)
+         * */
         virtual void buf_samples(const uint32_t) = 0;
 
-        // typical destructor
+        // destructor
         virtual ~audio_type(void) {}
     };
 
-    // output audio data in the format of RIFF linear PCM
+    // Output audio data in the format of RIFF linear PCM.
     std::ostream& operator <<(std::ostream&, const audio_type&);
     std::ostream& operator <<(std::ostream&, const audio_type* const);
 };

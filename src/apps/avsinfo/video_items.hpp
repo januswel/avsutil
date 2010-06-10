@@ -107,7 +107,7 @@ namespace avsinfo {
                     const char_type* header(void) const { return "color space"; }
                     const char_type* unit(void) const { return ""; }
                     string_type value(const avsutil::video_type::info_type& vi) const {
-                        return string_type(vi.fourcc_name());
+                        return string_type(vi.fourcc_name(vi.color_space));
                     }
             };
 
