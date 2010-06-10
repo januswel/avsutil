@@ -53,6 +53,16 @@ namespace avsutil {
                     DBGLOG( "avsutil::impl::cframe_type::~cframe_type(void)");
                 }
 
+            public:
+                // equivalent operator
+                bool operator==(const cframe_type& rhs) {
+                    return frame == rhs.frame;
+                }
+                // non-equivalent operator
+                bool operator!=(const cframe_type& rhs) {
+                    return !(*this == rhs);
+                }
+
             private:
                 // Inhibits copy and assignment.
                 // copy constructor
@@ -127,6 +137,16 @@ namespace avsutil {
                             util::algorithm::sweeper());
                 }
 
+            public:
+                // equivalent operator
+                bool operator==(const cvideo_type& rhs) {
+                    return mv_clip == rhs.mv_clip;
+                }
+                // non-equivalent operator
+                bool operator!=(const cvideo_type& rhs) {
+                    return !(*this == rhs);
+                }
+
             private:
                 // Inhibits copy and assignment.
                 // copy constructor
@@ -195,6 +215,16 @@ namespace avsutil {
                 // destructor
                 ~caudio_type(void) {
                     DBGLOG("avsutil::impl::caudio_type::~caudio_type(void)");
+                }
+
+            public:
+                // equivalent operator
+                bool operator==(const caudio_type& rhs) {
+                    return mv_clip == rhs.mv_clip;
+                }
+                // non-equivalent operator
+                bool operator!=(const caudio_type& rhs) {
+                    return !(*this == rhs);
                 }
 
             private:
@@ -314,13 +344,6 @@ namespace avsutil {
                     DBGLOG("avsutil::impl::cavs_type::cavs_type(void)");
                 }
 
-            private:
-                // Inhibits copy and assignment.
-                // copy constructor
-                explicit cavs_type(const cframe_type& rhs);
-                // assignment operator
-                cavs_type& operator=(const cframe_type& rhs);
-
             public:
                 // destructor
                 ~cavs_type(void) {
@@ -328,6 +351,23 @@ namespace avsutil {
                     if (mv_audio != NULL) delete mv_audio;
                     if (mv_video != NULL) delete mv_video;
                 }
+
+            public:
+                // equivalent operator
+                bool operator==(const cavs_type& rhs) {
+                    return mv_clip == rhs.mv_clip;
+                }
+                // non-equivalent operator
+                bool operator!=(const cavs_type& rhs) {
+                    return !(*this == rhs);
+                }
+
+            private:
+                // Inhibits copy and assignment.
+                // copy constructor
+                explicit cavs_type(const cframe_type& rhs);
+                // assignment operator
+                cavs_type& operator=(const cframe_type& rhs);
 
             public:
                 /*
@@ -373,6 +413,16 @@ namespace avsutil {
                     std::for_each(
                             cavses.rbegin(), cavses.rend(),
                             util::algorithm::sweeper());
+                }
+
+            public:
+                // equivalent operator
+                bool operator==(const cmanager_type& rhs) {
+                    return this == &rhs;
+                }
+                // non-equivalent operator
+                bool operator!=(const cmanager_type& rhs) {
+                    return !(*this == rhs);
                 }
 
             private:
