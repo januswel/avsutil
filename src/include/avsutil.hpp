@@ -48,9 +48,9 @@ namespace avsutil {
     manager_type& manager(void);
 
     /*
-     * A class has basic features about AVS,
-     * by wrapping classes defined in avisynth.h,
-     * e.g. opening AVS file and getting audio informations.
+     *  A class that has basic features about AVS, by wrapping classes defined
+     *  in avisynth.h.
+     *  E.g.: opening AVS file and getting audio informations.
      * */
     struct avs_type {
         // get informations
@@ -120,7 +120,7 @@ namespace avsutil {
             uint32_t width;             // a number of horizontal pixels
             uint32_t height;            // a number of scan lines
             double time;                //   numof_frames * fps_denominator
-            // / fps_numerator
+                                        // / fps_numerator
             double fps;                 // fps_numerator / fps_denominator
             uint32_t fps_numerator;
             uint32_t fps_denominator;
@@ -128,15 +128,15 @@ namespace avsutil {
             fourcc_type color_space;    // represented by FOURCC
             uint16_t bpp;               // effective bit per pixcel
             bool is_fieldbased;         // field-based if true
-            // frame-based if false
+                                        // frame-based if false
             bool is_tff;                // Top Field First if true,
-            // Bottom Field First if false
+                                        // Bottom Field First if false
             /*
              *  This should be evaluated only when is_fieldbased is true.
              *  AviSynth doesn't contain this information (in 2.58)
              * */
             //bool is_progressive;        // progressive if true
-            // interlaced if false
+                                          // interlaced if false
         };
 
         // get informations
@@ -184,7 +184,7 @@ namespace avsutil {
             uint32_t sampling_rate; // a.k.a sampling frequency
             uint64_t numof_samples; // a number of samples
             uint16_t block_size;    // bytes per sample:
-            // channels * (bit_depth / 8)
+                                    // channels * (bit_depth / 8)
         };
 
         typedef void (*progress_callback_type)(
