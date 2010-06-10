@@ -53,6 +53,13 @@ namespace avsutil {
                     DBGLOG( "avsutil::impl::cframe_type::~cframe_type(void)");
                 }
 
+            private:
+                // Inhibits copy and assignment.
+                // copy constructor
+                explicit cframe_type(const cframe_type& rhs);
+                // assignment operator
+                cframe_type& operator=(const cframe_type& rhs);
+
             public:
                 /*
                  *  Implementations of some member functions of a super class
@@ -120,6 +127,13 @@ namespace avsutil {
                             util::algorithm::sweeper());
                 }
 
+            private:
+                // Inhibits copy and assignment.
+                // copy constructor
+                explicit cvideo_type(const cframe_type& rhs);
+                // assignment operator
+                cvideo_type& operator=(const cframe_type& rhs);
+
             public:
                 /*
                  *  Implementations for some member functions of a super class
@@ -182,6 +196,13 @@ namespace avsutil {
                 ~caudio_type(void) {
                     DBGLOG("avsutil::impl::caudio_type::~caudio_type(void)");
                 }
+
+            private:
+                // Inhibits copy and assignment.
+                // copy constructor
+                explicit caudio_type(const cframe_type& rhs);
+                // assignment operator
+                caudio_type& operator=(const cframe_type& rhs);
 
             public:
                 /*
@@ -293,6 +314,13 @@ namespace avsutil {
                     DBGLOG("avsutil::impl::cavs_type::cavs_type(void)");
                 }
 
+            private:
+                // Inhibits copy and assignment.
+                // copy constructor
+                explicit cavs_type(const cframe_type& rhs);
+                // assignment operator
+                cavs_type& operator=(const cframe_type& rhs);
+
             public:
                 // destructor
                 ~cavs_type(void) {
@@ -346,6 +374,13 @@ namespace avsutil {
                             cavses.rbegin(), cavses.rend(),
                             util::algorithm::sweeper());
                 }
+
+            private:
+                // Inhibits copy and assignment.
+                // copy constructor
+                explicit cmanager_type(const cframe_type& rhs);
+                // assignment operator
+                cmanager_type& operator=(const cframe_type& rhs);
 
             public:
                 /*
