@@ -90,48 +90,6 @@ class opt_buffers_type
         }
 };
 
-class opt_samples_type
-    : public util::getopt::option,
-      public pattern::event::event_source<event_opt_uint> {
-    private:
-        static const unsigned int buf_samples_min = 1;
-
-    protected:
-        const char_type* shortname(void) const { return "s"; }
-        const char_type* longname(void) const { return "samples"; }
-        unsigned int handle_params(const parameters_type& params) {
-            parameters_type::const_iterator next = params.current() + 1;
-            const string_type& current = *(params.current());
-
-            if (next == params.end()) {
-                throw avs2wav_error(BAD_ARGUMENT,
-                        "Specify a number of samples processed at one time: "
-                        + current + "\n");
-            }
-
-            const string_type& param = *next;
-            if (!checker.is_integer(param) | !checker.is_positive(param)) {
-                throw avs2wav_error(BAD_ARGUMENT,
-                        "An argument should be positive integer number: " +
-                        current + " " + param + "\n");
-            }
-
-            unsigned int buf_samples = tconv.strto<unsigned int>(param);
-
-            if (buf_samples < buf_samples_min) {
-                throw avs2wav_error(BAD_ARGUMENT,
-                        "A number of samples processed at one time must be "
-                        + tconv.strfrom(buf_samples_min) + " or bigger.\n"
-                        + "Check the argument of \"" + current
-                        + "\" option.\n");
-            }
-
-            event_opt_uint event = {OPT_SAMPLES, buf_samples};
-            dispatch_event(event);
-            return 2;
-        }
-};
-
 class opt_output_type
     : public util::getopt::option,
       public pattern::event::event_source<event_opt_string> {

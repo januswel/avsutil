@@ -8,13 +8,12 @@
 
 #include "avs2wav.hpp"
 #include "main.hpp"
-#include "progress.hpp"
 
 #include "../../include/avsutil.hpp"
 
+#include "../../helper/elapsed.hpp"
 #include "../../helper/io.hpp"
 #include "../../helper/wav.hpp"
-#include "../../helper/algorithm.hpp"
 
 #include <fstream>
 #include <iomanip>
@@ -33,20 +32,6 @@ using namespace avsutil;
 // forward declarations
 // output audio informations
 ostream& operator <<(ostream&, const audio_type::info_type&);
-
-// copy samples
-template<const unsigned int Channels, const unsigned int Bytes>
-void copy_samples(std::ostream& outputs, std::ostream& infos, audio_type& audio) {
-    typedef format::riff_wav::basic_sample<Channels, Bytes> sample_type;
-    std::istream_iterator<sample_type> iitr(audio.stream()), end;
-    std::ostream_iterator<sample_type> oitr(outputs);
-    const uint64_t numof_samples = audio.info().numof_samples;
-    std::transform(
-            iitr, end, oitr,
-            progress<Channels, Bytes>(
-                infos, numof_samples / 100, numof_samples));
-}
-
 
 int Main::main(void) {
     // constants
@@ -112,17 +97,7 @@ int Main::main(void) {
         << setw(header_width) << "source:"                << inputfile << endl
         << setw(header_width) << "destination:"           << outputfile << endl
         << setw(header_width) << "buffers for output:"    << buf_size << " bytes" << endl
-        << setw(header_width) << "processed at one time:" << buf_samples << " samples" << endl
         << ai;
-
-    // allocate buffer
-    std::vector<char> output_buf(buf_size);
-    outputs.rdbuf()->pubsetbuf(&output_buf[0], buf_size);
-
-    // set buffer to stream of audio
-    const unsigned int input_buf_size = buf_samples * ai.block_size;
-    std::vector<char> input_buf(input_buf_size);
-    audio.stream().rdbuf()->pubsetbuf(&input_buf[0], input_buf_size);
 
     infos << fixed << setprecision(2);
 
@@ -136,31 +111,30 @@ int Main::main(void) {
     format::riff_wav::header_type header(elements);
     outputs << header;
 
-    switch (ai.channels) {
-        case 1:
-            switch (ai.bit_depth) {
-                case 8:     copy_samples<1, 1>(outputs, infos, audio); break;
-                case 16:    copy_samples<1, 2>(outputs, infos, audio); break;
-                case 24:    copy_samples<1, 3>(outputs, infos, audio); break;
-                case 32:    copy_samples<1, 4>(outputs, infos, audio); break;
-            }
-            break;
-        case 2:
-            switch (ai.bit_depth) {
-                case 8:     copy_samples<2, 1>(outputs, infos, audio); break;
-                case 16:    copy_samples<2, 2>(outputs, infos, audio); break;
-                case 24:    copy_samples<2, 3>(outputs, infos, audio); break;
-                case 32:    copy_samples<2, 4>(outputs, infos, audio); break;
-            }
-            break;
-        case 6:
-            switch (ai.bit_depth) {
-                case 8:     copy_samples<6, 1>(outputs, infos, audio); break;
-                case 16:    copy_samples<6, 2>(outputs, infos, audio); break;
-                case 24:    copy_samples<6, 3>(outputs, infos, audio); break;
-                case 32:    copy_samples<6, 4>(outputs, infos, audio); break;
-            }
-            break;
+    // allocate buffer
+    std::vector<char> buffer(buf_size);
+    buffer.reserve(buf_size);
+    char* buf = &buffer[0];
+    std::istream& ain = audio.stream();
+
+    // preparations for copying audio samples
+    const unsigned int block_size = ai.block_size;
+    uint64_t numerator = 0;
+    const uint64_t denominator = ai.numof_samples;
+    double percentage = 0;
+    util::time::elapsed elapsed;
+    // go!!
+    while (ain.good()) {
+        ain.read(buf, buf_size);
+        outputs.write(buf, ain.gcount());
+        numerator += ain.gcount() / block_size;
+        percentage = static_cast<double>(numerator) * 100 / denominator;
+
+        infos
+            << "\r"
+            << numerator << "/" << denominator << " samples"
+            << " (" << percentage << "%)"
+            << " elapsed " << elapsed() << " sec";
     }
 
     infos
