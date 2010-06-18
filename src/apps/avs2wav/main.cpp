@@ -60,8 +60,6 @@ int Main::main(void) {
     // output and information stream (to stdout for now)
     ostream outputs(cout.rdbuf());
     ostream infos(cout.rdbuf());
-    // apply manipulators to form data
-    infos << left;
 
     // settings for infos and outputs
     // this is true if redirected to file or connected to pipe
@@ -93,12 +91,13 @@ int Main::main(void) {
         util::io::set_stdout_binary();
     }
 
-    infos
-        << setw(header_width) << "source:"                << inputfile << endl
-        << setw(header_width) << "destination:"           << outputfile << endl
-        << setw(header_width) << "buffers for output:"    << buf_size << " bytes" << endl
+    infos << left
+        << setw(header_width) << "source:"              << inputfile << "\n"
+        << setw(header_width) << "destination:"         << outputfile << "\n"
+        << setw(header_width) << "buffers for output:"  << buf_size << " bytes\n"
         << ai;
 
+    // Applying manipulators to the stream to show informations.
     infos << fixed << setprecision(2);
 
     // do it
@@ -138,9 +137,7 @@ int Main::main(void) {
     }
 
     infos
-        << endl
-        << endl
-        << "done." << endl
+        << "\n\ndone.\n"
         << endl;
 
     return OK;
