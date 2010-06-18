@@ -29,7 +29,6 @@ class Main
         opt_version_type    opt_version;
         opt_help_type       opt_help;
         opt_buffers_type    opt_buffers;
-        opt_samples_type    opt_samples;
         opt_output_type     opt_output;
 
         // a kind of priority action
@@ -39,13 +38,11 @@ class Main
         // member variables
         string_type inputfile;
         string_type outputfile;
-        unsigned int buf_samples;
         unsigned int buf_size;
         std::list<string_type> unknown_opt;
 
         // constants
-        static const unsigned int buf_samples_def = 4096;
-        static const unsigned int buf_size_def = 4096;
+        static const unsigned int buf_size_def = 65536;
 
     protected:
         // implementations for virtual member functions of the super class
@@ -75,8 +72,6 @@ class Main
             switch (u.kind) {
                 case OPT_BUFFERS:   buf_size = u.data;
                                     break;
-                case OPT_SAMPLES:   buf_samples = u.data;
-                                    break;
                 default:            throw std::logic_error("unknown error");
             }
         }
@@ -92,19 +87,17 @@ class Main
         // constructor
         Main(void)
             : priority(UNSPECIFIED),
-              buf_size(buf_size_def), buf_samples(buf_samples_def) {
+              buf_size(buf_size_def) {
             // register options
             register_option(opt_version);
             register_option(opt_help);
             register_option(opt_buffers);
-            register_option(opt_samples);
             register_option(opt_output);
 
             // register event listeners
             opt_version.add_event_listener(this);
             opt_help.add_event_listener(this);
             opt_buffers.add_event_listener(this);
-            opt_samples.add_event_listener(this);
             opt_output.add_event_listener(this);
         }
 
