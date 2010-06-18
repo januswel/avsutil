@@ -195,34 +195,14 @@ namespace avsutil {
                                     // channels * (bit_depth / 8)
         };
 
-        // for convenience
-        typedef void (*progress_callback_type)(
-                const uint64_t processed_samples,
-                const uint64_t total_samples);
-
         // Returns informations about an audio stream.
         virtual const info_type& info(void) const = 0;
-        // Outputs audio data in the format of RIFF linear PCM.
-        virtual void write(std::ostream&) const = 0;
-        // Sets a function to show progress.
-        virtual void progress_callback(progress_callback_type) = 0;
-        /*
-         *  Sets a buffer size to read/write audio samples
-         *
-         *  default: 4096
-         *  An actual buffer size is:
-         *      min     buf_samples *  1 byte ( 8bit, mono)
-         *      max     buf_samples * 24 byte (32bit, 5.1ch)
-         * */
-        virtual void buf_samples(const uint32_t) = 0;
+
+        virtual std::istream& stream(void) = 0;
 
         // destructor
         virtual ~audio_type(void) {}
     };
-
-    // Output audio data in the format of RIFF linear PCM.
-    std::ostream& operator <<(std::ostream&, const audio_type&);
-    std::ostream& operator <<(std::ostream&, const audio_type* const);
 };
 
 #endif // AVSUTIL_HPP

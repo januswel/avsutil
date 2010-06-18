@@ -13,10 +13,12 @@
 
 #include "../../helper/elapsed.hpp"
 #include "../../helper/io.hpp"
+#include "../../helper/wav.hpp"
 
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <locale>
 #include <memory>   // fot std::auto_ptr
 #include <stdexcept>
@@ -34,12 +36,40 @@ util::string::check checker(locale::classic());
 // this stream is used in progress_cl()
 // streambuf is stdout fow now
 ostream progresss(cout.rdbuf());
+uint64_t max_samples;
 
 // forward declarations
 // callback function for audio_type::write()
-void progress_cl(const uint64_t, const uint64_t);
+template<const unsigned int Channels, const unsigned int Bytes>
+const format::riff_wav::basic_sample<Channels, Bytes>
+progress(const format::riff_wav::basic_sample<Channels, Bytes>& sample) {
+    static util::time::elapsed elapsed_time;
+    static uint64_t processed = 0;
+
+    ++processed;
+    if (processed % 16384 == 0 || processed == max_samples) {
+        float percentage = (static_cast<float>(processed) / static_cast<float>(max_samples)) * 100;
+        progresss
+            << "\r"
+            << setw(10) << processed << "/" << max_samples << " samples"
+            << " (" << setw(6) << percentage << "%)"
+            << " elapsed time " << elapsed_time() << " sec";
+    }
+    return sample;
+}
+
 // output audio informations
 ostream& operator <<(ostream&, const audio_type::info_type&);
+// copy
+template<const unsigned int Channels, const unsigned int Bytes>
+void copy_samples(std::ostream& outputs, audio_type& audio) {
+    typedef format::riff_wav::basic_sample<Channels, Bytes> sample_type;
+    std::istream_iterator<sample_type> iitr(audio.stream()), end;
+    std::ostream_iterator<sample_type> oitr(outputs);
+//    std::copy(iitr, end, oitr);
+    std::transform(iitr, end, oitr, progress<Channels, Bytes>);
+}
+
 
 int Main::main(void) {
     // constants
@@ -114,11 +144,46 @@ int Main::main(void) {
     std::vector<char> internalbuf(buf_size);
     outputs.rdbuf()->pubsetbuf(&internalbuf[0], buf_size);
     // set values to audio_type
-    audio.buf_samples(buf_samples);
-    audio.progress_callback(progress_cl);
+//    audio.buf_samples(buf_samples);
+//    audio.progress_callback(progress_cl);
 
+    max_samples = ai.numof_samples;
     // do it
-    outputs << audio;
+    format::riff_wav::elements_type elements = {
+        ai.channels,
+        ai.bit_depth,
+        static_cast<uint32_t>(ai.numof_samples),
+        ai.sampling_rate
+    };
+    format::riff_wav::header_type header(elements);
+    outputs << header;
+
+    switch (ai.channels) {
+        case 1:
+            switch (ai.bit_depth) {
+                case 8:     copy_samples<1, 1>(outputs, audio); break;
+                case 16:    copy_samples<1, 2>(outputs, audio); break;
+                case 24:    copy_samples<1, 3>(outputs, audio); break;
+                case 32:    copy_samples<1, 4>(outputs, audio); break;
+            }
+            break;
+        case 2:
+            switch (ai.bit_depth) {
+                case 8:     copy_samples<2, 1>(outputs, audio); break;
+                case 16:    copy_samples<2, 2>(outputs, audio); break;
+                case 24:    copy_samples<2, 3>(outputs, audio); break;
+                case 32:    copy_samples<2, 4>(outputs, audio); break;
+            }
+            break;
+        case 6:
+            switch (ai.bit_depth) {
+                case 8:     copy_samples<6, 1>(outputs, audio); break;
+                case 16:    copy_samples<6, 2>(outputs, audio); break;
+                case 24:    copy_samples<6, 3>(outputs, audio); break;
+                case 32:    copy_samples<6, 4>(outputs, audio); break;
+            }
+            break;
+    }
 
     infos
         << endl
@@ -127,16 +192,6 @@ int Main::main(void) {
         << endl;
 
     return OK;
-}
-
-void progress_cl(const uint64_t processed, const uint64_t max) {
-    static util::time::elapsed elapsed_time;
-    float percentage = (static_cast<float>(processed) / static_cast<float>(max)) * 100;
-    progresss
-        << "\r"
-        << setw(10) << processed << "/" << max << " samples"
-        << " (" << setw(6) << percentage << "%)"
-        << " elapsed time " << elapsed_time() << " sec";
 }
 
 ostream& operator <<(ostream& out, const audio_type::info_type& ai) {

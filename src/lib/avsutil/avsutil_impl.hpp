@@ -186,19 +186,13 @@ namespace avsutil {
                 const PClip mv_clip;
                 IScriptEnvironment* mv_se;
                 const info_type mv_info;
-                progress_callback_type mv_progress_callback;
-                uint32_t mv_buf_samples;
-
-                // constants
-                static const uint64_t mv_buf_samples_default = 4096;
+                std::istream* mv_stream;
 
             public:
                 // constructor
                 explicit caudio_type(   PClip clip, IScriptEnvironment* se,
                                         const info_type& info)
-                    : mv_clip(clip), mv_se(se), mv_info(info),
-                      mv_progress_callback(NULL),
-                      mv_buf_samples(mv_buf_samples_default) {
+                    : mv_clip(clip), mv_se(se), mv_info(info), mv_stream(NULL) {
                         DBGLOG("avsutil::impl::caudio_type::"
                                 "caudio_type(PClip, IScriptEnvironment*)\n"
                                 "exists: " << mv_info.exists << "\n"
@@ -215,6 +209,7 @@ namespace avsutil {
                 // destructor
                 ~caudio_type(void) {
                     DBGLOG("avsutil::impl::caudio_type::~caudio_type(void)");
+                    if (mv_stream != NULL) delete mv_stream;
                 }
 
             public:
@@ -240,52 +235,11 @@ namespace avsutil {
                  *  audio_type.
                  * */
                 const info_type& info(void) const { return mv_info; }
-                void write(std::ostream& out) const {
-                    DBGLOG("avsutil::impl::caudio_type::write(std::ostream&)");
-                    write_header(out);
-                    (mv_progress_callback == NULL)
-                        ? write_data(out)
-                        : write_data(out, mv_progress_callback);
-                }
-                void
-                progress_callback(progress_callback_type progress_callback) {
-                    mv_progress_callback = progress_callback;
-                }
-                void buf_samples(const uint32_t buf_samples) {
-                    mv_buf_samples = buf_samples;
-                }
+
+                std::istream& stream(void);
 
             public:
                 // utility functions
-                /*
-                 * function audio_data() returns audio data in the following format:
-                 *
-                 *  case mono
-                 *      d0, d1, ... , dn
-                 *  case stereo
-                 *      l0, r0, l1, r1, ... , ln, rn
-                 *  case 5.1 ch (maybe)
-                 *      fl0, fr0, fc0, lf0, bl0, br0, ... , fln, frn, fcn, lfn, bln, brn
-                 *
-                 *  notes
-                 *      d:  data            (for mono)
-                 *      l:  left            (for stereo)
-                 *      r:  right           (for stereo)
-                 *      fl: front left      (for 5.1ch)
-                 *      fr: front right     (for 5.1ch)
-                 *      fc: front center    (for 5.1ch)
-                 *      lf: low frequency   (for 5.1ch)
-                 *      bl: back left       (for 5.1ch)
-                 *      br: back right      (for 5.1ch)
-                 * */
-                void
-                audio_data( char* buf,
-                            const uint64_t start, const uint64_t count) const {
-                    DBGLOG("avsutil::impl::caudio_type::audio_data(char*, "
-                            << start << ", " << count << ")");
-                    mv_clip->GetAudio(buf, start, count, mv_se);
-                }
-
                 static const unsigned int bit_depth(const int sample_type) {
                     DBGLOG("avsutil::impl::caudio_type::"
                             "bitdepth(const int sample_type)");
@@ -305,12 +259,6 @@ namespace avsutil {
                             return 0;
                     }
                 }
-
-            private:
-                // utility functions
-                void write_header(std::ostream&) const;
-                void write_data(std::ostream&) const;
-                void write_data(std::ostream&, progress_callback_type) const;
         };
 
         class cavs_type : public avs_type {
