@@ -42,7 +42,7 @@ class Main
         std::list<string_type> unknown_opt;
 
         // constants
-        static const unsigned int buf_size_def = 4096;
+        static const unsigned int buf_size_def = 65536;
 
     protected:
         // implementations for virtual member functions of the super class
