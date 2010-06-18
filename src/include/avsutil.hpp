@@ -197,7 +197,7 @@ namespace avsutil {
 
         // Returns informations about an audio stream.
         virtual const info_type& info(void) const = 0;
-
+        // Returns input stream for audio samples.
         virtual std::istream& stream(void) = 0;
 
         // destructor
