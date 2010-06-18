@@ -8,12 +8,13 @@
 
 #include "avs2wav.hpp"
 #include "main.hpp"
+#include "progress.hpp"
 
 #include "../../include/avsutil.hpp"
 
-#include "../../helper/elapsed.hpp"
 #include "../../helper/io.hpp"
 #include "../../helper/wav.hpp"
+#include "../../helper/algorithm.hpp"
 
 #include <fstream>
 #include <iomanip>
@@ -29,42 +30,20 @@
 using namespace std;
 using namespace avsutil;
 
-// progresss is abbr of "progress stream"
-// this stream is used in progress_cl()
-// streambuf is stdout fow now
-ostream progresss(cout.rdbuf());
-uint64_t max_samples;
-
 // forward declarations
-// callback function for audio_type::write()
-template<const unsigned int Channels, const unsigned int Bytes>
-const format::riff_wav::basic_sample<Channels, Bytes>
-progress(const format::riff_wav::basic_sample<Channels, Bytes>& sample) {
-    static util::time::elapsed elapsed_time;
-    static uint64_t processed = 0;
-
-    ++processed;
-    if (processed % 16384 == 0 || processed == max_samples) {
-        float percentage = (static_cast<float>(processed) / static_cast<float>(max_samples)) * 100;
-        progresss
-            << "\r"
-            << setw(10) << processed << "/" << max_samples << " samples"
-            << " (" << setw(6) << percentage << "%)"
-            << " elapsed time " << elapsed_time() << " sec";
-    }
-    return sample;
-}
-
 // output audio informations
 ostream& operator <<(ostream&, const audio_type::info_type&);
-// copy
+
+// copy samples
 template<const unsigned int Channels, const unsigned int Bytes>
-void copy_samples(std::ostream& outputs, audio_type& audio) {
+void copy_samples(std::ostream& outputs, std::ostream& infos, audio_type& audio) {
     typedef format::riff_wav::basic_sample<Channels, Bytes> sample_type;
     std::istream_iterator<sample_type> iitr(audio.stream()), end;
     std::ostream_iterator<sample_type> oitr(outputs);
-//    std::copy(iitr, end, oitr);
-    std::transform(iitr, end, oitr, progress<Channels, Bytes>);
+    std::transform(
+            iitr, end, oitr,
+            progress<Channels, Bytes>(
+                infos, 16384, audio.info().numof_samples));
 }
 
 
@@ -96,10 +75,9 @@ int Main::main(void) {
     ostream outputs(cout.rdbuf());
     ostream infos(cout.rdbuf());
     // apply manipulators to form data
-    progresss << right << fixed << setprecision(2);
     infos << left;
 
-    // settings for infos, outputs and progresss
+    // settings for infos and outputs
     // this is true if redirected to file or connected to pipe
     if (!util::io::is_redirected()) {
         // if output to file
@@ -124,7 +102,6 @@ int Main::main(void) {
         // only to show
         outputfile.assign("stdout");
         // use stderr to show a progress of the process and informations of avs
-        progresss.rdbuf(cerr.rdbuf());
         infos.rdbuf(cerr.rdbuf());
         // set stdout to binary mode (Windows only)
         util::io::set_stdout_binary();
@@ -142,9 +119,9 @@ int Main::main(void) {
     outputs.rdbuf()->pubsetbuf(&internalbuf[0], buf_size);
     // set values to audio_type
 //    audio.buf_samples(buf_samples);
-//    audio.progress_callback(progress_cl);
 
-    max_samples = ai.numof_samples;
+    infos << fixed << setprecision(2);
+
     // do it
     format::riff_wav::elements_type elements = {
         ai.channels,
@@ -158,26 +135,26 @@ int Main::main(void) {
     switch (ai.channels) {
         case 1:
             switch (ai.bit_depth) {
-                case 8:     copy_samples<1, 1>(outputs, audio); break;
-                case 16:    copy_samples<1, 2>(outputs, audio); break;
-                case 24:    copy_samples<1, 3>(outputs, audio); break;
-                case 32:    copy_samples<1, 4>(outputs, audio); break;
+                case 8:     copy_samples<1, 1>(outputs, infos, audio); break;
+                case 16:    copy_samples<1, 2>(outputs, infos, audio); break;
+                case 24:    copy_samples<1, 3>(outputs, infos, audio); break;
+                case 32:    copy_samples<1, 4>(outputs, infos, audio); break;
             }
             break;
         case 2:
             switch (ai.bit_depth) {
-                case 8:     copy_samples<2, 1>(outputs, audio); break;
-                case 16:    copy_samples<2, 2>(outputs, audio); break;
-                case 24:    copy_samples<2, 3>(outputs, audio); break;
-                case 32:    copy_samples<2, 4>(outputs, audio); break;
+                case 8:     copy_samples<2, 1>(outputs, infos, audio); break;
+                case 16:    copy_samples<2, 2>(outputs, infos, audio); break;
+                case 24:    copy_samples<2, 3>(outputs, infos, audio); break;
+                case 32:    copy_samples<2, 4>(outputs, infos, audio); break;
             }
             break;
         case 6:
             switch (ai.bit_depth) {
-                case 8:     copy_samples<6, 1>(outputs, audio); break;
-                case 16:    copy_samples<6, 2>(outputs, audio); break;
-                case 24:    copy_samples<6, 3>(outputs, audio); break;
-                case 32:    copy_samples<6, 4>(outputs, audio); break;
+                case 8:     copy_samples<6, 1>(outputs, infos, audio); break;
+                case 16:    copy_samples<6, 2>(outputs, infos, audio); break;
+                case 24:    copy_samples<6, 3>(outputs, infos, audio); break;
+                case 32:    copy_samples<6, 4>(outputs, infos, audio); break;
             }
             break;
     }
