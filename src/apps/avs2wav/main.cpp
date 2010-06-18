@@ -60,6 +60,8 @@ int Main::main(void) {
     // output and information stream (to stdout for now)
     ostream targetout(cout.rdbuf());
     ostream infoout(cout.rdbuf());
+    targetout.imbue(std::locale::classic());
+    infoout.imbue(std::locale::classic());
 
     // settings for infoout and targetout
     // this is true if redirected to file or connected to pipe
