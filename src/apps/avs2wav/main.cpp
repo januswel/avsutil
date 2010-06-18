@@ -49,19 +49,19 @@ int Main::main(void) {
 
     // get audio stream
     audio_type& audio = avs.audio();
-    const audio_type::info_type& ai = audio.info();
+    const audio_type::info_type& info = audio.info();
 
-    if (!ai.exists) {
+    if (!info.exists) {
         throw avs2wav_error(BAD_AVS,
                 "Specified file has no audio stream: " + inputfile);
     }
 
     // preparations
     // output and information stream (to stdout for now)
-    ostream outputs(cout.rdbuf());
-    ostream infos(cout.rdbuf());
+    ostream targetout(cout.rdbuf());
+    ostream infoout(cout.rdbuf());
 
-    // settings for infos and outputs
+    // settings for infoout and targetout
     // this is true if redirected to file or connected to pipe
     if (!util::io::is_redirected()) {
         // if output to file
@@ -78,7 +78,7 @@ int Main::main(void) {
         }
 
         // set filebuf to output stream
-        outputs.rdbuf(fbuf);
+        targetout.rdbuf(fbuf);
     }
     else {
         // if output to stdout
@@ -86,29 +86,30 @@ int Main::main(void) {
         // only to show
         outputfile.assign("stdout");
         // use stderr to show a progress of the process and informations of avs
-        infos.rdbuf(cerr.rdbuf());
+        infoout.rdbuf(cerr.rdbuf());
         // set stdout to binary mode (Windows only)
         util::io::set_stdout_binary();
     }
 
-    infos << left
+    // showing informations
+    infoout << left
         << setw(header_width) << "source:"              << inputfile << "\n"
         << setw(header_width) << "destination:"         << outputfile << "\n"
         << setw(header_width) << "buffers for output:"  << buf_size << " bytes\n"
-        << ai;
+        << info;
 
     // Applying manipulators to the stream to show informations.
-    infos << fixed << setprecision(2);
+    infoout << fixed << setprecision(2);
 
-    // do it
+    // writing wav header
     format::riff_wav::elements_type elements = {
-        ai.channels,
-        ai.bit_depth,
-        static_cast<uint32_t>(ai.numof_samples),
-        ai.sampling_rate
+        info.channels,
+        info.bit_depth,
+        static_cast<uint32_t>(info.numof_samples),
+        info.sampling_rate
     };
     format::riff_wav::header_type header(elements);
-    outputs << header;
+    targetout << header;
 
     // allocate buffer
     std::vector<char> buffer(buf_size);
@@ -117,54 +118,58 @@ int Main::main(void) {
     std::istream& ain = audio.stream();
 
     // preparations for copying audio samples
-    const unsigned int block_size = ai.block_size;
+    const unsigned int block_size = info.block_size;
     uint64_t numerator = 0;
-    const uint64_t denominator = ai.numof_samples;
+    const uint64_t denominator = info.numof_samples;
     double percentage = 0;
     util::time::elapsed elapsed;
     // go!!
     while (ain.good()) {
+        // read and write
         ain.read(buf, buf_size);
-        outputs.write(buf, ain.gcount());
+        targetout.write(buf, ain.gcount());
+
+        // calculations to show progresses
         numerator += ain.gcount() / block_size;
         percentage = static_cast<double>(numerator) * 100 / denominator;
 
-        infos
+        // showing progresses
+        infoout
             << "\r"
             << numerator << "/" << denominator << " samples"
             << " (" << percentage << "%)"
             << " elapsed " << elapsed() << " sec";
     }
 
-    infos
+    infoout
         << "\n\ndone.\n"
         << endl;
 
     return OK;
 }
 
-ostream& operator <<(ostream& out, const audio_type::info_type& ai) {
+ostream& operator <<(ostream& out, const audio_type::info_type& info) {
     // constants
     static const unsigned int header_width = 18;
 
     // preparations
     string channels;
-    switch (ai.channels) {
+    switch (info.channels) {
         case 1: channels = "mono";   break;
         case 2: channels = "stereo"; break;
         case 6: channels = "5.1ch";  break;
         default:
-            channels.assign(tconv.strfrom(ai.channels)).append("ch");
+            channels.assign(tconv.strfrom(info.channels)).append("ch");
             break;
     }
-    float sampling_rate = static_cast<float>(ai.sampling_rate) / 1000;
+    float sampling_rate = static_cast<float>(info.sampling_rate) / 1000;
 
     // instantiate new ostream object and set streambuf of "out" to it
     // in order to save the formattings of "out"
     ostream o(out.rdbuf());
     o << left << setfill('.')
         << "\n"
-        << setw(header_width) << "bit depth "     << ' ' << ai.bit_depth << "bit\n"
+        << setw(header_width) << "bit depth "     << ' ' << info.bit_depth << "bit\n"
         << setw(header_width) << "channels "      << ' ' << channels << "\n"
         << setw(header_width) << "sampling rate " << ' ' << sampling_rate << "kHz\n"
         << endl;
