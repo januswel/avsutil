@@ -114,6 +114,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\apps\avs2wav\about.cpp" />
+    <ClCompile Include="..\..\..\src\apps\avs2wav\global.cpp" />
     <ClCompile Include="..\..\..\src\apps\avs2wav\main.cpp" />
     <ClCompile Include="..\..\..\src\apps\avs2wav\name.cpp" />
     <ClCompile Include="..\..\..\src\apps\avs2wav\usage.cpp" />
