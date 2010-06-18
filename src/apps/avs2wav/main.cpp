@@ -40,10 +40,11 @@ void copy_samples(std::ostream& outputs, std::ostream& infos, audio_type& audio)
     typedef format::riff_wav::basic_sample<Channels, Bytes> sample_type;
     std::istream_iterator<sample_type> iitr(audio.stream()), end;
     std::ostream_iterator<sample_type> oitr(outputs);
+    const uint64_t numof_samples = audio.info().numof_samples;
     std::transform(
             iitr, end, oitr,
             progress<Channels, Bytes>(
-                infos, 16384, audio.info().numof_samples));
+                infos, numof_samples / 100, numof_samples));
 }
 
 
@@ -63,7 +64,7 @@ int Main::main(void) {
 
     // get audio stream
     audio_type& audio = avs.audio();
-    audio_type::info_type ai = audio.info();
+    const audio_type::info_type& ai = audio.info();
 
     if (!ai.exists) {
         throw avs2wav_error(BAD_AVS,
@@ -115,10 +116,13 @@ int Main::main(void) {
         << ai;
 
     // allocate buffer
-    std::vector<char> internalbuf(buf_size);
-    outputs.rdbuf()->pubsetbuf(&internalbuf[0], buf_size);
-    // set values to audio_type
-//    audio.buf_samples(buf_samples);
+    std::vector<char> output_buf(buf_size);
+    outputs.rdbuf()->pubsetbuf(&output_buf[0], buf_size);
+
+    // set buffer to stream of audio
+    const unsigned int input_buf_size = buf_samples * ai.block_size;
+    std::vector<char> input_buf(input_buf_size);
+    audio.stream().rdbuf()->pubsetbuf(&input_buf[0], input_buf_size);
 
     infos << fixed << setprecision(2);
 
