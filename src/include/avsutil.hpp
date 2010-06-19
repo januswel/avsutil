@@ -9,16 +9,26 @@
 #ifndef AVSUTIL_HPP
 #define AVSUTIL_HPP
 
-#include <ostream>
-#include <stdexcept>
+#include <istream>
 #include <stdint.h>
 
 namespace avsutil {
     // forward declarations
+    struct manager_type;
     struct avs_type;
     struct video_type;
-    struct frame_type;
     struct audio_type;
+
+    /*
+     *  A function to start.
+     *  Usage:
+     *
+     *      using namespace avsutil;
+     *
+     *      // note: binding by reference
+     *      avs_type& avs = manager().load("funny_animal.avs");
+     * */
+    manager_type& manager(void);
 
     /*
      *  a class to manage AVS files
@@ -26,12 +36,7 @@ namespace avsutil {
     struct manager_type {
         /*
          *  Reads the file that is located on "filepath" and returns the
-         *  reference of avs_type. Use as follwings:
-         *
-         *      using namespace avsutil;
-         *
-         *      // note: binding by reference
-         *      avs_type& avs = manager().load("funny_animal.avs");
+         *  reference of avs_type.
          * */
         virtual avs_type& load(const char* filepath) = 0;
 
@@ -45,13 +50,13 @@ namespace avsutil {
         virtual ~manager_type(void) {}
     };
 
-    // A function to start
-    manager_type& manager(void);
-
     /*
      *  A class that has basic features about AVS, by wrapping classes defined
-     *  in avisynth.h.
-     *  E.g.: opening AVS file and getting audio informations.
+     *  in avisynth.h.  E.g.:
+     *
+     *      - opening AVS file
+     *      - getting the object to get video informations / frame data
+     *      - getting the object to get audio informations / samples
      * */
     struct avs_type {
         // Returns informations
@@ -63,7 +68,7 @@ namespace avsutil {
         // false.
         virtual const char* errmsg(void) const = 0;
 
-        // Returns the objects to treat video/audio streams.
+        // Returns the objects to treat video/audio.
         virtual video_type& video(void) = 0;
         virtual audio_type& audio(void) = 0;
 
@@ -71,9 +76,9 @@ namespace avsutil {
         virtual ~avs_type(void) {}
     };
 
-    // a class for a video stream
+    // a class for a video
     struct video_type {
-        // informations of a video stream
+        // informations of a video
         struct info_type {
             /*
              *  Enumerations for representations as the color spaces (pixel
@@ -146,7 +151,7 @@ namespace avsutil {
                                           // interlaced if false
         };
 
-        // Returns informations about a video stream.
+        // Returns informations about a video.
         virtual const info_type& info(void) const = 0;
         // Returns a nth frame stream object.
         virtual std::istream& framestream(uint32_t n) = 0;
@@ -156,9 +161,9 @@ namespace avsutil {
         virtual ~video_type(void) {}
     };
 
-    // a class for an audio stream
+    // a class for an audio
     struct audio_type {
-        // informations of an audio stream
+        // informations of an audio
         struct info_type {
             bool exists;
             uint16_t channels;      // left, [right, [center, ...]]
@@ -171,7 +176,7 @@ namespace avsutil {
                                     // channels * (bit_depth / 8)
         };
 
-        // Returns informations about an audio stream.
+        // Returns informations about an audio.
         virtual const info_type& info(void) const = 0;
         // Returns input stream for audio samples.
         virtual std::istream& stream(void) = 0;
