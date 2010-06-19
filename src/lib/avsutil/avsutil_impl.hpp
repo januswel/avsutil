@@ -21,7 +21,6 @@
 #include <functional>
 #include <list>
 #include <memory>
-#include <ostream>
 #include <string>
 
 namespace avsutil {
@@ -42,29 +41,34 @@ namespace avsutil {
                 // constructor
                 explicit cvideo_type(   PClip clip, IScriptEnvironment* se,
                                         const info_type& info)
-                    : mv_clip(clip), mv_rgb_clip(clip),
-                      mv_se(se), mv_info(info) {
-                          DBGLOG( "avsutil::impl::cvideo_type::"
-                                  "cvideo_type(Pclip, IScriptEnvironment*)\n"
-                                  "exists: " << mv_info.exists << "\n"
-                                  "width: " << mv_info.width << "\n"
-                                  "height: " << mv_info.height << "\n"
-                                  "time: " << mv_info.time << "\n"
-                                  "fps: " << mv_info.fps << "\n"
-                                  "fps_numerator: " << mv_info.fps_numerator << "\n"
-                                  "fps_denominator: " << mv_info.fps_denominator << "\n"
-                                  "numof_frames: " << mv_info.numof_frames << "\n"
-                                  "color_space: " << mv_info.fourcc_name(mv_info.color_space) << "\n"
-                                  "bpp: " << mv_info.bpp << "\n"
-                                  "is_fieldbased: " << mv_info.is_fieldbased << "\n"
-                                  "is_tff: " << mv_info.is_tff << "\n");
-                      }
+                : mv_clip(clip), mv_rgb_clip(clip),
+                  mv_se(se), mv_info(info) {
+                    DBGLOG( "avsutil::impl::cvideo_type::"
+                            "cvideo_type(Pclip, IScriptEnvironment*,"
+                            " const info_type&)\n"
+                            "exists: " << mv_info.exists << "\n"
+                            "width: " << mv_info.width << "\n"
+                            "height: " << mv_info.height << "\n"
+                            "time: " << mv_info.time << "\n"
+                            "fps: " << mv_info.fps << "\n"
+                            "fps_numerator: " << mv_info.fps_numerator << "\n"
+                            "fps_denominator: "
+                                << mv_info.fps_denominator << "\n"
+                            "numof_frames: " << mv_info.numof_frames << "\n"
+                            "color_space: "
+                                << mv_info.fourcc_name(mv_info.color_space)
+                                << "\n"
+                            "bpp: " << mv_info.bpp << "\n"
+                            "is_fieldbased: " << mv_info.is_fieldbased << "\n"
+                            "is_tff: " << mv_info.is_tff << "\n");
+                }
 
             public:
                 // destructor
                 ~cvideo_type(void) {
                     DBGLOG("avsutil::impl::cvideo_type::~cvideo_type(void)");
-                    std::for_each(framestreams.rbegin(), framestreams.rend(),
+                    std::for_each(
+                            framestreams.rbegin(), framestreams.rend(),
                             util::algorithm::sweeper());
                 }
 
@@ -92,6 +96,7 @@ namespace avsutil {
                  * */
                 const info_type& info(void) const { return mv_info; }
                 std::istream& framestream(uint32_t n);
+                void release_framestream(std::istream& target);
 
             public:
                 // utility functions
@@ -107,8 +112,6 @@ namespace avsutil {
                         default:                    return info_type::UNKOWN;
                     }
                 }
-
-                void release_framestream(std::istream& target);
         };
 
         class caudio_type : public audio_type {
@@ -123,18 +126,19 @@ namespace avsutil {
                 // constructor
                 explicit caudio_type(   PClip clip, IScriptEnvironment* se,
                                         const info_type& info)
-                    : mv_clip(clip), mv_se(se), mv_info(info), mv_stream(NULL) {
-                        DBGLOG("avsutil::impl::caudio_type::"
-                                "caudio_type(PClip, IScriptEnvironment*)\n"
-                                "exists: " << mv_info.exists << "\n"
-                                "channels: " << mv_info.channels << "\n"
-                                "bit_depth: " << mv_info.bit_depth << "\n"
-                                "is_int: " << mv_info.is_int << "\n"
-                                "time: " << mv_info.time << "\n"
-                                "sampling_rate: " << mv_info.sampling_rate << "\n"
-                                "numof_samples: " << mv_info.numof_samples << "\n"
-                                "block_size: " << mv_info.block_size << "\n");
-                    }
+                : mv_clip(clip), mv_se(se), mv_info(info), mv_stream(NULL) {
+                    DBGLOG( "avsutil::impl::caudio_type::"
+                            "caudio_type(PClip, IScriptEnvironment*,"
+                            " const info_type&)\n"
+                            "exists: " << mv_info.exists << "\n"
+                            "channels: " << mv_info.channels << "\n"
+                            "bit_depth: " << mv_info.bit_depth << "\n"
+                            "is_int: " << mv_info.is_int << "\n"
+                            "time: " << mv_info.time << "\n"
+                            "sampling_rate: " << mv_info.sampling_rate << "\n"
+                            "numof_samples: " << mv_info.numof_samples << "\n"
+                            "block_size: " << mv_info.block_size << "\n");
+                }
 
             public:
                 // destructor
@@ -166,7 +170,6 @@ namespace avsutil {
                  *  audio_type.
                  * */
                 const info_type& info(void) const { return mv_info; }
-
                 std::istream& stream(void);
 
             public:
@@ -216,10 +219,8 @@ namespace avsutil {
             public:
                 // constructor
                 cavs_type(void)
-                    : mv_se(CreateScriptEnvironment()),
-                      mv_is_fine(true),
-                      mv_video(NULL),
-                      mv_audio(NULL) {
+                : mv_se(CreateScriptEnvironment()), mv_is_fine(true),
+                  mv_video(NULL), mv_audio(NULL) {
                     DBGLOG("avsutil::impl::cavs_type::cavs_type(void)");
                 }
 
@@ -282,13 +283,13 @@ namespace avsutil {
             public:
                 // constructor
                 cmanager_type(void) {
-                    DBGLOG("cavs_loader_type::cavs_loader_type(void)");
+                    DBGLOG("cmanager_type::cmanager_type(void)");
                 }
 
             public:
                 // destructor
                 ~cmanager_type(void) {
-                    DBGLOG("cavs_loader_type::~cavs_loader_type(void)");
+                    DBGLOG("cmanager_type::~cmanager_type(void)");
                     std::for_each(
                             cavses.rbegin(), cavses.rend(),
                             util::algorithm::sweeper());
