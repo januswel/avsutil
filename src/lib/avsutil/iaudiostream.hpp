@@ -2,8 +2,8 @@
  * iaudiostream.hpp
  *  Declarations and definitions of a class iaudiostream and audiostreambuf
  *
- *  written by janus_wel<janus.wel.3@gmail.com>
- *  This source code is in public domain, and has NO WARRANTY.
+ *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
+ *  see LICENSE for redistributing, modifying, and so on.
  * */
 
 #ifndef IAUDIOSTREAM_HPP
