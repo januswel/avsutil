@@ -15,7 +15,6 @@
 #include <iomanip>
 #include <iostream>
 #include <locale>
-#include <memory>   // for std::auto_ptr
 #include <stdexcept>
 
 // using namespaces
@@ -39,24 +38,28 @@ int Main::main(void) {
         throw avsinfo_error(BAD_AVS, avs.errmsg());
     }
 
-    // video stream items
-    const video_type::info_type vi = avs.video().info();;
+    // video items
+    const video_type::info_type& video_info = avs.video().info();;
 
-    if (vi.exists) {
-        video_items.notation(is_human_friendly).output(cout, vi);
+    if (video_info.exists) {
+        video_items.notation(is_human_friendly).output(cout, video_info);
     }
     else {
-        cerr << "<inputfile> has no video stream: " << inputfile << endl;
+        throw avsinfo_error(
+                BAD_AVS,
+                "<inputfile> has no video: " + inputfile);
     }
 
-    // audio stream items
-    const audio_type::info_type ai = avs.audio().info();
+    // audio items
+    const audio_type::info_type& audio_info = avs.audio().info();
 
-    if (ai.exists) {
-        audio_items.notation(is_human_friendly).output(cout, ai);
+    if (audio_info.exists) {
+        audio_items.notation(is_human_friendly).output(cout, audio_info);
     }
     else {
-        cerr << "<inputfile> has no audio stream: " << inputfile << endl;
+        throw avsinfo_error(
+                BAD_AVS,
+                "<inputfile> has no audio: " + inputfile);
     }
 
     return OK;
