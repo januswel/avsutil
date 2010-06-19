@@ -51,7 +51,7 @@ namespace avsutil {
          *  mv_se.
          * */
         video_type& cavs_type::video(void) {
-            const VideoInfo vi = mv_clip->GetVideoInfo();
+            const VideoInfo& vi = mv_clip->GetVideoInfo();
             const cvideo_type::info_type info = {
                 vi.HasVideo(),
                 vi.width,
@@ -74,7 +74,7 @@ namespace avsutil {
         }
 
         audio_type& cavs_type::audio(void) {
-            const VideoInfo vi = mv_clip->GetVideoInfo();
+            const VideoInfo& vi = mv_clip->GetVideoInfo();
             const caudio_type::info_type info = {
                 vi.HasAudio(),
                 vi.AudioChannels(),
