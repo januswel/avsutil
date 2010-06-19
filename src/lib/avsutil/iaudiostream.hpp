@@ -1,18 +1,21 @@
 /*
- * audio_impl.cpp
- *  Definitions for caudio_type class
+ * iaudiostream.hpp
+ *  Declarations and definitions of a class iaudiostream and audiostreambuf
  *
- *  Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>
- *  see LICENSE for redistributing, modifying, and so on.
+ *  written by janus_wel<janus.wel.3@gmail.com>
+ *  This source code is in public domain, and has NO WARRANTY.
  * */
 
-#include "avsutil_impl.hpp"
+#ifndef IAUDIOSTREAM_HPP
+#define IAUDIOSTREAM_HPP
+
+#include <istream>
 
 #include "../../helper/dlogger.hpp"
 
 namespace avsutil {
     namespace impl {
-        class avsaudiostreambuf : public std::streambuf {
+        class audiostreambuf : public std::streambuf {
             private:
                 PClip clip;
                 IScriptEnvironment* se;
@@ -42,7 +45,7 @@ namespace avsutil {
 
             public:
                 // constructor
-                avsaudiostreambuf(PClip clip, IScriptEnvironment* se)
+                audiostreambuf(PClip clip, IScriptEnvironment* se)
                     : clip(clip), se(se),
                     sample_size(clip->GetVideoInfo().BytesPerAudioSample()),
                     numof_samples(clip->GetVideoInfo().num_audio_samples),
@@ -50,13 +53,13 @@ namespace avsutil {
                     samples_at_a_time(buf_size_def / sample_size),
                     buf(new char[sample_size * samples_at_a_time]),
                     is_internal_buf(true) {
-                        DBGLOG( "avsaudiostreambuf::avsaudiostreambuf"
+                        DBGLOG( "audiostreambuf::audiostreambuf"
                                 "(PClip, IScriptEnvironment*)");
                     }
 
                 // destructor
-                ~avsaudiostreambuf(void) {
-                    DBGLOG( "avsaudiostreambuf::~avsaudiostreambuf(void)");
+                ~audiostreambuf(void) {
+                    DBGLOG( "audiostreambuf::~audiostreambuf(void)");
                     if (is_internal_buf) {
                         DBGLOG( "delete the internal buffer");
                         delete[] buf;
@@ -65,13 +68,13 @@ namespace avsutil {
 
             private:
                 // copy constructor
-                avsaudiostreambuf(const avsaudiostreambuf& rhs);
+                audiostreambuf(const audiostreambuf& rhs);
                 // assignment operator
-                avsaudiostreambuf& operator=(const avsaudiostreambuf& rhs);
+                audiostreambuf& operator=(const audiostreambuf& rhs);
 
             protected:
                 std::streambuf* setbuf(char_type* s, std::streamsize n) {
-                    DBGLOG( "avsaudiostreambuf::setbuf(char_type*, "
+                    DBGLOG( "audiostreambuf::setbuf(char_type*, "
                             << n << ")");
 
                     // Delete the existing buffer if that was allocated by
@@ -98,7 +101,7 @@ namespace avsutil {
                         off_type off, std::ios_base::seekdir way,
                         std::ios_base::openmode which =
                         std::ios_base::in | std::ios_base::out) {
-                    DBGLOG( "avsaudiostreambuf::seekoff("
+                    DBGLOG( "audiostreambuf::seekoff("
                             << off << ", " << way << ", " << which << ")");
 
                     // Does only if a stream is opened in an input mode
@@ -173,13 +176,13 @@ namespace avsutil {
                         pos_type sp,
                         std::ios_base::openmode which =
                         std::ios_base::in | std::ios_base::out) {
-                    DBGLOG( "avsaudiostreambuf::seekpos("
+                    DBGLOG( "audiostreambuf::seekpos("
                             << sp << ", " << which << ")");
                     return seekoff(off_type(sp), std::ios_base::beg, which);
                 }
 
                 int_type underflow(void) {
-                    DBGLOG("avsaudiostreambuf::underflow(void)");
+                    DBGLOG("audiostreambuf::underflow(void)");
                     if (numof_samples <= page_next) {
                         DBGLOG("reached to the end of avs audio stream");
                         return traits_type::eof();
@@ -227,22 +230,22 @@ namespace avsutil {
                 }
         };
 
-        class iavsaudiostream : public std::istream {
+        class iaudiostream : public std::istream {
             private:
                 const std::streambuf* internal_buf;
 
             public:
                 // constructor
-                iavsaudiostream(PClip clip, IScriptEnvironment* se)
-                    : std::istream(new avsaudiostreambuf(clip, se)),
-                    internal_buf(rdbuf()) {
-                        DBGLOG( "iavsaudiostream::iavsaudiostream"
-                                "(PClip, IScriptEnvironment*)");
-                    }
+                iaudiostream(PClip clip, IScriptEnvironment* se)
+                : std::istream(new audiostreambuf(clip, se)),
+                  internal_buf(rdbuf()) {
+                    DBGLOG( "iaudiostream::iaudiostream"
+                            "(PClip, IScriptEnvironment*)");
+                }
 
                 // destructor
-                ~iavsaudiostream(void) {
-                    DBGLOG( "iavsaudiostream::~iavsaudiostream(void)");
+                ~iaudiostream(void) {
+                    DBGLOG( "iaudiostream::~iaudiostream(void)");
                     if (rdbuf() == internal_buf) {
                         DBGLOG( "delete the internal streambuf.");
                         delete rdbuf();
@@ -251,17 +254,12 @@ namespace avsutil {
 
             private:
                 // copy constructor
-                iavsaudiostream(const iavsaudiostream& rhs);
+                iaudiostream(const iaudiostream& rhs);
                 // assignment operator
-                iavsaudiostream& operator=(const iavsaudiostream& rhs);
+                iaudiostream& operator=(const iaudiostream& rhs);
         };
-
-        std::istream& caudio_type::stream(void) {
-            if (mv_stream == NULL) {
-                mv_stream = new iavsaudiostream(mv_clip, mv_se);
-            }
-            return *mv_stream;
-        }
     }
 }
+
+#endif // IAUDIOSTREAM_HPP
 

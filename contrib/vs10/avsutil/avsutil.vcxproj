@@ -14,6 +14,9 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\lib\avsutil\avsutil_impl.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{696EC07A-CC2B-4E75-A996-1884E1EBDD3A}</ProjectGuid>
     <RootNamespace>avsutil</RootNamespace>
@@ -92,15 +95,6 @@
       <AdditionalDependencies>C:\Program Files\AviSynth 2.5\Extras\avisynth.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\src\lib\avsutil\avsutil_impl.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\src\lib\avsutil\audio_impl.cpp" />
-    <ClCompile Include="..\..\..\src\lib\avsutil\avs_impl.cpp" />
-    <ClCompile Include="..\..\..\src\lib\avsutil\manager_impl.cpp" />
-    <ClCompile Include="..\..\..\src\lib\avsutil\video_impl.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
