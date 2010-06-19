@@ -13,7 +13,6 @@
 
 #include <iostream>
 #include <locale>
-#include <memory>       // for std::auto_ptr
 #include <stdexcept>
 
 using namespace std;
@@ -28,8 +27,7 @@ int Main::main(void) {
     // Do it
     avs_type& avs = manager().load(inputfile.c_str());
     if (!avs.is_fine()) {
-        cerr << avs.errmsg() << endl;
-        return BAD_AVS;
+        throw avslint_error(BAD_AVS, avs.errmsg());
     }
 
     return OK;
