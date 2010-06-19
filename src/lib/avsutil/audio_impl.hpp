@@ -77,6 +77,9 @@ namespace avsutil {
                 const info_type& info(void) const { return mv_info; }
 
                 std::istream& stream(void) {
+                    DBGLOG( "avsutil::impl::caudio_type::"
+                            "stream(void)");
+
                     if (mv_stream == NULL) {
                         mv_stream = new iaudiostream(mv_clip, mv_se);
                     }
@@ -86,7 +89,7 @@ namespace avsutil {
             public:
                 // utility functions
                 static const unsigned int bit_depth(const int sample_type) {
-                    DBGLOG("avsutil::impl::caudio_type::"
+                    DBGLOG( "avsutil::impl::caudio_type::"
                             "bitdepth(const int sample_type)");
 
                     switch (sample_type) {

@@ -28,12 +28,12 @@ namespace avsutil {
                 // constructor
                 framestreambuf(PVideoFrame frame)
                     : frame(frame),
-                    beginning(
-                            const_cast<char*>(
-                                util::cast::constpointer_cast<const char*>(
-                                    frame->GetReadPtr()))),
-                    pitch(frame->GetPitch()), height(frame->GetHeight()),
-                    size(pitch * height) {
+                      beginning(
+                              const_cast<char*>(
+                                  util::cast::constpointer_cast<const char*>(
+                                      frame->GetReadPtr()))),
+                      pitch(frame->GetPitch()), height(frame->GetHeight()),
+                      size(pitch * height) {
                         DBGLOG( "framestreambuf::framestreambuf"
                                 "(PVideoFrame)");
                         setg(beginning, beginning, beginning + size);

@@ -96,6 +96,9 @@ namespace avsutil {
                 const info_type& info(void) const { return mv_info; }
 
                 std::istream& framestream(uint32_t n) {
+                    DBGLOG( "avsutil::impl::cvideo_type::"
+                            "framestream(" << n << ")");
+
                     if (!mv_rgb_clip->GetVideoInfo().IsRGB24()) {
                         DBGLOG("convert to RGB24");
                         AVSValue clip = mv_rgb_clip;
@@ -116,7 +119,6 @@ namespace avsutil {
                     if (found != framestreams.end()) return **found;
 
                     // not found and create
-                    DBGLOG("create new iframestream object with: " << n << "frame");
                     PVideoFrame frame = mv_rgb_clip->GetFrame(n, mv_se);
                     iframestream* created = new iframestream(frame, n);
                     framestreams.push_back(created);
@@ -124,6 +126,9 @@ namespace avsutil {
                 }
 
                 void release_framestream(std::istream& target) {
+                    DBGLOG( "avsutil::impl::cvideo_type::"
+                            "release_framestream(std::istream&)");
+
                     framestreams_type::iterator found =
                         std::find(
                                 framestreams.begin(), framestreams.end(),
