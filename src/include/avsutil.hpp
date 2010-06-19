@@ -148,37 +148,13 @@ namespace avsutil {
 
         // Returns informations about a video stream.
         virtual const info_type& info(void) const = 0;
-        // Returns a frame object.
-        virtual frame_type& frame(uint32_t) = 0;
+        // Returns a nth frame stream object.
+        virtual std::istream& framestream(uint32_t n) = 0;
+        virtual void release_framestream(std::istream& target) = 0;
 
         // destructor
         virtual ~video_type(void) {}
     };
-
-    // a class for a frame in a video stream.
-    struct frame_type {
-        // informations of a frame
-        struct info_type {
-            uint16_t width;
-            uint16_t pitch;
-            uint16_t height;
-            uint32_t nth;
-        };
-
-        // Returns informations about a frame.
-        virtual const info_type& info(void) const = 0;
-        // Outputs frame data in the format of 24bit Windows Bitmap.
-        virtual void write(std::ostream&) const = 0;
-        // Releases a frame object from a memory space.
-        virtual void release(void) const = 0;
-
-        // destructor
-        virtual ~frame_type(void) {}
-    };
-
-    // Outputs frame data in the format of 24bit Windows Bitmap
-    std::ostream& operator <<(std::ostream&, const frame_type&);
-    std::ostream& operator <<(std::ostream&, const frame_type* const);
 
     // a class for an audio stream
     struct audio_type {

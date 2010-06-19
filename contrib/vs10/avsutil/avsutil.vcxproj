@@ -98,7 +98,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\lib\avsutil\audio_impl.cpp" />
     <ClCompile Include="..\..\..\src\lib\avsutil\avs_impl.cpp" />
-    <ClCompile Include="..\..\..\src\lib\avsutil\frame_impl.cpp" />
     <ClCompile Include="..\..\..\src\lib\avsutil\manager_impl.cpp" />
     <ClCompile Include="..\..\..\src\lib\avsutil\video_impl.cpp" />
   </ItemGroup>

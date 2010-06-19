@@ -8,11 +8,9 @@
 
 #include "avsutil_impl.hpp"
 
-#include "../../helper/dlogger.hpp"
-
 namespace avsutil {
     namespace impl {
-        frame_type& cvideo_type::frame(uint32_t n) {
+        std::istream& cvideo_type::framestream(uint32_t n) {
             if (!mv_rgb_clip->GetVideoInfo().IsRGB24()) {
                 DBGLOG("convert to RGB24");
                 AVSValue clip = mv_rgb_clip;
@@ -22,36 +20,31 @@ namespace avsutil {
                 mv_rgb_clip = converted.AsClip();
             }
 
-            cframes_type::iterator found =
+            framestreams_type::iterator found =
                 std::find_if(
-                        cframes.begin(), cframes.end(),
+                        framestreams.begin(), framestreams.end(),
                         std::bind2nd(std::mem_fun(
-                                &avsutil::impl::cframe_type::is_me
+                                &avsutil::impl::iframestream::is_me
                                 ), n));
 
             // found
-            if (found != cframes.end()) return **found;
+            if (found != framestreams.end()) return **found;
 
             // not found and create
+            DBGLOG("create new iframestream object with: " << n << "frame");
             PVideoFrame frame = mv_rgb_clip->GetFrame(n, mv_se);
-            const cframe_type::info_type info = {
-                frame->GetRowSize() / 3,
-                frame->GetPitch(),
-                frame->GetHeight(),
-                n
-            };
-            cframe_type* created = new cframe_type(frame , this, info);
-            cframes.push_back(created);
+            iframestream* created = new iframestream(frame, n);
+            framestreams.push_back(created);
             return *created;
         }
 
-        void cvideo_type::release_frame(const cframe_type* const target) {
-            cframes_type::iterator found =
-                std::find(cframes.begin(), cframes.end(), target);
+        void cvideo_type::release_framestream(std::istream& target) {
+            framestreams_type::iterator found =
+                std::find(framestreams.begin(), framestreams.end(), &target);
 
-            if (found != cframes.end()) {
+            if (found != framestreams.end()) {
                 delete *found;
-                cframes.erase(found);
+                framestreams.erase(found);
             }
         }
     }

@@ -10,6 +10,8 @@
 
 #include "../../include/avsutil.hpp"
 
+#include "../../helper/bmp.hpp"
+
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -68,7 +70,7 @@ int Main::main(void) {
     for (target_frames_type::const_iterator itr = target_frames.begin();
             itr != target_frames.end(); ++itr) {
         unsigned int n = *itr;
-        frame_type& frame = video.frame(n - 1);
+        std::istream& iframestream = video.framestream(n - 1);
 
         padding.clear();
         padding.str("");
@@ -85,9 +87,16 @@ int Main::main(void) {
                     "Can't open output file: " + filename);
         }
 
-        fout << frame;
+        format::windows_bitmap::elements_type elements = {
+            info.width,
+            info.height
+        };
+        format::windows_bitmap::header_type header(elements);
 
-        frame.release();
+        fout << header;
+        fout << iframestream.rdbuf();
+
+        video.release_framestream(iframestream);
     }
 
     return OK;

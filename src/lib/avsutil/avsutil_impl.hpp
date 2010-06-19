@@ -12,6 +12,7 @@
 #include "../../include/avsutil.hpp"
 
 #include "avisynth.h"
+#include "iframestream.hpp"
 
 #include "../../helper/algorithm.hpp"
 #include "../../helper/dlogger.hpp"
@@ -25,79 +26,9 @@
 
 namespace avsutil {
     namespace impl {
-        // forward decralations
-        class cvideo_type;
-
-        class cframe_type : public frame_type {
-            private:
-                // variables
-                const PVideoFrame frame;
-                const info_type mv_info;
-                cvideo_type* video;
-
-            public:
-                // constructor
-                explicit cframe_type(   PVideoFrame frame, cvideo_type* video,
-                                        const info_type& info)
-                    : frame(frame), mv_info(info), video(video) {
-                        DBGLOG( "avsutil::impl::cframe_type::"
-                                "cframe_type(PVideoFrame)\n"
-                                "width: " << mv_info.width << "\n"
-                                "pitch: " << mv_info.pitch << "\n"
-                                "height: " << mv_info.height << "\n");
-                    }
-
-            public:
-                // destructor
-                ~cframe_type(void) {
-                    DBGLOG( "avsutil::impl::cframe_type::~cframe_type(void)");
-                }
-
-            public:
-                // equivalent operator
-                bool operator==(const cframe_type& rhs) {
-                    return frame == rhs.frame;
-                }
-                // non-equivalent operator
-                bool operator!=(const cframe_type& rhs) {
-                    return !(*this == rhs);
-                }
-
-            private:
-                // Inhibits copy and assignment.
-                // copy constructor
-                explicit cframe_type(const cframe_type& rhs);
-                // assignment operator
-                cframe_type& operator=(const cframe_type& rhs);
-
-            public:
-                /*
-                 *  Implementations of some member functions of a super class
-                 *  frame_type
-                 * */
-                const info_type& info(void) const { return mv_info; }
-
-                void write(std::ostream& out) const {
-                    DBGLOG("avsutil::impl::cframe_type::write(std::ostream&)");
-                    write_header(out);
-                    write_data(out);
-                }
-
-                void release(void) const;
-
-            public:
-                // utility functions
-                bool is_me(uint32_t n) const { return mv_info.nth == n; }
-
-            private:
-                // utility functions
-                void write_header(std::ostream&) const;
-                void write_data(std::ostream&) const;
-        };
-
         class cvideo_type: public video_type {
             private:
-                typedef std::list<cframe_type*>  cframes_type;
+                typedef std::list<iframestream*>  framestreams_type;
 
             private:
                 // variables
@@ -105,7 +36,7 @@ namespace avsutil {
                 PClip mv_rgb_clip;
                 IScriptEnvironment* mv_se;
                 const info_type mv_info;
-                cframes_type cframes;
+                framestreams_type framestreams;
 
             public:
                 // constructor
@@ -133,7 +64,7 @@ namespace avsutil {
                 // destructor
                 ~cvideo_type(void) {
                     DBGLOG("avsutil::impl::cvideo_type::~cvideo_type(void)");
-                    std::for_each(cframes.rbegin(), cframes.rend(),
+                    std::for_each(framestreams.rbegin(), framestreams.rend(),
                             util::algorithm::sweeper());
                 }
 
@@ -150,9 +81,9 @@ namespace avsutil {
             private:
                 // Inhibits copy and assignment.
                 // copy constructor
-                explicit cvideo_type(const cframe_type& rhs);
+                explicit cvideo_type(const cvideo_type& rhs);
                 // assignment operator
-                cvideo_type& operator=(const cframe_type& rhs);
+                cvideo_type& operator=(const cvideo_type& rhs);
 
             public:
                 /*
@@ -160,7 +91,7 @@ namespace avsutil {
                  *  video_type
                  * */
                 const info_type& info(void) const { return mv_info; }
-                frame_type& frame(uint32_t n);
+                std::istream& framestream(uint32_t n);
 
             public:
                 // utility functions
@@ -177,7 +108,7 @@ namespace avsutil {
                     }
                 }
 
-                void release_frame(const cframe_type* const target);
+                void release_framestream(std::istream& target);
         };
 
         class caudio_type : public audio_type {
@@ -225,9 +156,9 @@ namespace avsutil {
             private:
                 // Inhibits copy and assignment.
                 // copy constructor
-                explicit caudio_type(const cframe_type& rhs);
+                explicit caudio_type(const caudio_type& rhs);
                 // assignment operator
-                caudio_type& operator=(const cframe_type& rhs);
+                caudio_type& operator=(const caudio_type& rhs);
 
             public:
                 /*
@@ -313,9 +244,9 @@ namespace avsutil {
             private:
                 // Inhibits copy and assignment.
                 // copy constructor
-                explicit cavs_type(const cframe_type& rhs);
+                explicit cavs_type(const cavs_type& rhs);
                 // assignment operator
-                cavs_type& operator=(const cframe_type& rhs);
+                cavs_type& operator=(const cavs_type& rhs);
 
             public:
                 /*
@@ -376,9 +307,9 @@ namespace avsutil {
             private:
                 // Inhibits copy and assignment.
                 // copy constructor
-                explicit cmanager_type(const cframe_type& rhs);
+                explicit cmanager_type(const cmanager_type& rhs);
                 // assignment operator
-                cmanager_type& operator=(const cframe_type& rhs);
+                cmanager_type& operator=(const cmanager_type& rhs);
 
             public:
                 /*
