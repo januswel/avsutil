@@ -1,6 +1,6 @@
 /*
  * iframestream.hpp
- *  remarks
+ *  Declarations and definitions of a class iframestream and framestreambuf
  *
  *  written by janus_wel<janus.wel.3@gmail.com>
  *  This source code is in public domain, and has NO WARRANTY.
@@ -41,7 +41,7 @@ namespace avsutil {
 
                 // destructor
                 ~framestreambuf(void) {
-                    DBGLOG( "framestreambuf::~framestreambuf(void)");
+                    DBGLOG("framestreambuf::~framestreambuf(void)");
                 }
 
             private:
@@ -55,7 +55,9 @@ namespace avsutil {
                         off_type off, std::ios_base::seekdir way,
                         std::ios_base::openmode which =
                         std::ios_base::in | std::ios_base::out) {
-                    DBGLOG("framestreambuf::seekoff(" << off << ", " << way << ", " << which << ")");
+                    DBGLOG( "framestreambuf::seekoff(" << off << ", "
+                            << way << ", " << which << ")");
+
                     // Does only if a stream is opened in an input mode
                     if ((which & std::ios_base::in) == std::ios_base::in) {
                         uint64_t current_pos = gptr() - eback();
@@ -65,8 +67,8 @@ namespace avsutil {
                         // In case of tellg()
                         if (way == std::ios_base::cur && off == 0) {
                             DBGLOG("call by tellg()");
-                            // The current position may be different from eback(),
-                            // after setg().
+                            // The current position may be different from
+                            // eback(), after setg().
                             return pos_type(off_type(current_pos));
                         }
 
@@ -105,7 +107,8 @@ namespace avsutil {
                         pos_type sp,
                         std::ios_base::openmode which =
                         std::ios_base::in | std::ios_base::out) {
-                    DBGLOG("framestreambuf::seekpos(" << sp << ", " << which << ")");
+                    DBGLOG( "framestreambuf::seekpos("
+                            << sp << ", " << which << ")");
                     return seekoff(off_type(sp), std::ios_base::beg, which);
                 }
         };
@@ -118,21 +121,22 @@ namespace avsutil {
             public:
                 // constructor
                 iframestream(PVideoFrame frame, unsigned int n)
-                    : std::istream(new framestreambuf(frame)),
-                    internal_buf(rdbuf()), n(n) {
-                        DBGLOG( "iframestream::iframestream"
-                                "(PVideoFrame, " << n << ")");
-                    }
+                : std::istream(new framestreambuf(frame)),
+                  internal_buf(rdbuf()), n(n) {
+                    DBGLOG( "iframestream::iframestream"
+                            "(PVideoFrame, " << n << ")");
+                }
 
                 // destructor
                 ~iframestream(void) {
-                    DBGLOG( "iframestream::~iframestream(void)");
+                    DBGLOG("iframestream::~iframestream(void)");
                     if (rdbuf() == internal_buf) {
                         DBGLOG( "delete the internal streambuf.");
                         delete rdbuf();
                     }
                 }
 
+                // utility function
                 bool is_me(unsigned int n) { return (this->n == n); }
 
             private:
