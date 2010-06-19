@@ -22,20 +22,22 @@ using namespace std;
 using namespace avsutil;
 
 int Main::main(void) {
+    // preparations and error handlings
     if (inputfile.empty()) {
         throw avs2bmp_error(BAD_ARGUMENT, "Specify <inputfile>\n");
     }
 
     if (base.empty()) base = inputfile;
 
+    // Read in avs file.
     avs_type& avs = manager().load(inputfile.c_str());
     if (!avs.is_fine()) {
         throw avs2bmp_error(BAD_AVS, avs.errmsg());
     }
     video_type& video = avs.video();
-    video_type::info_type info = video.info();
+    const video_type::info_type& info = video.info();
 
-    // preparations and error handlings
+    // Generate actual target frames.
     for (timerange_array_type::const_iterator itr = timerange_array.begin();
             itr != timerange_array.end(); ++itr) {
         unsigned int first = static_cast<unsigned int>((*itr).first
@@ -53,6 +55,7 @@ int Main::main(void) {
                 " \"-f|--frames\".\n");
     }
 
+    // Compress if enable.
     target_frames.sort();
     target_frames.unique();
 
@@ -64,40 +67,53 @@ int Main::main(void) {
     }
 
     // do it
+    // preparations
     unsigned int i = 0;
+    unsigned int n;
     const unsigned int total = target_frames.size();
     const unsigned int frac_width = tconv.strfrom(total).size() * 2 + 1;
+    double percentage = 0;
     stringstream padding;
+    padding.imbue(std::locale::classic());
     padding << right << setfill('0');
+    cout << fixed << setprecision(2);
     for (target_frames_type::const_iterator itr = target_frames.begin();
             itr != target_frames.end(); ++itr) {
-        unsigned int n = *itr;
+        // Get frame stream.
+        n = *itr;
         std::istream& iframestream = video.framestream(n - 1);
 
+        // Build a filename to output.
         padding.clear();
         padding.str("");
         padding << setw(digit) << n;
         string_type filename = base + '.' + padding.str() + ".bmp";
 
-        cout << fixed << setprecision(2)
+        // Show progresses.
+        percentage = static_cast<double>(i) * 100 / total;
+        cout
             << filename << " " << setw(frac_width) << ++i << "/" << total
-            << "(" << setw(6) << static_cast<double>(i) * 100 / total << ")\n";
+            << "(" << setw(6) << percentage << "%)\n";
 
+        // Open output file stream.
         ofstream fout(filename, ios::binary | ios::trunc);
         if (!fout.good()) {
             throw avs2bmp_error(FILE_IO,
                     "Can't open output file: " + filename);
         }
 
+        // Write Windows Bitmap header.
         format::windows_bitmap::elements_type elements = {
             info.width,
             info.height
         };
         format::windows_bitmap::header_type header(elements);
-
         fout << header;
+
+        // Write pixcel data.
         fout << iframestream.rdbuf();
 
+        // Release frame stream.
         video.release_framestream(iframestream);
     }
 
