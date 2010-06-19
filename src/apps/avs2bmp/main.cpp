@@ -26,6 +26,12 @@ util::string::typeconverter tconv(locale::classic());
 util::string::check checker(locale::classic());
 
 int Main::main(void) {
+    if (inputfile.empty()) {
+        throw avs2bmp_error(BAD_ARGUMENT, "Specify <inputfile>\n");
+    }
+
+    if (base.empty()) base = inputfile;
+
     avs_type& avs = manager().load(inputfile.c_str());
     if (!avs.is_fine()) {
         throw avs2bmp_error(BAD_AVS, avs.errmsg());

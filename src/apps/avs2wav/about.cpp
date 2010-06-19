@@ -10,8 +10,16 @@
 
 #include <ostream>
 
+#include "../../include/avsutil.hpp"
+
 void about(std::ostream& out) {
-    out << name() << " version " << version() << '\n'
+    out
+        << name() << " version " << version() << '\n'
+        << "Library:\n"
+        << "    avsutil version " << avsutil::version()
+        << " compiled at " << avsutil::compile_date()
+        << " " << avsutil::compile_time() << "\n"
+        << "\n"
         << "Copyright (C) 2010 janus_wel<janus.wel.3@gmail.com>\n"
         << '\n'
         << "This program is free software: you can redistribute it and/or modify\n"

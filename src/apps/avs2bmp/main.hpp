@@ -131,12 +131,6 @@ class Main
                             unknown_opt.begin(),
                             unknown_opt.end(), ", ") + "\n");
             }
-
-            if (inputfile.empty()) {
-                throw avs2bmp_error(BAD_ARGUMENT, "Specify <inputfile>\n");
-            }
-
-            if (base.empty()) base = inputfile;
         }
 
         // do it
