@@ -20,7 +20,6 @@
 #include <iostream>
 #include <iterator>
 #include <locale>
-#include <memory>   // fot std::auto_ptr
 #include <stdexcept>
 #include <string>
 #include <vector>
