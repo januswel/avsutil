@@ -13,6 +13,12 @@
 #include <stdint.h>
 
 namespace avsutil {
+    // meta informations
+    const char* version(void);
+    unsigned int version_num(void);
+    const char* compile_date(void);
+    const char* compile_time(void);
+
     // forward declarations
     struct manager_type;
     struct avs_type;
