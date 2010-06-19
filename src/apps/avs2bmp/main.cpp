@@ -21,10 +21,6 @@
 using namespace std;
 using namespace avsutil;
 
-// global objects
-util::string::typeconverter tconv(locale::classic());
-util::string::check checker(locale::classic());
-
 int Main::main(void) {
     if (inputfile.empty()) {
         throw avs2bmp_error(BAD_ARGUMENT, "Specify <inputfile>\n");

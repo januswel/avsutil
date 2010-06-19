@@ -6,7 +6,7 @@
  *  see LICENSE for redistributing, modifying, and so on.
  * */
 
-#include "avs2wav.hpp"
+#include "avs2bmp.hpp"
 
 #include <locale>
 

@@ -23,9 +23,6 @@ using namespace std;
 using namespace avsutil;
 using namespace avsinfo::items;
 
-// global objects
-util::string::typeconverter tconv(locale::classic());
-
 int Main::main(void) {
     if (inputfile.empty()) {
         throw avsinfo_error(BAD_ARGUMENT, "Specify <inputfile>\n");

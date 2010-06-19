@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\apps\avsinfo\about.cpp" />
+    <ClCompile Include="..\..\..\src\apps\avsinfo\global.cpp" />
     <ClCompile Include="..\..\..\src\apps\avsinfo\main.cpp" />
     <ClCompile Include="..\..\..\src\apps\avsinfo\name.cpp" />
     <ClCompile Include="..\..\..\src\apps\avsinfo\usage.cpp" />

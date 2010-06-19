@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\apps\avslint\about.cpp" />
+    <ClCompile Include="..\..\..\src\apps\avslint\global.cpp" />
     <ClCompile Include="..\..\..\src\apps\avslint\main.cpp" />
     <ClCompile Include="..\..\..\src\apps\avslint\name.cpp" />
     <ClCompile Include="..\..\..\src\apps\avslint\usage.cpp" />

@@ -99,6 +99,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\apps\avs2bmp\about.cpp" />
+    <ClCompile Include="..\..\..\src\apps\avs2bmp\global.cpp" />
     <ClCompile Include="..\..\..\src\apps\avs2bmp\main.cpp" />
     <ClCompile Include="..\..\..\src\apps\avs2bmp\name.cpp" />
     <ClCompile Include="..\..\..\src\apps\avs2bmp\usage.cpp" />
