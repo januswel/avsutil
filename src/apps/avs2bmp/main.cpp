@@ -90,9 +90,10 @@ int Main::main(void) {
         string_type filename = base + '.' + padding.str() + ".bmp";
 
         // Show progresses.
+        ++i;
         percentage = static_cast<double>(i) * 100 / total;
         cout
-            << filename << " " << setw(frac_width) << ++i << "/" << total
+            << filename << " " << setw(frac_width) << i << "/" << total
             << "(" << setw(6) << percentage << "%)\n";
 
         // Open output file stream.
