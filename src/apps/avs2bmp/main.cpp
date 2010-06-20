@@ -40,8 +40,8 @@ int Main::main(void) {
     const video_type::info_type& info = video.info();
 
     // Generate actual target frames.
-    for (timerange_array_type::const_iterator itr = timerange_array.begin();
-            itr != timerange_array.end(); ++itr) {
+    for (timeranges_type::const_iterator itr = timeranges.begin();
+            itr != timeranges.end(); ++itr) {
         unsigned int first = static_cast<unsigned int>(util::math::round((*itr).first * info.fps)) + 1;
         unsigned int last = static_cast<unsigned int>(util::math::round((*itr).second * info.fps)) + 1;
 

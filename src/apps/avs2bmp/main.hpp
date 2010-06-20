@@ -28,7 +28,7 @@ class Main
       public pattern::event::event_listener<util::getopt::option::string_type> {
     public:
         typedef std::list<unsigned int>     target_frames_type;
-        typedef std::list<timerange_type>   timerange_array_type;
+        typedef std::list<timerange_type>   timeranges_type;
 
     private:
         // objects to handle options
@@ -49,7 +49,7 @@ class Main
         string_type inputfile;
         std::list<string_type> unknown_opt;
         std::list<unsigned int> target_frames;
-        timerange_array_type timerange_array;
+        timeranges_type timeranges;
         string_type base;
         unsigned int digit;
 
@@ -95,7 +95,7 @@ class Main
             }
         }
         void handle_event(const timerange_type& t) {
-            timerange_array.push_back(t);
+            timeranges.push_back(t);
         }
 
     public:
