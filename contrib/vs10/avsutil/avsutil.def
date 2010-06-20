@@ -1,0 +1,7 @@
+LIBRARY avsutil
+EXPORTS
+    version
+    version_num
+    compile_date
+    compile_time
+    manager
