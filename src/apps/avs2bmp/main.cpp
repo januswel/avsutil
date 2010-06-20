@@ -11,6 +11,7 @@
 #include "../../include/avsutil.hpp"
 
 #include "../../helper/bmp.hpp"
+#include "../../helper/algorithm.hpp"
 
 #include <fstream>
 #include <iomanip>
@@ -40,13 +41,12 @@ int Main::main(void) {
     // Generate actual target frames.
     for (timerange_array_type::const_iterator itr = timerange_array.begin();
             itr != timerange_array.end(); ++itr) {
-        unsigned int first = static_cast<unsigned int>((*itr).first
-                * info.fps_numerator / info.fps_denominator) + 1;
-        unsigned int last = static_cast<unsigned int>((*itr).second
-                * info.fps_numerator / info.fps_denominator) + 1;
-        for (unsigned int i = first; i <= last; ++i) {
-            target_frames.push_back(i);
-        }
+        unsigned int first = static_cast<unsigned int>((*itr).first * info.fps) + 1;
+        unsigned int last = static_cast<unsigned int>((*itr).second * info.fps) + 1;
+
+        std::generate_n(
+                std::back_inserter(target_frames), last - first,
+                util::algorithm::counter<unsigned int>(first, 1));
     }
 
     if (target_frames.empty()) {
