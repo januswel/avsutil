@@ -5,14 +5,22 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Independence|Win32">
-      <Configuration>Independence</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\src\lib\avsutil\audio_impl.hpp" />
+    <ClInclude Include="..\..\..\src\lib\avsutil\avisynth.h" />
+    <ClInclude Include="..\..\..\src\lib\avsutil\avs_impl.hpp" />
+    <ClInclude Include="..\..\..\src\lib\avsutil\iaudiostream.hpp" />
+    <ClInclude Include="..\..\..\src\lib\avsutil\iframestream.hpp" />
+    <ClInclude Include="..\..\..\src\lib\avsutil\manager_impl.hpp" />
+    <ClInclude Include="..\..\..\src\lib\avsutil\video_impl.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\lib\avsutil\avsutil_impl.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <Keyword>Win32Proj</Keyword>
@@ -26,10 +34,6 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Independence|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -39,18 +43,12 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Independence|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Independence|Win32'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -85,35 +83,6 @@
       <ModuleDefinitionFile>$(ProjectDir)\avsutil.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Independence|Win32'">
-    <ClCompile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;AVSUTIL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-    </ClCompile>
-    <Link>
-      <TargetMachine>MachineX86</TargetMachine>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>"$(ProgramFiles)\AviSynth 2.5\Extras\avisynth.lib";%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>$(ProjectDir)\avsutil.def</ModuleDefinitionFile>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\src\lib\avsutil\avsutil_impl.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\src\lib\avsutil\audio_impl.hpp" />
-    <ClInclude Include="..\..\..\src\lib\avsutil\avisynth.h" />
-    <ClInclude Include="..\..\..\src\lib\avsutil\avs_impl.hpp" />
-    <ClInclude Include="..\..\..\src\lib\avsutil\iaudiostream.hpp" />
-    <ClInclude Include="..\..\..\src\lib\avsutil\iframestream.hpp" />
-    <ClInclude Include="..\..\..\src\lib\avsutil\manager_impl.hpp" />
-    <ClInclude Include="..\..\..\src\lib\avsutil\video_impl.hpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
