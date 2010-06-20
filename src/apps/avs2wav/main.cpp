@@ -120,6 +120,7 @@ int Main::main(void) {
 
     // preparations for copying audio samples
     const unsigned int block_size = info.block_size;
+    uint64_t amount = 0;
     uint64_t numerator = 0;
     const uint64_t denominator = info.numof_samples;
     double percentage = 0;
@@ -131,7 +132,9 @@ int Main::main(void) {
         targetout.write(buf, ain.gcount());
 
         // calculations to show progresses
-        numerator += ain.gcount() / block_size;
+        amount += ain.gcount();
+        numerator = amount / block_size;
+
         percentage = static_cast<double>(numerator) * 100 / denominator;
 
         // showing progresses
